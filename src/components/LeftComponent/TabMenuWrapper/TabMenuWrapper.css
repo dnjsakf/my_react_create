@@ -1,0 +1,9 @@
+::-webkit-scrollbar{
+  display: none;
+}
+.TabMenuWrapper{
+  height: 30px;
+  width: 300px;
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+}

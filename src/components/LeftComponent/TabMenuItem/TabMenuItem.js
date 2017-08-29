@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
+import style from './TabMenuItem.css'
+
+// props.menuTitles type is Array
 
 const TabMenuItem = ( props )=>{
-  const items = (<li></li>);
-
+  let items = [];
+  props.menuTitles.map((item, index)=>{
+    console.log(item)
+    items.push( <li  key={index}> { item } </li> );
+  });
+  console.log(items)
+  
   return (
-    <ul>
+    <ul className="TabMenuItems">
       { items }
     </ul>
   )

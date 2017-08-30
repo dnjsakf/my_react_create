@@ -1,12 +1,12 @@
 ::-webkit-scrollbar{
   display: none;
 }
-.TabMenuWrapper.left-tab{
+.TabMenuWrapper.right-tab{
   /* height: 30px; */
   height: auto;
   width: 100%;
   overflow-x: scroll;
   -ms-overflow-style: none;
 
-  background-color: aqua;
+  background-color: gray;
 }

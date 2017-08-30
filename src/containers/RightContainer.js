@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { TabMenuWrapper } from '../components/RightComponent';
 
 class RightContainer extends Component{
   render(){
     return (
       <section className="right-tab">
-        <h1>RightContainer</h1>
+        <TabMenuWrapper/>
       </section>
     )
   }

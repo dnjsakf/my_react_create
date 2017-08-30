@@ -4,14 +4,12 @@ import style from './TabMenuWrapper.css';
 
 const TabMenuWrapper = ( props )=>{
   // const titles = props.titles;
-  const titles = ['Algorithm', 'MyAlgorithm', 'Detail'];
+  const titles = ['Home', 'detail', 'editor', 'mypage'];
 
-  console.log('[TabMenuWrapper]', props)
   return(
-    <div className="TabMenuWrapper left-tab">
+    <div className="TabMenuWrapper right-tab">
       <TabMenuItem
         menuTitles={ titles }
-        onClick = { props.onClick }
       />
     </div>
   );

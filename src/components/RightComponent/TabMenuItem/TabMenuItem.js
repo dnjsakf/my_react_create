@@ -10,17 +10,13 @@ const TabMenuItem = ( props )=>{
   props.menuTitles.map((item, index)=>{
     items.push(
       <li  key={index}>
-        <Button 
-          onClick={ props.onClick }
-          value={item} >
-          { item }
-        </Button>
+        <Button>{ item }</Button>
       </li>
     );
   });
   
   return (
-    <ul className="TabMenuItems left-tab">
+    <ul className="TabMenuItems right-tab">
       { items }
     </ul>
   )

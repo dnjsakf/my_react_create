@@ -9,6 +9,10 @@ import {
   FooterContainer as Footer,
 } from './containers';
 
+function test(){
+  console.log('onclick test');
+}
+
 render(
   <div>
     <Header/>
@@ -16,7 +20,6 @@ render(
       <LeftTab/>
       <RightTab/>
     </Section>
-    <Footer/>
   </div>
   ,
   document.getElementById('root')

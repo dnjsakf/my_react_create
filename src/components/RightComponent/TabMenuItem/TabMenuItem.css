@@ -1,11 +1,11 @@
-ul.TabMenuItems.left-tab{
+ul.TabMenuItems.right-tab{
   display: inline-flex;
   list-style-type: none;
 }
-ul.TabMenuItems.left-tab > li{
+ul.TabMenuItems.right-tab > li{
   flex: 1;
   margin-right: 4px;
 }
-ul.TabMenuItems.left-tab > li > Button{
+ul.TabMenuItems.right-tab > li > Button{
   border-top-right-radius: 10px;
 }

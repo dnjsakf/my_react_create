@@ -9,6 +9,7 @@ import mysql from 'mysql';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 
+import { algorithm } from './routes';
 
 const app = express();
 const expressPort = 8080;
@@ -32,20 +33,11 @@ app.use(session({
 
 // Router Controll
 app.use('/', express.static(path.join(__dirname, './../public')));
+app.use('/api', [algorithm]);
 app.get('*', (req,res)=>{
   return res.status(200).sendFile(path.join(__dirname, './../public/index.html'));
 });
 
-// Connect Database
-const conn = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'wjddns1',
-  database: 'battlecode'
-});
-conn.connect(function(){
-  console.log('[mysql-connected]');
-});
 
 app.listen(expressPort, ()=>{
   console.log('[express] Server is running on port:', expressPort);

@@ -11,7 +11,7 @@ const TabMenuItem = ( props )=>{
     items.push(
       <li  key={index}>
         <Button 
-          onClick={ props.onClick }
+          onClick={ props.getAlgorithm }
           value={item} >
           { item }
         </Button>

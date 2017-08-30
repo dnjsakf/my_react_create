@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import update from 'react-addons-update';
+
 import { 
   TabMenuWrapper,
   ContentsWrapper
@@ -8,33 +11,66 @@ class LeftContainer extends Component{
   constructor(props){
     super(props);
     this.state = {
-      id: 'Algorithm',
+      content: 'algorithm',
+      data: ''
     }
+    this.data = [];
+
     this.handleLeftTabMenu = this.handleLeftTabMenu.bind(this);
   }
   
+  // contents만 바꿔줌
   handleLeftTabMenu( event ){
-    const id = event.target.value;
     this.setState({
-      id,
+      content: event.target.value
     });
-    console.log('[handleLeftTabMenu]',id);
   }
   
+  // 이렇게 설정하면
+  // 최초의 1회가 출력이 안되는게 문제...
+  componentDidMount(){
+    this.props.handleGetAlgorithm();
+  }
+  shouldComponentUpdate(nextProps, nextState){
+    return this.state.content !== nextState.content;
+    // return (JSON.stringify(nextState) !== JSON.stringify(this.state));
+  }
 
   render(){
     return (
       <section className="left-tab">
         <TabMenuWrapper
-          onClick={ this.handleLeftTabMenu }
+          getAlgorithm = { this.handleLeftTabMenu }
         />
         <ContentsWrapper
-          id = { this.state.id }
+          id = { this.state.content }
+          subject = { this.props.data }
         />
       </section>
     )
   }
 }
-export default LeftContainer
 
-// { this.props.children }
+
+// import * as actions from '../actions';
+import { algorithmRequest } from '../actions/Algorithm';
+const mapStateToProps = (state)=>{
+  return {
+    status: state.AlgorithmList.status,
+    data: state.AlgorithmList.data,
+  };
+}
+const mapDispatchToProps = (dispatch)=>{
+  return {
+    handleGetAlgorithm: ()=>{ 
+      // return dispatch( actions.Algorithm.algorithmRequest() );
+      return dispatch( algorithmRequest() );
+    },
+    // more action
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(LeftContainer);

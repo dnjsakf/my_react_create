@@ -11,7 +11,7 @@ const TabMenuWrapper = ( props )=>{
     <div className="TabMenuWrapper left-tab">
       <TabMenuItem
         menuTitles={ titles }
-        onClick = { props.onClick }
+        getAlgorithm = { props.getAlgorithm }
       />
     </div>
   );

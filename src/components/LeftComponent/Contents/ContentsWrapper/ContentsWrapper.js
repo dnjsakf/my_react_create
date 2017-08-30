@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import QuestionSubject from '../QuestionSubject/QuestionSubject';
 import QuestionDetail from '../QuestionDetail/QuestionDetail';
+import style from './ContentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
   console.log('[ContentsWrapper]',props, typeof props.id)
@@ -9,7 +10,7 @@ const ContentsWrapper = ( props )=>{
   switch(contentID.toLowerCase()){
     case 'algorithm':
       content = (
-        <QuestionSubject />
+        <QuestionSubject subject={ props.subject } />
       );
       break;
     case 'detail':

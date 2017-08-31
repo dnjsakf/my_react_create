@@ -7,8 +7,10 @@ import {
 import update from 'react-addons-update';
 
 const initialState = {
+  content: 'algorithm',
   status: 'INIT',
   data: [],
+  changeRightContent: false, 
 }
 
 export default function LeftContetnControll(state, action){
@@ -20,23 +22,29 @@ export default function LeftContetnControll(state, action){
     case GET_ALGORITHM_LIST:
       return update( state,
         {
+          content: { $set: action.content },
           status: { $set: 'waiting' },
+          changeRightContent: { $set: false }      
         }
       );
     
     case GET_ALGORITHM_LIST_FAILURE:
       return update( state,
         {
+          content: { $set: action.content },
           status: { $set: 'ERROR' },
-          data: { $set: action.error }          
+          data: { $set: action.error },
+          changeRightContent: { $set: false }      
         }
       );
     
     case GET_ALGORITHM_LIST_SUCCESS:
       return update( state,
         {
+          content: { $set: action.content },
           status: { $set: 'SUCCESS' },
-          data: { $set: action.data }          
+          data: { $set: action.data },   
+          changeRightContent: { $set: true }
         }
       );
       

@@ -4,7 +4,7 @@ import style from './TabMenuWrapper.css';
 
 const TabMenuWrapper = ( props )=>{
   console.log('right-tab-menu-wrap')
-  const titles = ['Home', 'detail', 'editor', 'mypage'];
+  const titles = ['Home', 'Algorithm', 'Editor', 'MyPage'];
 
   return(
     <div className="TabMenuWrapper right-tab">

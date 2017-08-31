@@ -34,13 +34,15 @@ class LeftContainer extends Component{
     const menu = (event.target.value).toLowerCase();
     if( menu === 'algorithm' ){
       this.props.getAlgorithmList().then(()=>{
-        this.setState(
-          update(this.state, {
-              left:{
-                content: { $set: menu }
-              }
-          })
-        );
+        if(this.props.left.status === "SUCCESS"){
+          this.setState(
+            update(this.state, {
+                left:{
+                  content: { $set: menu }
+                }
+            })
+          );
+        }
       })
     } else {
       this.setState(
@@ -68,19 +70,30 @@ class LeftContainer extends Component{
     }
   }
   
+  // 나중에 MyAlgorithm Actino 추가해서
+  // this.props.content가 바뀌도록 해줘야됨
   shouldComponentUpdate(nextProps, nextState){
-    const update = (this.state.left.content !== nextState.left.content) || (this.state.left.selected !== nextState.left.selected)
+    const update = JSON.stringify(this.props.left.data) !== JSON.stringify(nextProps.left.data);
     return update;
+  }
+  componentWillRecevieProps(nextProps){
+    
+  }
+  componentDidMount(){
+    this.props.getAlgorithmList();
   }
 
   render(){
+    console.log('[left-render여기!!]', this.state)
+    console.log('[left-render여기!!]', this.props)
+
     return (
       <section className="left-tab">
         <TabMenuWrapper
           changeLeftTab = { this.handleLeftTabMenu }
         />
         <ContentsWrapper
-          id = { this.state.left.content }
+          id = { this.props.left.content }
           content = { this.props.left.data }
           getAlgorithmDetail = { this.handleClickSubject }
         />
@@ -100,6 +113,7 @@ const mapStateToProps = (state)=>{
   console.log('[map-state-to-props]', state);
   return {
     left:{
+      content: state.LeftContentControll.content,
       status: state.LeftContentControll.status,
       data: state.LeftContentControll.data,
     },

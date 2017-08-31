@@ -50,11 +50,13 @@ export function algorithmRequestData( questionNo ){
 export function algorithmData(){
   return {
     type: GET_ALGORITHM_DATA,
+    content: 'algorithm',
   }
 }
 export function algorithmList(){
   return {
     type: GET_ALGORITHM_LIST,
+    content: 'algorithm',
   }
 };
 
@@ -74,12 +76,14 @@ export function algorithmDataFailure(error){
 export function algorithmListSuccess(data){
   return {
     type: GET_ALGORITHM_LIST_SUCCESS,
+    content: 'algorithm',
     data
   }
 };
 export function algorithmDataSuccess(data){
   return {
     type: GET_ALGORITHM_DATA_SUCCESS,
+    content: 'algorithm',
     data
   }
 };

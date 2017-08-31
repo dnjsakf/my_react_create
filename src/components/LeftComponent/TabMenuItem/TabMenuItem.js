@@ -12,7 +12,7 @@ const TabMenuItem = ( props )=>{
       <li  key={index}>
         <Button 
           onClick={ props.changeLeftTab }
-          value={item} >
+          value={ item.toLowerCase() } >
           { item }
         </Button>
       </li>

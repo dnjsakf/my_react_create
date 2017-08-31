@@ -7,7 +7,7 @@ const ContentsWrapper = ( props )=>{
   let content = '';
   const contentID = props.id;
   switch(contentID.toLowerCase()){
-    case 'detail':
+    case 'algorithm':
       if(Object.keys(props.data).length > 0){
         content = [
           (<QuestionTitle 
@@ -23,10 +23,13 @@ const ContentsWrapper = ( props )=>{
       }
       break;
     case 'home':
+      content = (<span>id "{contentID}" is no defined</span>);
       break;
     case 'editor':
+      content = (<span>id "{contentID}" is no defined</span>);
       break;
     case 'mypage':
+      content = (<span>id "{contentID}" is no defined</span>);
       break;
     default:
       content = (<span>id "{contentID}" is no defined</span>);

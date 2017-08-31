@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { QuestionTitle, QuestionDetail } from '../QuestionDetail';
+import { CodemirrorEditor } from '../TextEditor';
 import style from './contentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
@@ -26,7 +27,7 @@ const ContentsWrapper = ( props )=>{
       content = (<span>id "{contentID}" is no defined</span>);
       break;
     case 'editor':
-      content = (<span>id "{contentID}" is no defined</span>);
+      content = (<CodemirrorEditor/>);
       break;
     case 'mypage':
       content = (<span>id "{contentID}" is no defined</span>);

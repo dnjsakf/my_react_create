@@ -5,13 +5,14 @@ import style from './QuestionSubject.css';
 const QuestionSubject = ( props )=>{
   const list = [];
   const subject = props.subject;
-  console.log(typeof props.subject, props.subject)
+
+  console.log('[왜 여기가 도냐]', props)
   Array.from(subject).map((item, index)=>{
     list.push(
       <CollectionItem
-        key= { index }
-        href= "#"                 // Material option 
-        onClick={ props.onClick }> 
+        key={ index }
+        href={"#"}
+        onClick={ ()=>{props.getAlgorithmDetail( item.no )} }> 
         { item.subject }
       </CollectionItem>
     );

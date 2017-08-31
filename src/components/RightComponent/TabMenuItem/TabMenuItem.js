@@ -9,8 +9,12 @@ const TabMenuItem = ( props )=>{
   let items = [];
   props.menuTitles.map((item, index)=>{
     items.push(
-      <li  key={index}>
-        <Button>{ item }</Button>
+      <li  key={ index }>
+        <Button 
+          onClick={ props.changeRightTab }
+          value = { item }>
+          { item }
+        </Button>
       </li>
     );
   });

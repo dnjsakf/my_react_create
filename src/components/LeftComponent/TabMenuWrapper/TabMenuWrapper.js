@@ -6,12 +6,12 @@ const TabMenuWrapper = ( props )=>{
   // const titles = props.titles;
   const titles = ['Algorithm', 'MyAlgorithm', 'Detail'];
 
-  console.log('[TabMenuWrapper]', props)
+  console.log('[left-tab-menu-wrap]', props)
   return(
     <div className="TabMenuWrapper left-tab">
       <TabMenuItem
         menuTitles={ titles }
-        getAlgorithm = { props.getAlgorithm }
+        changeLeftTab = { props.changeLeftTab }
       />
     </div>
   );

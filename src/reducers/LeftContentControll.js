@@ -1,7 +1,7 @@
 import {
   GET_ALGORITHM_LIST,
-  GET_ALGORITHM_SUCCESS,
-  GET_ALGORITHM_FAILURE
+  GET_ALGORITHM_LIST_FAILURE,
+  GET_ALGORITHM_LIST_SUCCESS,
 } from '../actions/ActionTypes';
 
 import update from 'react-addons-update';
@@ -11,7 +11,8 @@ const initialState = {
   data: [],
 }
 
-export default function algorithmList(state, action){
+export default function LeftContetnControll(state, action){
+  console.log('[reducer-left]', action);
   if(typeof state === 'undefined'){
     state = initialState;
   }
@@ -23,7 +24,7 @@ export default function algorithmList(state, action){
         }
       );
     
-    case GET_ALGORITHM_FAILURE:
+    case GET_ALGORITHM_LIST_FAILURE:
       return update( state,
         {
           status: { $set: 'ERROR' },
@@ -31,7 +32,7 @@ export default function algorithmList(state, action){
         }
       );
     
-    case GET_ALGORITHM_SUCCESS:
+    case GET_ALGORITHM_LIST_SUCCESS:
       return update( state,
         {
           status: { $set: 'SUCCESS' },

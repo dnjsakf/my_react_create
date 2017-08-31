@@ -15,6 +15,8 @@ conn.connect(function(){
 });
 
 router.get('/data/algorithm/list', (req, res)=>{
+  console.log('[LIST]', req.query);
+  
   const sql = `SELECT no, subject FROM questions`;
   conn.query(sql, (error, subjects)=>{
     if(error) throw error;
@@ -29,6 +31,27 @@ router.get('/data/algorithm/list', (req, res)=>{
       success: true,
       subjects
     });
+  });
+});
+
+router.get('/data/algorithm/data/:questionNo', (req, res)=>{
+  console.log('[DATA]', req.params.questionNo, req.query);
+
+  const questionNO = req.params.questionNo;
+  const sql = `SELECT * FROM questions WHERE no = ? `;
+  conn.query(sql, questionNO ,(error, question)=>{
+    if(error) throw error;
+    if(question.lenght === 0){
+      return res.status(404).json({
+        error: 'Not Found',
+        error: 0
+      });
+    }
+    
+    return res.status(200).json({
+      success: true,
+      question: question[0]
+    })
   });
 });
 

@@ -1,43 +1,85 @@
 import {
+  GET_ALGORITHM_DATA,
   GET_ALGORITHM_LIST,
-  GET_ALGORITHM_FAILURE,
-  GET_ALGORITHM_SUCCESS
+  GET_ALGORITHM_LIST_FAILURE,
+  GET_ALGORITHM_LIST_SUCCESS,
+  GET_ALGORITHM_DATA_FAILURE,
+  GET_ALGORITHM_DATA_SUCCESS,
 }from './ActionTypes';
 
 import axios from 'axios';
 
-export function algorithmRequest(){
+export function algorithmRequestList(){
   return (dispatch)=>{
-    console.log('[first-dispatch]')
+    console.log('[action-algo-list]')
+    
+    // 현재 상태를 waiting 상태로 변경
     dispatch(algorithmList());
 
     return axios.get('/api/data/algorithm/list',{})
           .then((response)=>{
-            console.log('[algorithm-request]', response);
-            dispatch( algorithmRequestSuccess(response.data.subjects));
+            console.log('[algo-list-request]', response);
+            dispatch( algorithmListSuccess(response.data.subjects));
           })
           .catch((error)=>{
-            console.error('[algorithm-request]', error);
-            dispatch( algorithmRequestFailure(error.response.data.error));
+            console.error('[algo-list-request]', error);
+            dispatch( algorithmListFailure(error.response.data.error));
           });
   }  
 };
+export function algorithmRequestData( questionNo ){
+  return (dispatch)=>{
+    console.log('[action-algo-data]',  questionNo );
+
+    // 현재 상태를 waiting 상태로 변경
+    dispatch( algorithmData() );
+
+    return axios.get('/api/data/algorithm/data/'+questionNo, { questionNo : questionNo })
+          .then((response)=>{
+            console.log('[algo-data-request]', response);
+            dispatch( algorithmDataSuccess(response.data.question) );    // [qusetion] 서버에서 보내는 json
+          })
+          .catch((error)=>{
+            console.error('[algo-data-request]', error);
+            dispatch( algorithmDataFailure(error.response.data.error) ); // [error] 서버에서 보내는 json
+          });
+  }
+}
+
+
+export function algorithmData(){
+  return {
+    type: GET_ALGORITHM_DATA,
+  }
+}
 export function algorithmList(){
   return {
     type: GET_ALGORITHM_LIST,
   }
 };
 
-export function algorithmRequestFailure(error){
+export function algorithmListFailure(error){
   return {
-    type: GET_ALGORITHM_FAILURE,
+    type: GET_ALGORITHM__LIST_FAILURE,
+    error
+  }
+};
+export function algorithmDataFailure(error){
+  return {
+    type: GET_ALGORITHM__DATA_FAILURE,
     error
   }
 };
 
-export function algorithmRequestSuccess(data){
+export function algorithmListSuccess(data){
   return {
-    type: GET_ALGORITHM_SUCCESS,
+    type: GET_ALGORITHM_LIST_SUCCESS,
+    data
+  }
+};
+export function algorithmDataSuccess(data){
+  return {
+    type: GET_ALGORITHM_DATA_SUCCESS,
     data
   }
 };

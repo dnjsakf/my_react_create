@@ -11,40 +11,78 @@ class LeftContainer extends Component{
   constructor(props){
     super(props);
     this.state = {
-      content: 'algorithm',
-      data: ''
+      left:{
+        content: '',
+        status: 'INIT',
+        data: [],
+        selected: 0,
+      },
+      right:{
+        content: '',
+        status: 'INIT',
+        data: [],
+      }
     }
-    this.data = [];
 
     this.handleLeftTabMenu = this.handleLeftTabMenu.bind(this);
+    this.handleClickSubject = this.handleClickSubject.bind(this);
   }
   
   // contents만 바꿔줌
   handleLeftTabMenu( event ){
-    this.setState({
-      content: event.target.value
-    });
+    console.log('[left-tab-menu]', event.target.value);
+    const menu = (event.target.value).toLowerCase();
+    if( menu === 'algorithm' ){
+      this.props.getAlgorithmList().then(()=>{
+        this.setState(
+          update(this.state, {
+              left:{
+                content: { $set: menu }
+              }
+          })
+        );
+      })
+    } else {
+      this.setState(
+        update(this.state, {
+          left:{
+            content: { $set: menu }
+          }
+        })
+      );
+    }
+  }
+  handleClickSubject( questionNo ){
+    if( typeof questionNo === 'number' && questionNo > 0){
+      console.log('[left-subject-click]', questionNo);
+     
+      this.props.getAlgorithmData(questionNo).then(()=>{
+        this.setState(
+          update(this.state, {
+            left:{
+              selected: { $set: questionNo }
+            },
+          })
+        );
+      });
+    }
   }
   
-  // 이렇게 설정하면
-  // 최초의 1회가 출력이 안되는게 문제...
-  componentDidMount(){
-    this.props.handleGetAlgorithm();
-  }
   shouldComponentUpdate(nextProps, nextState){
-    return this.state.content !== nextState.content;
-    // return (JSON.stringify(nextState) !== JSON.stringify(this.state));
+    const update = (this.state.left.content !== nextState.left.content) || (this.state.left.selected !== nextState.left.selected)
+    return update;
   }
 
   render(){
     return (
       <section className="left-tab">
         <TabMenuWrapper
-          getAlgorithm = { this.handleLeftTabMenu }
+          changeLeftTab = { this.handleLeftTabMenu }
         />
         <ContentsWrapper
-          id = { this.state.content }
-          subject = { this.props.data }
+          id = { this.state.left.content }
+          content = { this.props.left.data }
+          getAlgorithmDetail = { this.handleClickSubject }
         />
       </section>
     )
@@ -53,19 +91,29 @@ class LeftContainer extends Component{
 
 
 // import * as actions from '../actions';
-import { algorithmRequest } from '../actions/Algorithm';
+import { 
+  algorithmRequestList,
+  algorithmRequestData,
+} from '../actions/Algorithm';
+
 const mapStateToProps = (state)=>{
+  console.log('[map-state-to-props]', state);
   return {
-    status: state.AlgorithmList.status,
-    data: state.AlgorithmList.data,
+    left:{
+      status: state.LeftContentControll.status,
+      data: state.LeftContentControll.data,
+    },
+    // 여기서 right를 호출하려 했더니, 리로딩 되면서 이 데이터가 바뀌어 버림.
   };
 }
 const mapDispatchToProps = (dispatch)=>{
   return {
-    handleGetAlgorithm: ()=>{ 
-      // return dispatch( actions.Algorithm.algorithmRequest() );
-      return dispatch( algorithmRequest() );
+    getAlgorithmList: ()=>{ 
+      return dispatch( algorithmRequestList() );
     },
+    getAlgorithmData: ( questionNo )=>{
+      return dispatch( algorithmRequestData( questionNo ) );
+    }
     // more action
   }
 }

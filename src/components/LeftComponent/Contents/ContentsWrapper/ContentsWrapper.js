@@ -4,18 +4,20 @@ import QuestionDetail from '../QuestionDetail/QuestionDetail';
 import style from './ContentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
-  console.log('[ContentsWrapper]',props, typeof props.id)
+  console.log('[left-content-wrap]',props, typeof props.id)
   const contentID = props.id;
   let content = '';
   switch(contentID.toLowerCase()){
     case 'algorithm':
       content = (
-        <QuestionSubject subject={ props.subject } />
+        <QuestionSubject 
+          subject={ props.content }
+          getAlgorithmDetail={ props.getAlgorithmDetail }/>
       );
       break;
     case 'detail':
       content = (
-        <QuestionDetail />
+        <QuestionDetail detail={ props.content }/>
       );
       break;
     // more add contents

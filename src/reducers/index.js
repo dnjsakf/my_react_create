@@ -1,8 +1,10 @@
-import AlgorithmList from './AlgorithmList';
+import LeftContentControll from './LeftContentControll';
+import RightContentControll from './RightContentControll';
 import { combineReducers } from 'redux';
 
 const reducers = combineReducers({
-  AlgorithmList
+  LeftContentControll,
+  RightContentControll
 })
 
 export default reducers;

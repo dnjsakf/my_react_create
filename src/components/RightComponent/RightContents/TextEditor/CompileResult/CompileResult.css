@@ -1,0 +1,47 @@
+.row.CompileResult-scroll{
+  height: 40%;
+  width: 100%;
+  margin-bottom: 0;
+}
+.row.CompileResult-scroll .blue-grey.darken-1.card{
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.row.CompileResult-scroll .col.m6.CompileResult-InputCase{
+  height: 100%;
+  overflow-y: scroll;
+
+  /* padding-right: 3px; */
+  padding: 2px 1px 2px 2px;
+}
+.row.CompileResult-scroll .col.m6.CompileResult-OutputCase{
+  height: 100%;
+  overflow-y: scroll;
+
+  /* padding-left: 3px; */
+  padding: 2px 2px 2px 1px;
+}
+.row.CompileResult-scroll .col.s1.m12.input-wrapper,
+.row.CompileResult-scroll .col.s2.m12.output-wrapper{
+  padding: 0;
+}
+
+.row.CompileResult-scroll table{
+  text-align: center;
+}
+
+.row.CompileResult-scroll th.no,
+.row.CompileResult-scroll td.no{
+  width: 20%;
+  text-align: center;
+}
+.row.CompileResult-scroll th.data,
+.row.CompileResult-scroll td.data{
+  width: 60%;
+  text-align: center;
+}
+.row.CompileResult-scroll th.test,
+.row.CompileResult-scroll td.test{
+  width: 20%;
+  text-align: center;
+}

@@ -1,5 +1,9 @@
-.ReactCodeMirror,
-.CodeMirror.CodeMirror-wrap,
-.CodeMirror-scroll{
+.ReactCodeMirror{
+  height: 60%;
+}
+.CodeMirror{
   height: 100%;
+}
+.CodeMirror-scroll{
+  padding-bottom: 0;
 }

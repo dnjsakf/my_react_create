@@ -4,8 +4,6 @@ import { ContentsWrapper } from '../components/RightComponent/RightContents';
 
 import update from 'react-addons-update';
 
-const consoleSwitch = true;
-
 class RightContainer extends Component{
   render(){
     return (

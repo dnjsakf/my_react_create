@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { QuestionTitle, QuestionDetail } from '../QuestionDetail';
-import { CodemirrorEditor } from '../TextEditor';
+import { TextEditorWrapper } from '../TextEditor';
 import style from './contentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
@@ -28,7 +28,12 @@ const ContentsWrapper = ( props )=>{
       content = (<span>id "{menu}" is no defined</span>);
       break;
     case 'editor':
-      content = (<CodemirrorEditor/>);
+      content = (<TextEditorWrapper
+                  content={{
+                    inputcase: props.content.input,
+                    outputcase: props.content.output
+                  }}
+                  />);
       break;
     case 'mypage':
       content = (<span>id "{menu}" is no defined</span>);

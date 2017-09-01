@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { Navbar, NavItem, Icon } from 'react-materialize';
+import style from './QuestionTitle.css';
 
 const QuestionTitle = ( props )=>{
   console.log('[question-title]', props, props.subject)
   return(
-    <Navbar brand={ `${props.no}  ${props.subject}` } right>
-      <NavItem key={1} href='get-started.html'><Icon>search</Icon></NavItem>
-      <NavItem key={2} href='get-started.html'><Icon>view_module</Icon></NavItem>
-      <NavItem key={3} href='get-started.html'><Icon>refresh</Icon></NavItem>
-      <NavItem key={4} href='get-started.html'><Icon>more_vert</Icon></NavItem>
+    <Navbar className='QuestionTitle' brand={ `${props.no}  ${props.subject}` } right>
+      <NavItem 
+        key={1} 
+        onClick={ ()=>{ props.onAlgorithmSolve(props.no)} }>
+        <Icon>border_color</Icon>
+      </NavItem>
     </Navbar>
   );
 }

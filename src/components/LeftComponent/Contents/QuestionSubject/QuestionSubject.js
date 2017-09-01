@@ -3,16 +3,19 @@ import { Collection, CollectionItem } from 'react-materialize';
 import style from './QuestionSubject.css';
 
 const QuestionSubject = ( props )=>{
+  console.log('[알고리즘 리스트 생성]', props );
+  if( typeof props.subject === 'undefined' ){
+    return (<span>NOT FOUND LIST DATA</span>);
+  }
+
   const list = [];
   const subject = props.subject;
-
-  console.log('[왜 여기가 도냐]', props)
   Array.from(subject).map((item, index)=>{
     list.push(
       <CollectionItem
         key={ index }
         href={"#"}
-        onClick={ ()=>{props.getAlgorithmDetail( item.no )} }> 
+        onClick={ ()=>{ props.onAlgorithmClick( item.no )} }> 
         { item.subject }
       </CollectionItem>
     );

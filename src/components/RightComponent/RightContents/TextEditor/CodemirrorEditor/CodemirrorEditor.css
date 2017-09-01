@@ -1,0 +1,5 @@
+.ReactCodeMirror,
+.CodeMirror.CodeMirror-wrap,
+.CodeMirror-scroll{
+  height: 100%;
+}

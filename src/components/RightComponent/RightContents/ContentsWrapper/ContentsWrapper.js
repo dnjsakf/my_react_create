@@ -6,34 +6,35 @@ import style from './contentsWrapper.css';
 const ContentsWrapper = ( props )=>{
   console.log('right-content-wrap', props);
   let content = '';
-  const contentID = props.id;
-  switch(contentID.toLowerCase()){
-    case 'algorithm':
-      if(Object.keys(props.data).length > 0){
+  const menu = props.menu;
+  switch(menu.toLowerCase()){
+    case 'detail':
+      if(Object.keys(props.content).length > 0){
         content = [
           (<QuestionTitle 
             key={ 1 }
-            no={ props.data.no}
-            subject={ props.data.subject }
+            no={ props.content.no}
+            subject={ props.content.subject }
+            onAlgorithmSolve={ props.onAlgorithmSolve }
             />),
           (<QuestionDetail 
             key={ 2 }
-            data={ props.data }
+            content={ props.content }
             />)
         ];
       }
       break;
     case 'home':
-      content = (<span>id "{contentID}" is no defined</span>);
+      content = (<span>id "{menu}" is no defined</span>);
       break;
     case 'editor':
       content = (<CodemirrorEditor/>);
       break;
     case 'mypage':
-      content = (<span>id "{contentID}" is no defined</span>);
+      content = (<span>id "{menu}" is no defined</span>);
       break;
     default:
-      content = (<span>id "{contentID}" is no defined</span>);
+      content = (<span>id "{menu}" is no defined</span>);
       break;
   }
 

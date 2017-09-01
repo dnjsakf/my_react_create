@@ -30,10 +30,7 @@ render(
   <Provider store={ store }>
     <div>
       <Header/>
-      <Section>
-        <LeftTab/>
-        <RightTab/>
-      </Section>
+      <Section/>
     </div>
   </Provider>
   ,

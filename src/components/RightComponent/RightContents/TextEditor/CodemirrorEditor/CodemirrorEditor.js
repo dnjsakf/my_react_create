@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
+import style from './CodemirrorEditor.css';
+
 import CodeMirror from 'react-codemirror';
-import test from 'codemirror';
+import cmStyle from 'codemirror/lib/codemirror.css';
+import cmModePython from 'codemirror/mode/python/python.js';
+import cmModeJavascript from 'codemirror/mode/javascript/javascript.js';
+import cmThemeDracula from 'codemirror/theme/dracula.css';
 
-function handleKeyUp(changeText){
-  console.log(CodeMirror);
-  console.log(test);
+function handleOnChange(changeText){
+
 }
-
 
 const CodemirrorEditor = ( props )=>{
   const readOnly = false;
@@ -15,6 +18,8 @@ const CodemirrorEditor = ( props )=>{
     lineWrapping: true,
     matchBrackets: true,
     readOnly: readOnly,
+    theme: 'dracula',
+    mode: 'python'
   }
   const defaultSource = 'this is test code'
 
@@ -22,7 +27,8 @@ const CodemirrorEditor = ( props )=>{
     <CodeMirror
       value={ defaultSource }
       options={ option }
-      onChange={ handleKeyUp }/>
+      onChange={ handleOnChange }
+      />
   );
 }
 

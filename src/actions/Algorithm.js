@@ -11,36 +11,36 @@ import axios from 'axios';
 
 export function algorithmRequestList(){
   return (dispatch)=>{
-    console.log('[action-algo-list]')
+    console.log('[액션-algo-list-시작]')
     
     // 현재 상태를 waiting 상태로 변경
     dispatch(algorithmList());
 
     return axios.get('/api/data/algorithm/list',{})
           .then((response)=>{
-            console.log('[algo-list-request]', response);
+            console.log('[액션-algo-list-성공]', response);
             dispatch( algorithmListSuccess(response.data.subjects));
           })
           .catch((error)=>{
-            console.error('[algo-list-request]', error);
+            console.error('[액션-algo-list-실패]', error);
             dispatch( algorithmListFailure(error.response.data.error));
           });
   }  
 };
 export function algorithmRequestData( questionNo ){
   return (dispatch)=>{
-    console.log('[action-algo-data]',  questionNo );
+    console.log('[ 액션-algo-data-시작]',  questionNo );
 
     // 현재 상태를 waiting 상태로 변경
     dispatch( algorithmData() );
 
     return axios.get('/api/data/algorithm/data/'+questionNo, { questionNo : questionNo })
           .then((response)=>{
-            console.log('[algo-data-request]', response);
+            console.log('[액션-algo-data-성공]', response);
             dispatch( algorithmDataSuccess(response.data.question) );    // [qusetion] 서버에서 보내는 json
           })
           .catch((error)=>{
-            console.error('[algo-data-request]', error);
+            console.error('[액션-algo-data-실패]', error);
             dispatch( algorithmDataFailure(error.response.data.error) ); // [error] 서버에서 보내는 json
           });
   }
@@ -50,13 +50,11 @@ export function algorithmRequestData( questionNo ){
 export function algorithmData(){
   return {
     type: GET_ALGORITHM_DATA,
-    content: 'algorithm',
   }
 }
 export function algorithmList(){
   return {
     type: GET_ALGORITHM_LIST,
-    content: 'algorithm',
   }
 };
 
@@ -76,14 +74,12 @@ export function algorithmDataFailure(error){
 export function algorithmListSuccess(data){
   return {
     type: GET_ALGORITHM_LIST_SUCCESS,
-    content: 'algorithm',
     data
   }
 };
 export function algorithmDataSuccess(data){
   return {
     type: GET_ALGORITHM_DATA_SUCCESS,
-    content: 'algorithm',
     data
   }
 };

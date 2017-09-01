@@ -1,0 +1,22 @@
+.blue-grey.darken-1.card{
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+.row.QusetionDetail-scroll.left{
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+
+  margin-bottom: 0;
+}
+.row.QusetionDetail-scroll.left .col.m6.QuestionDetail-InputCase{
+  padding-right: 3px;
+}
+.row.QusetionDetail-scroll.left .col.m6.QuestionDetail-OutputCase{
+  padding-left: 3px;
+}
+
+.row.QusetionDetail-scroll.left .col.s1.m12.input-wrapper,
+.row.QusetionDetail-scroll.left .col.s2.m12.output-wrapper{
+  padding: 0;
+}

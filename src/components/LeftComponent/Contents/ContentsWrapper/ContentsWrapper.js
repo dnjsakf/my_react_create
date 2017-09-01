@@ -4,25 +4,27 @@ import QuestionDetail from '../QuestionDetail/QuestionDetail';
 import style from './ContentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
-  console.log('[left-content-wrap]',props, typeof props.id)
-  const contentID = props.id;
+  console.log('[left-content-wrap]', props.menu, props.content, typeof props.menu)
   let content = '';
-  switch(contentID.toLowerCase()){
+
+  const menu = props.menu;
+  switch(menu.toLowerCase()){
     case 'algorithm':
       content = (
         <QuestionSubject 
           subject={ props.content }
-          getAlgorithmDetail={ props.getAlgorithmDetail }/>
+          onAlgorithmClick={ props.onAlgorithmClick }/>
       );
       break;
     case 'detail':
       content = (
-        <QuestionDetail detail={ props.content }/>
+        <QuestionDetail 
+        content={ props.content }/>
       );
       break;
     // more add contents
     default:
-      content = (<span>id "{contentID}" is no defined</span>);
+      content = (<span>id "{props.menu}" is no defined</span>);
       break;
   } 
   

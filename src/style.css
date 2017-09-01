@@ -22,7 +22,7 @@ section.main-section{
 section.main-section > section.left-tab{
   z-index: 2;
   position: absolute;
-  width: 300px;
+  width: 400px;
   height: inherit;
   background: lightgreen;
 }
@@ -32,8 +32,26 @@ section.main-section > section.right-tab{
   width: 100%;
   height: inherit;
   background: lightseagreen;
-  padding-left: 300px;
+  padding-left: 400px;
 }
+
+@media screen and (min-width: 861px){
+  section.main-section > section.left-tab{
+    width: 40%;
+  }
+  section.main-section > section.right-tab{
+    padding-left: 40%;
+  }
+}
+@media screen and (max-width: 860px){
+  section.main-section > section.left-tab{
+    width: 400px;
+  }
+  section.main-section > section.right-tab{
+    padding-left: 400px;
+  }
+}
+
 /* footer.main-footer{
   width: 100%;
   height: 50px;

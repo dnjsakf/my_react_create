@@ -2,21 +2,21 @@
   margin-top: 10px;
   margin-bottom: 0;
 }
-.row.QusetionDetail-scroll{
-  height: calc(100% - 110px);
+.row.QusetionDetail-scroll.right{
+  height: calc(100% - 68px);
   width: 100%;
   overflow-y: scroll;
 
   margin-bottom: 0;
 }
-.col.m6.QuestionDetail-InputCase{
+.row.QusetionDetail-scroll.right .col.m6.QuestionDetail-InputCase{
   padding-right: 3px;
 }
-.col.m6.QuestionDetail-OutputCase{
+.row.QusetionDetail-scroll.right .col.m6.QuestionDetail-OutputCase{
   padding-left: 3px;
 }
 
-.col.s1.m12.input-wrapper,
-.col.s2.m12.output-wrapper{
+.row.QusetionDetail-scroll.right .col.s1.m12.input-wrapper,
+.row.QusetionDetail-scroll.right .col.s2.m12.output-wrapper{
   padding: 0;
 }

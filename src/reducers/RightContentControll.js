@@ -7,13 +7,11 @@ import {
 import update from 'react-addons-update';
 
 const initialState = {
-  content: 'home',
   status: 'INIT',
-  data: [],
+  content: [],
 }
 
 export default function RightContentControll(state, action){
-  console.log('[reducer-right]', action);
   if(typeof state === 'undefined'){
     state = initialState;
   }
@@ -21,7 +19,6 @@ export default function RightContentControll(state, action){
     case GET_ALGORITHM_DATA:
       return update( state,
         {
-          content: { $set: action.content },
           status: { $set: 'waiting' },
         }
       );
@@ -29,18 +26,16 @@ export default function RightContentControll(state, action){
     case GET_ALGORITHM_DATA_FAILURE:
       return update( state,
         {
-          content: { $set: action.content },
           status: { $set: 'ERROR' },
-          data: { $set: action.error }          
+          content: { $set: action.error }          
         }
       );
     
     case GET_ALGORITHM_DATA_SUCCESS:
       return update( state,
         {
-          content: { $set: action.content },
           status: { $set: 'SUCCESS' },
-          data: { $set: action.data }          
+          content: { $set: action.data }          
         }
       );
       

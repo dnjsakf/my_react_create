@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { QuestionTitle, QuestionDetail } from '../QuestionDetail';
 import { TextEditorWrapper } from '../TextEditor';
-import style from './contentsWrapper.css';
+import style from './ContentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
   console.log('right-content-wrap', props);

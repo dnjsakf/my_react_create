@@ -1,4 +1,5 @@
-import EventButton from './EventButton';
-import UserState from './UserState';
+import HeaderWrapper from './HeaderWrapper/HeaderWrapper';
 
-export { EventButton, UserState }
+export {
+  HeaderWrapper
+}

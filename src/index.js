@@ -7,19 +7,18 @@ import { createStore, applyMiddleware } from 'redux';
 import reducers from './reducers';
 import thunk from 'redux-thunk';
 
+import { Router, Route, browserHistory, indexRoute } from 'react-router'
+
 // applyMiddleware
 // thunk
 // 이 녀석들이 없으면 action에서 plain object로
 // action을 사용할 수 있음. 
 
-
 import {
-  HeaderContainer as Header,
-  SectionContainer as Section,
-  LeftContainer as LeftTab,
-  RightContainer as RightTab,
-  FooterContainer as Footer,
+  MainApp,
+  AuthApp,
 } from './containers';
+
 
 const store = createStore(reducers, applyMiddleware(thunk));
 // const unsubscribe = store.subscribe(()=>{
@@ -28,10 +27,10 @@ const store = createStore(reducers, applyMiddleware(thunk));
 
 render(
   <Provider store={ store }>
-    <div>
-      <Header/>
-      <Section/>
-    </div>
+    <Router history={ browserHistory }>
+      <Route path="/" component={ MainApp } />
+      <Route path="/login" component={ AuthApp }/>
+    </Router>
   </Provider>
   ,
   document.getElementById('root')

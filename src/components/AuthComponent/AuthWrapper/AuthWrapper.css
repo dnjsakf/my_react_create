@@ -1,0 +1,30 @@
+section.AuthWrapper{
+  background-color: #ffcdd2;
+  height: 500px;
+  width: 500px;
+
+  margin: 0 auto;
+
+  margin-top: 30px;
+}
+
+section.AuthWrapper .Auth-Form{
+  width: 100%;
+}
+
+section.AuthWrapper .Auth-Change-Buttons{
+  width: 100%;
+  text-align: center;
+}
+section.AuthWrapper > div.Auth-Change-Buttons > button{
+  width: 50%;
+  height: 50px;
+}
+
+div.Auth-Buttons{
+  text-align: center;
+  margin: 0 auto;
+}
+div.Auth-Buttons > button{
+  width: 130px;
+}

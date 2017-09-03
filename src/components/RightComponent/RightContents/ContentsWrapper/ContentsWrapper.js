@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { TextEditorWrapper } from '../TextEditor';
 import { QuestionWrapper } from '../Question';
 import { HomeWrapper } from '../Home';
+import { MyPageWrapper } from '../MyPage';
 
 import style from './ContentsWrapper.css';
 
@@ -37,7 +38,12 @@ const ContentsWrapper = ( props )=>{
       );
       break;
     case 'mypage':
-      content = (<span>id "{menu}" is no defined</span>);
+      content = (
+        <MyPageWrapper
+          onPasswordCheck={ props.onPasswordCheck }
+          passwordChecked={ props.passwordChecked }
+        />
+      );
       break;
     default:
       content = (<span>id "{menu}" is no defined</span>);

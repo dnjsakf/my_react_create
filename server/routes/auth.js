@@ -65,7 +65,8 @@ router.post('/login', (req, res)=>{
     }
     session.user = {
       username: exist[0].email,
-      displayName: exist[0].name
+      displayName: exist[0].name,
+      password: exist[0].password,
     }
     console.log('[session-check-login]', session.user);
     return res.status(200).json({
@@ -133,6 +134,38 @@ router.post('/register', (req, res)=>{
     });
   });
 });
+
+/**
+ * 비밀번호 체크 (MyPage)
+ */
+router.post('/passwordCheck', (req, res)=>{
+  const findUser = `SELECT password FROM member WHERE email = ?`;
+  conn.query(findUser, [req.body.username], (error, exist)=>{
+    if(error) throw error;
+    if( exist.length === 0){
+      return res.status(404).json({
+        failure: false,
+        error: 'Not found user',
+        code: 1
+      });
+    }
+
+    const passwordMatched = bcrypt.compareSync( req.body.password, exist[0].password);
+    if( !passwordMatched ){
+      return res.status(400).json({
+        failure: false,
+        error: 'No matched password',
+        code: 2
+      });
+    } else {
+      return res.status(200).json({
+        success: true,
+      })
+    }
+    
+  });
+});
+
 
 
 function mapping(myObject){

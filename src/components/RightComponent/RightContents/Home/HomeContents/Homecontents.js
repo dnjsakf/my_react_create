@@ -7,7 +7,7 @@ const HomeContents = ( props )=>{
   return (
     <Card className='HomeContents small'
       header={ <CardTitle image='/images/home/back.png'>Hi, I'm battle-code!!!</CardTitle> }
-      actions={[<a href='#'>This is a Link</a>]}>
+      actions={[<a key={'link-1'} href='#'>This is a Link</a>]}>
       알고리즘 문제 풀이 웹사이트.
     </Card>
   );

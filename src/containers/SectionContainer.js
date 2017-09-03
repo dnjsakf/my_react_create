@@ -229,6 +229,9 @@ class SectionContainer extends Component{
           onAlgorithmClick={ this.handleAlgorithmSelect }
           />
         <RightContainer 
+          isLogined={ this.props.isLogined }
+          username={ this.props.username }
+
           disableTitles={ this.state.right.disableTitles }
           menuTitles={ this.state.right.menuTitles }
           menu={ this.state.right.menu }

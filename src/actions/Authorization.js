@@ -3,16 +3,19 @@ import {
   AUTH_LOGIN_WAITING,
   AUTH_LOGOUT_WAITING,
   AUTH_REGISTER_WAITING,
-
+  AUTH_PASSWORD_CHECK_WAITING,
+  
   AUTH_SESSION_SUCCESS,
   AUTH_LOGIN_SUCCESS,
   AUTH_LOGOUT_SUCCESS,
   AUTH_REGISTER_SUCCESS,
+  AUTH_PASSWORD_CHECK_SUCCESS,
   
   AUTH_SESSION_FAILURE,
   AUTH_LOGIN_FAILURE,
   AUTH_LOGOUT_FAILURE,
   AUTH_REGISTER_FAILURE,
+  AUTH_PASSWORD_CHECK_FAILURE,
 } from './ActionTypes';
 import axios from 'axios';
 
@@ -88,6 +91,22 @@ export function authRegisterRequest( username, password, displayName ){
   }
 }
 
+export function authPasswordCheckRequest( username, password ){
+  return ( dispatch )=>{
+    
+    dispatch( authWaiting('passwordCheck') );
+    return axios.post('/api/auth/passwordCheck', { username, password })
+          .then((response)=>{
+            console.log('[passwordCheck-success]', response);
+            dispatch( authSuccess('passwordCheck', true ) );
+          })
+          .catch((error)=>{
+            console.error('[passwordCheck-failure]', error);
+            dispatch(authFailure('passwordCheck', false ) );
+          })
+  }
+}
+
 
 // 회원가입 성공 
 export function authWaiting( mode ){
@@ -111,6 +130,11 @@ export function authWaiting( mode ){
       return {
         mode: mode, 
         type: AUTH_REGISTER_WAITING
+      }
+    case 'passwordCheck':
+      return {
+        mode: mode, 
+        type: AUTH_PASSWORD_CHECK_WAITING
       }
     default:
       return false;
@@ -144,6 +168,12 @@ export function authSuccess( mode, username ){
         type: AUTH_REGISTER_SUCCESS,
         username: username
       }
+    case 'passwordCheck':
+      return { 
+        mode: mode,
+        type: AUTH_PASSWORD_CHECK_SUCCESS,
+        success: username
+      }
     default:
       return false;
   }
@@ -175,6 +205,12 @@ export function authFailure( mode, error ){
         mode: mode,
         type: AUTH_REGISTER_FAILURE,
         error: error
+      }
+    case 'passwordCheck':
+      return { 
+        mode: mode,
+        type: AUTH_PASSWORD_CHECK_FAILURE,
+        failure: error
       }
     default:
       return false;

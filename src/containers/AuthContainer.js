@@ -76,7 +76,7 @@ class AuthContainer extends Component{
     // login 눌렀을 때 보내버리면 되는거잖아?
   }
   componentWillReceiveProps(nextProps){
-    if( nextProps.isLogined === true ){
+    if( nextProps.mode === 'login' && nextProps.isLogined === true ){
       browserHistory.push('/');
     }
   }

@@ -40,6 +40,7 @@ class MainApp extends Component{
         />
         <Section
           isLogined={ this.props.isLogined }
+          username={ this.props.username }
         />
       </section>
     )

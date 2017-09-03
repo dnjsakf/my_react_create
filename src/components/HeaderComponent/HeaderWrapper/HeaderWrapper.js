@@ -4,14 +4,18 @@ import { Link } from 'react-router';
 
 import style from './HeaderWrapper.css';
 
-function test(event){
-  location.href = '/login';
-}
 const HeaderWrapper = ( props )=>{
+  const login = (
+    <Link to="/login"><Icon >fingerprint</Icon></Link>
+  );
+  const logout = (
+    <a onClick={ props.onLogout } ><Icon >vpn_key</Icon></a>
+  )
+
   return (
     <Navbar className='HeaderWrapper' brand='Battle-Code' right>
       <NavItem>
-        <Link to="/login"><Icon >fingerprint</Icon></Link>
+        { props.isLogined === true ? logout : login }
       </NavItem>
     </Navbar>
   );

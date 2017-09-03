@@ -1,0 +1,144 @@
+import {
+  AUTH_LOGIN_WAITING,
+  AUTH_LOGOUT_WAITING,
+  AUTH_REGISTER_WAITING,
+
+  AUTH_LOGIN_SUCCESS,
+  AUTH_LOGOUT_SUCCESS,
+  AUTH_REGISTER_SUCCESS,
+  
+  AUTH_LOGIN_FAILURE,
+  AUTH_LOGOUT_FAILURE,
+  AUTH_REGISTER_FAILURE,
+} from './ActionTypes';
+import axios from 'axios';
+
+export function authLoginRequest( username, password ){
+  return ( dispatch )=>{
+
+    // 상태 변경
+    dispatch( authWaiting('login') );
+    
+    return axios.post('/api/auth/login', { username, password })
+          .then((response)=>{
+            console.log('[login-success]', response);
+            dispatch(authSuccess('login', username ))
+          })
+          .catch((error)=>{
+            console.error('[login-failure]', error);
+            dispatch(authFailure('login', error.response.data.error ));
+          })
+  }
+}
+
+export function authLogoutRequest( username ){
+  return ( dispatch )=>{
+    
+    // 상태 변경
+    dispatch( authWaiting('logout') );
+
+    return axios.post('/api/auth/logout',{ username })
+          .then((response)=>{
+            console.log('[logout-success]', response);
+            dispatch(authSuccess('logout', username ))
+          })
+          .catch((error)=>{
+            console.error('[logout-failure]', error);
+            dispatch(authFailure('logout', error.response.data.error ));
+          });
+  }
+}
+
+export function authRegisterRequest( username, password, displayName ){
+  return ( dispatch )=>{
+
+    // 상태 변경
+    dispatch( authWaiting('register') );
+    
+    return axios.post('/api/auth/register', { username, password, displayName })
+          .then((response)=>{
+            console.log('[register-success]', response);
+            dispatch( authSuccess('register', username ) );
+          })
+          .catch((error)=>{
+            console.error('[register-failure]', error.response);
+            dispatch(authFailure('register', error.response.data.error ) );
+          })
+  }
+}
+
+
+// 회원가입 성공 
+export function authWaiting( mode ){
+  switch( mode ){
+    case 'login':
+      return {
+        mode: mode, 
+        type: AUTH_LOGIN_WAITING 
+      }
+    case 'logout':
+      return {
+        mode: mode, 
+        type: AUTH_LOGOUT_WAITING
+      }
+    case 'register':
+      return {
+        mode: mode, 
+        type: AUTH_REGISTER_WAITING
+      }
+    default:
+      return false;
+  } 
+}
+
+// 성공
+export function authSuccess( mode, username ){
+  switch( mode ){
+    case 'login':
+      return { 
+        mode: mode,
+        type: AUTH_LOGIN_SUCCESS,
+        username: username,
+      }
+    case 'logout':
+      return { 
+        mode: mode,
+        type: AUTH_LOGOUT_SUCCESS,
+        username: username
+      }
+    case 'register':
+      return { 
+        mode: mode,
+        type: AUTH_REGISTER_SUCCESS,
+        username: username
+      }
+    default:
+      return false;
+  }
+}
+
+// 실패
+export function authFailure( mode, error ){
+  switch( mode ){
+    case 'login':
+      return { 
+        mode: mode,
+        type: AUTH_LOGIN_FAILURE,
+        error: error
+      }
+    case 'logout':
+      return { 
+        mode: mdoe,
+        type: AUTH_LOGOUT_FAILURE,
+        error: error
+      }
+    case 'register':
+      return { 
+        mode: mode,
+        type: AUTH_REGISTER_FAILURE,
+        error: error
+      }
+    default:
+      return false;
+  }
+}

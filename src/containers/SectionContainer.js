@@ -28,7 +28,6 @@ class SectionContainer extends Component{
         content: [],
       }
     }
-
     this.handleMenuClick = this.handleMenuClick.bind(this);
     this.handleAlgorithmSelect = this.handleAlgorithmSelect.bind(this);
     this.handleAlgorithmSolve = this.handleAlgorithmSolve.bind(this);

@@ -1,23 +1,17 @@
 import React, { Component } from 'react';
 import { AuthWrapper } from '../components/AuthComponent';
+import { connect } from 'react-redux';
+import { browserHistory } from 'react-router';
+
 import update from 'react-addons-update';
 
 class AuthContainer extends Component{
-  constructor(props){
-    super(props);
+  constructor(props, context){
+    super(props, context);
     this.state = {
       mode: 'login',
-      login: {
-        username: '',
-        password: '',
-      },
-      register: {
-        usernmae: '',
-        displayName: '',
-        password: '',
-        passwordCheck: '',
-      }
-    }
+      username: ''
+    };
 
     this.defaultModes = ['login', 'register'];
 
@@ -54,27 +48,37 @@ class AuthContainer extends Component{
     if( typeof password !== 'string' ) return false;
     if( !(/[a-zA-Z0-9!@#$%]{6,12}/gm.test(password))) return false;
     
-    console.log('login', username, password);
-    this.setState(
-      update(
-        this.state,
-        {
-          login:{
-            username: { $set: username },
-            password: { $set: password }
-          }
-        }
-      )
-    )
+    this.props.handleAuthLogin( username, password );
   }
 
   handleRegisterEvent( event ){
-    console.log( 'register-submit', event.target );
+    const username = document.querySelector('input[name=username]').value;
+    const password = document.querySelector('input[name=password]').value;
+    const passwordCheck = document.querySelector('input[name=password-check]').value;
+    const displayName = document.querySelector('input[name=displayName]').value;
+
+    // 패스워드는 나중에 해쉬로 저장하자.
+    if( typeof username !== 'string' ) return false;
+    if( (/[a-zA-Z0-9\-\_]@[a-zA-Z0-9\-\_].[a-zA-Z]{2,3}/).test( username ) === false) return false;
+
+    if( typeof password !== 'string' ) return false;
+    if( (/[a-zA-Z0-9!@#$%]{6,12}/gm).test(password) === false) return false;
+    if( password !== passwordCheck ) return false;
+    
+    if( typeof displayName !== 'string' ) return false;
+    if( (/[a-zA-Z0-9가-힣]{4,8}/gm).test( displayName ) === false) return false;
+    
+    this.props.handleAuthRegister( username, password, displayName );
   }
 
   handleChange( event ){
     // 굳이 누를 때 마다 저장할 필요없이
     // login 눌렀을 때 보내버리면 되는거잖아?
+  }
+  componentWillReceiveProps(nextProps){
+    if( nextProps.isLogined === true ){
+      browserHistory.push('/');
+    }
   }
 
   // type은 다음에 mode로 replacement하자
@@ -90,4 +94,33 @@ class AuthContainer extends Component{
     )
   }
 }
-export default AuthContainer
+
+import {
+  authLoginRequest,
+  authRegisterRequest
+} from '../actions/Authorization'
+
+const mapStateToProps = (state)=>{
+  return {
+    mode: state.Authorization.mode,
+    isLogined: state.Authorization.isLogined,
+    status: state.Authorization.status,
+    result: state.Authorization.result,
+  }
+}
+const mapDispatchToProps = (dispatch)=>{
+  return {
+    handleAuthLogin: ( username, password )=>{
+      return dispatch( authLoginRequest( username, password ) );
+    },
+    handleAuthRegister: ( username, password, displayName )=>{
+      return dispatch( authRegisterRequest( username, password, displayName ) );
+    }
+  }
+}
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AuthContainer)

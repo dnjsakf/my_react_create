@@ -7,7 +7,6 @@ import { Button } from 'react-materialize';
 import style from './AuthWrapper.css'
 
 const AuthWrapper = ( props )=>{
-  console.log(props)
   let authcontent = '';
   let authEventButton = '';
   switch( props.type ){
@@ -26,7 +25,7 @@ const AuthWrapper = ( props )=>{
       authEventButton = ( 
         <Button 
           value="submit"
-          onSubmit={ props.onRegisterEvent }>
+          onClick={ props.onRegisterEvent }>
           submit
         </Button>
       );

@@ -14,7 +14,7 @@ conn.connect(function(){
   console.log('[mysql-connected]');
 });
 
-router.get('/data/algorithm/list', (req, res)=>{
+router.get('/algorithm/list', (req, res)=>{
   console.log('[LIST]', req.query);
   
   const sql = `SELECT no, subject FROM questions`;
@@ -34,7 +34,7 @@ router.get('/data/algorithm/list', (req, res)=>{
   });
 });
 
-router.get('/data/algorithm/data/:questionNo', (req, res)=>{
+router.get('/algorithm/data/:questionNo', (req, res)=>{
   console.log('[DATA]', req.params.questionNo, req.query);
 
   const questionNO = req.params.questionNo;

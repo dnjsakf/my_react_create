@@ -1,17 +1,38 @@
 import {
+  AUTH_SESSION_WAITING,
   AUTH_LOGIN_WAITING,
   AUTH_LOGOUT_WAITING,
   AUTH_REGISTER_WAITING,
 
+  AUTH_SESSION_SUCCESS,
   AUTH_LOGIN_SUCCESS,
   AUTH_LOGOUT_SUCCESS,
   AUTH_REGISTER_SUCCESS,
   
+  AUTH_SESSION_FAILURE,
   AUTH_LOGIN_FAILURE,
   AUTH_LOGOUT_FAILURE,
   AUTH_REGISTER_FAILURE,
 } from './ActionTypes';
 import axios from 'axios';
+
+export function authSessionRequest( ){
+  return ( dispatch )=>{
+    
+    // 상태 변경
+    dispatch( authWaiting('session') );
+    
+    return axios.post('/api/auth/session')
+          .then((response)=>{
+            console.log('[session-success]', response);
+            dispatch(authSuccess('session', response.data.username ))
+          })
+          .catch((error)=>{
+            console.error('[session-failure]', error);
+            dispatch(authFailure('session', error.response.data.error ));
+          })
+  }
+}
 
 export function authLoginRequest( username, password ){
   return ( dispatch )=>{
@@ -71,6 +92,11 @@ export function authRegisterRequest( username, password, displayName ){
 // 회원가입 성공 
 export function authWaiting( mode ){
   switch( mode ){
+    case 'session':
+      return {
+        mode: mode, 
+        type: AUTH_SESSION_WAITING 
+      }
     case 'login':
       return {
         mode: mode, 
@@ -94,6 +120,12 @@ export function authWaiting( mode ){
 // 성공
 export function authSuccess( mode, username ){
   switch( mode ){
+    case 'session':
+      return { 
+        mode: mode,
+        type: AUTH_SESSION_SUCCESS,
+        username: username,
+      }
     case 'login':
       return { 
         mode: mode,
@@ -120,6 +152,12 @@ export function authSuccess( mode, username ){
 // 실패
 export function authFailure( mode, error ){
   switch( mode ){
+    case 'session':
+      return { 
+        mode: mode,
+        type: AUTH_SESSION_FAILURE,
+        error: error
+      }
     case 'login':
       return { 
         mode: mode,

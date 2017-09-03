@@ -1,12 +1,15 @@
 import {
+  AUTH_SESSION_WAITING,
   AUTH_LOGIN_WAITING,
   AUTH_LOGOUT_WAITING,
   AUTH_REGISTER_WAITING,
 
+  AUTH_SESSION_SUCCESS,
   AUTH_LOGIN_SUCCESS,
   AUTH_LOGOUT_SUCCESS,
   AUTH_REGISTER_SUCCESS,
   
+  AUTH_SESSION_FAILURE,
   AUTH_LOGIN_FAILURE,
   AUTH_LOGOUT_FAILURE,
   AUTH_REGISTER_FAILURE,
@@ -26,6 +29,7 @@ export default function Authorization(state, action){
   if( typeof state === 'undefined' ){ state = initialState; }
   switch( action.type ){
     /* WAITING */
+    case AUTH_SESSION_WAITING:
     case AUTH_LOGIN_WAITING:
     case AUTH_LOGOUT_WAITING:
     case AUTH_REGISTER_WAITING:
@@ -36,18 +40,20 @@ export default function Authorization(state, action){
         }
       );
     /* SUCCESSC */
+    case AUTH_SESSION_SUCCESS:
     case AUTH_LOGIN_SUCCESS:
     case AUTH_LOGOUT_SUCCESS:
     case AUTH_REGISTER_SUCCESS:
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
-          isLogined: { $set: ( action.mode === 'login' ? true : false ) },
+          isLogined: { $set: ( action.mode === 'login' || action.mode === 'session' ? true : false ) },
           mode: { $set: action.mode },
           username: { $set: action.username }
         }
       );
     /* FAILURE */      
+    case AUTH_SESSION_FAILURE:
     case AUTH_LOGIN_FAILURE:
     case AUTH_LOGOUT_FAILURE:
     case AUTH_REGISTER_FAILURE:

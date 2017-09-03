@@ -14,28 +14,35 @@ conn.connect(()=>{
   console.log('[mysql-connection] - /api/auth');
 });
 
-router.post('/logout', (req, res)=>{
-  let session = req.session;
-  console.log(session);
-  if(typeof session !== 'undeinfed'){
-    session.destroy((error)=>{
-      return res.status(200).json({
-        success: true
-      });
-    });
-  } else {
+/**
+ * 세션검사 이벤트
+ */
+router.post('/session', (req, res)=>{
+  const session = req.session;
+  console.log('[session-check]', session.user);
+
+  if( typeof session.user == 'undefined' ){
     return res.status(400).json({
-      error: 'undefined session',
-      code: 1
-    })
+      error: 'Not found user session',
+      code: 1,
+    });
   }
+  
+  return res.status(200).json({
+    username: session.user.username
+  });
 });
 
+
+/**
+ *  로그인 이벤트 
+ */
 router.post('/login', (req, res)=>{
   const session = req.session;
   const condition = {
     email: req.body.username,
     password: req.body.password,
+    name: 'get'
   }
   const fields = Object.keys(condition);
   const findUser = `SELECT ${fields} FROM member WHERE email = ?`;
@@ -56,17 +63,40 @@ router.post('/login', (req, res)=>{
         code: 1
       });
     }
-
-    session.username = exist[0].email;
-    session.displayName = exist[0].name;
-
+    session.user = {
+      username: exist[0].email,
+      displayName: exist[0].name
+    }
+    console.log('[session-check-login]', session.user);
     return res.status(200).json({
       success: true
     })
   });
 });
 
+/**
+ * 로그아웃이벤트
+ */
+router.post('/logout', (req, res)=>{
+  let session = req.session;
+  console.log('[session-check-logout]', session.user);
+  if(typeof session.user !== 'undeinfed'){
+    session.destroy((error)=>{
+      return res.status(200).json({
+        success: true
+      });
+    });
+  } else {
+    return res.status(400).json({
+      error: 'undefined session',
+      code: 1
+    })
+  }
+});
 
+/**
+ * 회원가입이벤트
+ */
 router.post('/register', (req, res)=>{
   const condition = {
     email: req.body.username,

@@ -15,8 +15,7 @@ conn.connect(function(){
 });
 
 router.get('/algorithm/list', (req, res)=>{
-  console.log('[LIST]', req.query);
-  
+  console.log('[GetAlgorithmList]');
   const sql = `SELECT no, subject FROM questions`;
   conn.query(sql, (error, subjects)=>{
     if(error) throw error;
@@ -35,8 +34,7 @@ router.get('/algorithm/list', (req, res)=>{
 });
 
 router.get('/algorithm/data/:questionNo', (req, res)=>{
-  console.log('[DATA]', req.params.questionNo, req.query);
-
+  console.log('[GetAlgorithmData]', req.params.questionNo);
   const questionNO = req.params.questionNo;
   const sql = `SELECT * FROM questions WHERE no = ? `;
   conn.query(sql, questionNO ,(error, question)=>{

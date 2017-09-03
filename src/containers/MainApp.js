@@ -2,7 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import update from 'react-addons-update';
 
-import { authLogoutRequest } from '../actions/Authorization'; 
+import { 
+  authLogoutRequest, 
+  authSessionRequest 
+} from '../actions/Authorization'; 
 
 import Header from './HeaderContainer';
 import Section from './SectionContainer';
@@ -22,6 +25,9 @@ class MainApp extends Component{
     if( this.props.isLogined === true ){
       this.props.logout( this.props.username );
     }
+  }
+  componentDidMount(){
+    this.props.session();
   }
   
   render(){
@@ -54,6 +60,9 @@ const mapDispatchToProps = (dispatch)=>{
   return {
     logout: ( username )=>{
       return dispatch(authLogoutRequest(username));
+    },
+    session: ()=>{
+      return dispatch(authSessionRequest());
     }
   }
 }

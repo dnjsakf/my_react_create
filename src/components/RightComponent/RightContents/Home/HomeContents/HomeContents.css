@@ -1,0 +1,8 @@
+.HomeContents.small img {
+  height: 100%;
+}
+.HomeContents.small.card{
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}

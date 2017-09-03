@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { QuestionTitle, QuestionDetail } from '../QuestionDetail';
+// import { QuestionTitle, QuestionDetail } from '../QuestionDetail';
 import { TextEditorWrapper } from '../TextEditor';
+import { QuestionWrapper } from '../Question';
+import { HomeWrapper } from '../Home';
+
 import style from './ContentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
@@ -10,30 +13,28 @@ const ContentsWrapper = ( props )=>{
   switch(menu.toLowerCase()){
     case 'detail':
       if(Object.keys(props.content).length > 0){
-        content = [
-          (<QuestionTitle 
-            key={ 1 }
-            no={ props.content.no}
-            subject={ props.content.subject }
-            onAlgorithmSolve={ props.onAlgorithmSolve }
-            />),
-          (<QuestionDetail 
-            key={ 2 }
+        content = (
+          <QuestionWrapper
             content={ props.content }
-            />)
-        ];
+            onAlgorithmSolve={ props.onAlgorithmSolve }
+          />
+        );
       }
       break;
     case 'home':
-      content = (<span>id "{menu}" is no defined</span>);
+      content = (
+        <HomeWrapper/>
+      );
       break;
     case 'editor':
-      content = (<TextEditorWrapper
-                  content={{
-                    inputcase: props.content.input,
-                    outputcase: props.content.output
-                  }}
-                  />);
+      content = (
+        <TextEditorWrapper
+          content={{
+            inputcase: props.content.input,
+            outputcase: props.content.output
+          }}
+        />
+      );
       break;
     case 'mypage':
       content = (<span>id "{menu}" is no defined</span>);

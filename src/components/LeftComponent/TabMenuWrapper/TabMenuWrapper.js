@@ -7,6 +7,7 @@ const TabMenuWrapper = ( props )=>{
   return(
     <div className="TabMenuWrapper left-tab">
       <TabMenuItem
+        isLogined={ props.isLogined }
         menuTitles={ props.menuTitles }
         disableTitles={ props.disableTitles }
         onMenuClick = { props.onMenuClick }

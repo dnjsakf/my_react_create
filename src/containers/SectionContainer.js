@@ -222,6 +222,8 @@ class SectionContainer extends Component{
     return (
       <section className="main-section">
         <LeftContainer 
+          isLogined={ this.props.isLogined }
+          
           disableTitles={ this.state.left.disableTitles }
           menuTitles={ this.state.left.menuTitles }
           menu={ this.state.left.menu }

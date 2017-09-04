@@ -34,6 +34,7 @@ router.post('/update/:mode', (req, res)=>{
   const session = req.session;
   const mode = req.params.mode;
   const username = req.body.username;
+  console.log(mode)
   
   if( typeof session.user === 'undefined' ){
     return res.status(404).json({
@@ -68,7 +69,6 @@ router.post('/update/:mode', (req, res)=>{
       const sqlDefault = `UPDATE member SET ? WHERE email = ?`;
       conn.query(sqlDefault, [ updateDefault, username ], ( error, updated)=>{
         if(error) throw error;
-        console.log('[user-update]', updated);
         // 아 기억이 안난다.ㅇ아아아아.
         if( updated.changedRows === 0){
           return res.status(400).json({
@@ -86,6 +86,7 @@ router.post('/update/:mode', (req, res)=>{
       });
       break;
     case 'setting':
+      console.log('[setting]', req.body)
       const updateSetting = {};
       // 에디터_테마
       if( typeof req.body.theme !== 'undefined'){
@@ -100,8 +101,8 @@ router.post('/update/:mode', (req, res)=>{
         updateSetting.setting_editor_font = req.body.font;
       }
       // 에디터_폰트사이즈
-      if( typeof req.body.fontsize !== 'undefined' ){
-        updateSetting.setting_editor_fontsize = req.body.fontsize;
+      if( typeof req.body.fontSize !== 'undefined' ){
+        updateSetting.setting_editor_fontsize = req.body.fontSize;
       }
       
       if( Object.keys(updateSetting).length === 0){
@@ -111,10 +112,14 @@ router.post('/update/:mode', (req, res)=>{
         });
       }
       const sqlSetting = `UPDATE member SET ? WHERE email = ?`;
-      conn.query( sqlSetting, [updateSetting, username], (error, result)=>{
+      conn.query( sqlSetting, [updateSetting, username], (error, updated )=>{
         if(error) throw error;
-        // 여기도 위에랑 마찬가지 그거
-        
+        if( updated.changedRows === 0){
+          return res.status(400).json({
+            error: 'no chagned',
+            code: 4
+          });
+        }
         return res.status(200).json({
           success: true
         });

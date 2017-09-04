@@ -49,7 +49,7 @@ export function userStateUpdateRequest( mode, updateData ){
             dispatch(userStateSuccess('update', response.data));
           })
           .catch((error)=>{
-            console.error('[userstate-update-failure]', error.response.data);
+            console.error('[userstate-update-failure]', error);
             dispatch(userStateFailure('update', error.response.data.error));
           });
   }

@@ -8,16 +8,19 @@ import React, { Component } from 'react';
 
 const MyPageWrapper = ( props )=>{
   let content = '';
-
-  console.log( '[]asdfasdㅁㄴㅇ리;ㅁ너ㅏㅇㄻ닝런이;', props.passwordChecked)
   
   if( props.passwordChecked === true ){
     content = (
-      <UserState />
+      <UserState 
+        onUpdateUserState={ props.onUpdateUserState }
+
+        user={ props.user }
+      />
     )
   } else {
     content = (
       <PasswordCheck 
+        onPasswordChange={ props.onPasswordChange }
         onPasswordCheck={ props.onPasswordCheck }
       />
     )

@@ -29,9 +29,8 @@ conn.connect(function () {
   console.log('[mysql-connected]');
 });
 
-router.get('/data/algorithm/list', function (req, res) {
-  console.log('[LIST]', req.query);
-
+router.get('/algorithm/list', function (req, res) {
+  console.log('[GetAlgorithmList]');
   var sql = 'SELECT no, subject FROM questions';
   conn.query(sql, function (error, subjects) {
     if (error) throw error;
@@ -49,9 +48,8 @@ router.get('/data/algorithm/list', function (req, res) {
   });
 });
 
-router.get('/data/algorithm/data/:questionNo', function (req, res) {
-  console.log('[DATA]', req.params.questionNo, req.query);
-
+router.get('/algorithm/data/:questionNo', function (req, res) {
+  console.log('[GetAlgorithmData]', req.params.questionNo);
   var questionNO = req.params.questionNo;
   var sql = 'SELECT * FROM questions WHERE no = ? ';
   conn.query(sql, questionNO, function (error, question) {

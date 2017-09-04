@@ -12,7 +12,7 @@ import Section from './SectionContainer';
 
 const defaultProps = {
   isLogined: false,
-  username: 'UNKNOWN'
+  username: 'main-UNKNOWN'
 }
 
 class MainApp extends Component{
@@ -23,11 +23,15 @@ class MainApp extends Component{
   
   handleLogout(){
     if( this.props.isLogined === true ){
-      this.props.logout( this.props.username );
+      this.props.logout( this.props.session.user.username );
     }
   }
   componentDidMount(){
-    this.props.session();
+    this.props.sessionCheck();
+  }
+
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps.session)
   }
   
   render(){
@@ -35,12 +39,12 @@ class MainApp extends Component{
       <section>
         <Header
           isLogined={ this.props.isLogined }
-          username={ this.props.username }
+          user={ this.props.session.user }
           onLogout={ this.handleLogout }
         />
         <Section
           isLogined={ this.props.isLogined }
-          username={ this.props.username }
+          user={ this.props.session.user }
         />
       </section>
     )
@@ -54,7 +58,10 @@ const mapStateToProps = (state)=>{
     mode: state.Authorization.mode,
     isLogined: state.Authorization.isLogined,
     status: state.Authorization.status,
-    username: state.Authorization.username
+    session:{
+      status: state.Authorization.status,
+      user: state.Authorization.user
+    }
   }
 }
 const mapDispatchToProps = (dispatch)=>{
@@ -62,7 +69,7 @@ const mapDispatchToProps = (dispatch)=>{
     logout: ( username )=>{
       return dispatch(authLogoutRequest(username));
     },
-    session: ()=>{
+    sessionCheck: ()=>{
       return dispatch(authSessionRequest());
     }
   }

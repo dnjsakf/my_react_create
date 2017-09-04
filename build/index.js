@@ -54,7 +54,8 @@ app.use((0, _expressSession2.default)({
 
 // Router Controll
 app.use('/', _express2.default.static(_path2.default.join(__dirname, './../public')));
-app.use('/api', [_routes.algorithm]);
+app.use('/api/data', [_routes.algorithm]);
+app.use('/api/auth', [_routes.auth]);
 app.get('*', function (req, res) {
   return res.status(200).sendFile(_path2.default.join(__dirname, './../public/index.html'));
 });

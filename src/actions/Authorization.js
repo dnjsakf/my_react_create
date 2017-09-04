@@ -19,16 +19,18 @@ import {
 } from './ActionTypes';
 import axios from 'axios';
 
+/**
+ * Authorization Session Check Event
+ */
 export function authSessionRequest( ){
   return ( dispatch )=>{
     
-    // 상태 변경
     dispatch( authWaiting('session') );
     
     return axios.post('/api/auth/session')
           .then((response)=>{
             console.log('[session-success]', response);
-            dispatch(authSuccess('session', response.data.username ))
+            dispatch(authSuccess('session', response.data ))
           })
           .catch((error)=>{
             console.error('[session-failure]', error);
@@ -37,6 +39,9 @@ export function authSessionRequest( ){
   }
 }
 
+/**
+ * Authorization Login Event 
+ */
 export function authLoginRequest( username, password ){
   return ( dispatch )=>{
 
@@ -46,7 +51,7 @@ export function authLoginRequest( username, password ){
     return axios.post('/api/auth/login', { username, password })
           .then((response)=>{
             console.log('[login-success]', response);
-            dispatch(authSuccess('login', username ))
+            dispatch(authSuccess('login', response.data ))
           })
           .catch((error)=>{
             console.error('[login-failure]', error);
@@ -55,6 +60,9 @@ export function authLoginRequest( username, password ){
   }
 }
 
+/**
+ * Authorization logout Event 
+ */
 export function authLogoutRequest( username ){
   return ( dispatch )=>{
     
@@ -64,7 +72,7 @@ export function authLogoutRequest( username ){
     return axios.post('/api/auth/logout',{ username })
           .then((response)=>{
             console.log('[logout-success]', response);
-            dispatch(authSuccess('logout', username ))
+            dispatch(authSuccess('logout', response.data ))
           })
           .catch((error)=>{
             console.error('[logout-failure]', error);
@@ -73,6 +81,9 @@ export function authLogoutRequest( username ){
   }
 }
 
+/**
+ * Authorization Register Event 
+ */
 export function authRegisterRequest( username, password, displayName ){
   return ( dispatch )=>{
 
@@ -82,7 +93,7 @@ export function authRegisterRequest( username, password, displayName ){
     return axios.post('/api/auth/register', { username, password, displayName })
           .then((response)=>{
             console.log('[register-success]', response);
-            dispatch( authSuccess('register', username ) );
+            dispatch( authSuccess('register', response.data ) );
           })
           .catch((error)=>{
             console.error('[register-failure]', error.response);
@@ -91,6 +102,9 @@ export function authRegisterRequest( username, password, displayName ){
   }
 }
 
+/**
+ * Authorization Password-Check Event 
+ */
 export function authPasswordCheckRequest( username, password ){
   return ( dispatch )=>{
     
@@ -98,7 +112,7 @@ export function authPasswordCheckRequest( username, password ){
     return axios.post('/api/auth/passwordCheck', { username, password })
           .then((response)=>{
             console.log('[passwordCheck-success]', response);
-            dispatch( authSuccess('passwordCheck', true ) );
+            dispatch( authSuccess('passwordCheck', response.data ) );
           })
           .catch((error)=>{
             console.error('[passwordCheck-failure]', error);
@@ -142,37 +156,34 @@ export function authWaiting( mode ){
 }
 
 // 성공
-export function authSuccess( mode, username ){
+export function authSuccess( mode, data ){
   switch( mode ){
     case 'session':
       return { 
         mode: mode,
         type: AUTH_SESSION_SUCCESS,
-        username: username,
+        user: data.user
       }
     case 'login':
       return { 
         mode: mode,
         type: AUTH_LOGIN_SUCCESS,
-        username: username,
       }
     case 'logout':
       return { 
         mode: mode,
         type: AUTH_LOGOUT_SUCCESS,
-        username: username
       }
     case 'register':
       return { 
         mode: mode,
         type: AUTH_REGISTER_SUCCESS,
-        username: username
       }
     case 'passwordCheck':
       return { 
         mode: mode,
         type: AUTH_PASSWORD_CHECK_SUCCESS,
-        success: username
+        success: data.success  // 필요 없을듯
       }
     default:
       return false;

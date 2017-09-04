@@ -23,13 +23,14 @@ router.post('/session', (req, res)=>{
 
   if( typeof session.user == 'undefined' ){
     return res.status(400).json({
+      success: false,
       error: 'Not found user session',
       code: 1,
     });
-  }
+  } 
   
   return res.status(200).json({
-    username: session.user.username
+    user: session.user
   });
 });
 
@@ -42,7 +43,8 @@ router.post('/login', (req, res)=>{
   const condition = {
     email: req.body.username,
     password: req.body.password,
-    name: 'get'
+    name: 'get',
+    date: 'get'
   }
   const fields = Object.keys(condition);
   const findUser = `SELECT ${fields} FROM member WHERE email = ?`;
@@ -66,7 +68,11 @@ router.post('/login', (req, res)=>{
     session.user = {
       username: exist[0].email,
       displayName: exist[0].name,
-      password: exist[0].password,
+      regDate: exist[0].date,
+      /**
+       * 기타 옵션들은
+       * 추후에 필요할 때 추가하도록 하자. 
+       */
     }
     console.log('[session-check-login]', session.user);
     return res.status(200).json({
@@ -139,6 +145,8 @@ router.post('/register', (req, res)=>{
  * 비밀번호 체크 (MyPage)
  */
 router.post('/passwordCheck', (req, res)=>{
+
+  console.log( req.body );
   const findUser = `SELECT password FROM member WHERE email = ?`;
   conn.query(findUser, [req.body.username], (error, exist)=>{
     if(error) throw error;
@@ -162,7 +170,6 @@ router.post('/passwordCheck', (req, res)=>{
         success: true,
       })
     }
-    
   });
 });
 

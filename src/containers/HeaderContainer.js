@@ -5,9 +5,10 @@ import { HeaderWrapper } from '../components/HeaderComponent';
 class HeaderContainer extends Component{
   render(){
     return (
-      <HeaderWrapper 
+      <HeaderWrapper
         isLogined={ this.props.isLogined }
-        username={ this.props.username }
+        username={ this.props.user.username }
+        displayName={ this.props.user.displayName }
         onLogout={ this.props.onLogout }
       />
     )

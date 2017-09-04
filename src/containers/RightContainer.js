@@ -1,27 +1,98 @@
 import React, { Component } from 'react';
+
+import { browserHistory } from 'react-router';
+
 import { TabMenuWrapper } from '../components/RightComponent';
 import { ContentsWrapper } from '../components/RightComponent/RightContents';
 
 import { connect } from 'react-redux';
-import { authPasswordCheckRequest } from '../actions/Authorization';
+import { authPasswordCheckRequest, authSessionRequest } from '../actions/Authorization';
+import { userStateUpdateRequest } from '../actions/UserState';
 
 import update from 'react-addons-update';
 
 class RightContainer extends Component{
-
   constructor(props){
     super(props);
-    
+
+    this.state = {
+      mypage: {
+        isPwdChecked: false
+      }
+    }
+
     this.modes = ['passwordCheck', 'infoUpdate', 'history' ];
 
-    this.onPasswordCheck = this.onPasswordCheck.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handlePasswordCheck = this.handlePasswordCheck.bind(this);
+
+    this.handleUpdateUserState = this.handleUpdateUserState.bind(this);
+    this.handleDeleteUserState = this.handleDeleteUserState.bind(this);
   }
 
-  onPasswordCheck(){
-    if( this.props.isLogined === true ){
-      const password = document.querySelector('input.PasswordCheck[name=password]').value;
-      this.props.passwordCheck( this.props.username, password);
+  handlePasswordChange( event ){
+    if( event.which === 13 || event.keyCode === 13){
+      this.handlePasswordCheck();
     }
+  }
+
+  handlePasswordCheck( event ){
+    if( this.props.isLogined === false ) return false;
+    if( this.props.user === 'UNKNOWN') return false;
+
+    const password = document.querySelector('input.PasswordCheck[name=password]').value;
+    if( typeof password === 'undefined' ) return false;
+
+    this.props.passwordCheck( this.props.user.username, password);
+  }
+
+  handleUpdateUserState( event ){
+    const displayName = document.querySelector('input.UserState[name=displayName]');
+    // const password = document.querySelect('input.UserState[name=password]');
+    
+    if( this.props.isLogined === false ) return false;
+    if( this.props.user === 'UNKNOWN') return false;
+    if( typeof displayName === 'undefined' ) return false;
+    if( displayName.value.length < 4) return false;
+    
+    const updateData = {
+      username: this.props.user.username,
+      displayName: displayName.value
+    }
+    this.props.updateUserState('default', updateData).then(()=>{
+      const label = document.querySelector('input.UserState[name=displayName] + label');
+      displayName.value = '';
+      label.classList.remove('active');
+      this.props.sessionCheck();
+    });
+    
+    // TODO: action
+  }
+  handleDeleteUserState( event ){
+    if( this.props.isLogined === false ) return false;
+    if( this.props.user === 'UNKNOWN') return false;
+
+    // TODO: action
+  }
+
+  componentWillReceiveProps(nextProps){
+    const nextMenu = nextProps.menu.toLowerCase();
+    switch( nextMenu ){
+      case 'mypage':
+        if( nextProps.pwdCheck.mode === 'passwordCheck' && nextProps.pwdCheck.status === 'SUCCESS' ){
+          return this.setState(
+            update( this.state, 
+                {
+                  mypage: { isPwdChecked: { $set: true }}
+                }
+              )
+            );
+        }
+    }
+  }
+  
+  componentWillUpdate(){
+    console.log(this.props.user)
   }
 
   render(){
@@ -31,31 +102,48 @@ class RightContainer extends Component{
           menuTitles={ this.props.menuTitles }
           disableTitles={ this.props.disableTitles }
           onMenuClick={ this.props.onMenuClick }
-        />
+          />
         <ContentsWrapper
           menu={ this.props.menu }
           content={ this.props.content }
           onAlgorithmSolve={ this.props.onAlgorithmSolve }
 
-          onPasswordCheck={ this.onPasswordCheck }
-          passwordChecked={ this.props.passwordChecked }
+          onPasswordChange={ this.handlePasswordChange }
+          onPasswordCheck={ this.handlePasswordCheck }
+          passwordChecked={ this.state.mypage.isPwdChecked }
+
+          onUpdateUserState={ this.handleUpdateUserState }
+          onDeleteUserState={ this.handleDeleteUserState }
+        
+          user={ this.props.user }
           />
       </section>
     )
   }
 }
 
-const mapStateToProps = (state)=>{
+const mapStateToProps = ( state )=>{
   return {
-    status: state.Authorization.status,
-    mode: state.Authorization.mode,
-    passwordChecked: state.Authorization.result,
+    pwdCheck:{
+      status: state.Authorization.status,
+      mode: state.Authorization.mode,
+      passwordChecked: state.Authorization.checked,
+    },
+    update:{
+      status: state.UserState.status,
+    }
   }
 }
-const mapDispatchToProps = (dispatch)=>{
+const mapDispatchToProps = ( dispatch )=>{
   return {
     passwordCheck: ( username, password )=>{
-      return dispatch(authPasswordCheckRequest(username, password));
+      return dispatch(authPasswordCheckRequest( username, password ));
+    },
+    updateUserState: ( mode, updateData )=>{
+      return dispatch(userStateUpdateRequest( mode, updateData ));
+    },
+    sessionCheck: ()=>{
+      return dispatch(authSessionRequest());
     }
   }
 }

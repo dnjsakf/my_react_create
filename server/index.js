@@ -9,7 +9,7 @@ import mysql from 'mysql';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 
-import { algorithm, auth } from './routes';
+import { algorithm, auth, userstate } from './routes';
 
 const app = express();
 const expressPort = 8080;
@@ -33,8 +33,9 @@ app.use(session({
 
 // Router Controll
 app.use('/', express.static(path.join(__dirname, './../public')));
-app.use('/api/data', [algorithm]);
-app.use('/api/auth', [auth]);
+app.use('/api/data', algorithm);
+app.use('/api/auth', auth);
+app.use('/api/userstate', userstate)
 app.get('*', (req,res)=>{
   return res.status(200).sendFile(path.join(__dirname, './../public/index.html'));
 });

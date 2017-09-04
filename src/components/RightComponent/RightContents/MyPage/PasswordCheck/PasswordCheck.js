@@ -3,20 +3,23 @@ import { Row, Input, Button } from 'react-materialize';
 
 const PasswordCheck = ( props )=>{
   return (
-    <form id="login-form">
+    <section className="PasswordCheck">
       <Row>
         <Input
+          onKeyPress={ props.onPasswordChange } 
           className="PasswordCheck"
           name="password" 
-          onChange={ props.onChange } 
           type="password" 
           label="password" 
           s={6} />
       </Row>
       <Row>
-        <input className='btn' onClick={ props.onPasswordCheck } type="button" value="submit"/>
+        <Button
+          onClick={ props.onPasswordCheck }>
+          submit
+        </Button>
       </Row>
-    </form>
+    </section>
   );
 }
 

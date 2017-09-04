@@ -213,7 +213,9 @@ class SectionContainer extends Component{
     console.log('[오른쪽 메뉴 변경]',this.state.right.menu, nextState.right.menu)
     const update = JSON.stringify(nextState) !== JSON.stringify(this.state);
     console.log('[업데이트 해야됨?]', update);
-    return update;
+    
+    
+    return true;
   }
 
   render(){
@@ -230,7 +232,7 @@ class SectionContainer extends Component{
           />
         <RightContainer 
           isLogined={ this.props.isLogined }
-          username={ this.props.username }
+          user={ this.props.user }
 
           disableTitles={ this.state.right.disableTitles }
           menuTitles={ this.state.right.menuTitles }

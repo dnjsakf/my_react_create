@@ -14,7 +14,7 @@ const Login = ( props )=>{
           s={12} />
         <Input 
           name="password" 
-          onChange={ props.onChange } 
+          onKeyPress={ props.onKeyPressEnter } 
           type="password" 
           label="password" 
           s={12} />

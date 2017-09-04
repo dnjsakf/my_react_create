@@ -26,6 +26,8 @@ const Register = ( props )=>{
           name="password-check" 
           type="password" 
           label="password check" 
+
+          onKeyPress = { props.onKeyPressEnter }
           s={6} />
         </Row>
     </form>

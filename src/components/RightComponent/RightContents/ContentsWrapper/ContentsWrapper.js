@@ -40,8 +40,13 @@ const ContentsWrapper = ( props )=>{
     case 'mypage':
       content = (
         <MyPageWrapper
+          onPasswordChange={ props.onPasswordChange }
           onPasswordCheck={ props.onPasswordCheck }
           passwordChecked={ props.passwordChecked }
+
+          onUpdateUserState={ props.onUpdateUserState }
+
+          user={ props.user }
         />
       );
       break;

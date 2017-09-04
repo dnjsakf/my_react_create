@@ -11,10 +11,15 @@ const HeaderWrapper = ( props )=>{
   const logout = (
     <a onClick={ props.onLogout } ><Icon >vpn_key</Icon></a>
   )
-
+  const displayName = (
+    <span>{ props.displayName }</span>
+  )
   return (
     <Navbar className='HeaderWrapper' brand='Battle-Code' right>
-      <NavItem>
+      <NavItem key={1}>
+        { props.isLogined === true ? displayName : null }
+      </NavItem>
+      <NavItem key={2}>
         { props.isLogined === true ? logout : login }
       </NavItem>
     </Navbar>

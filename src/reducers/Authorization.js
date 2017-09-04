@@ -23,6 +23,11 @@ import update from 'react-addons-update';
 const initialState = {
   mode: 'INIT',
   isLogined: false,
+  user:{
+    username: 'UNKNOWN EMAIL',
+    displayName: 'UNKNOWN NAME',
+    regDate: '2099-12-30'
+  },
   status: 'INIT',
   result: 'INIT',
   error: 'INIT',
@@ -44,24 +49,31 @@ export default function Authorization(state, action){
         }
       );
     /* SUCCESSC */
-    case AUTH_SESSION_SUCCESS:
     case AUTH_LOGIN_SUCCESS:
     case AUTH_LOGOUT_SUCCESS:
     case AUTH_REGISTER_SUCCESS:
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
-          isLogined: { $set: ( action.mode === 'login' || action.mode === 'session' ? true : false ) },
           mode: { $set: action.mode },
-          username: { $set: action.username }
+          isLogined: { $set: ( action.mode === 'login' ? true : false ) }
         }
       );
+    case AUTH_SESSION_SUCCESS:
+      return update( state, 
+        {
+          status: { $set: 'SUCCESS' },
+          mode: { $set: action.mode },
+          isLogined: { $set: true },
+          user: { $set: action.user }
+        }
+      )
     case AUTH_PASSWORD_CHECK_SUCCESS:
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
           mode: { $set: action.mode },
-          result: { $set: action.success }
+          checked: { $set: action.success }
         }
       );
 
@@ -83,7 +95,7 @@ export default function Authorization(state, action){
         {
           status: { $set: 'FAILURE' },
           mode: { $set: action.mode },
-          result: { $set: action.failure }
+          checked: { $set: action.failure }
         }
       );
 

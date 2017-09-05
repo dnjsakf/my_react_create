@@ -3,6 +3,7 @@ import update from 'react-addons-update';
 import { connect } from 'react-redux';
 
 import { userStateUpdateRequest } from '../actions/UserState';
+
 import { HeaderWrapper } from '../components/HeaderComponent'; 
 import { PopUpWrapper } from '../components/PopUpComponent';
 
@@ -20,7 +21,7 @@ class HeaderContainer extends Component{
     this.handleShowPopUp = this.handleShowPopUp.bind(this);
     this.handleClosePopUp = this.handleClosePopUp.bind(this);
 
-    this.handleSave = this.handleSave.bind(this);
+    this.handleSaveSetting = this.handleSaveSetting.bind(this);
   }
 
   handleShowPopUp( mode ){
@@ -39,6 +40,8 @@ class HeaderContainer extends Component{
   }
 
   handleClosePopUp( event ){
+    event.preventDefault();
+
     this.setState(
       update( this.state,
         {
@@ -50,7 +53,7 @@ class HeaderContainer extends Component{
     )
   }
 
-  handleSave( event ){
+  handleSaveSetting( event ){
     const editorTheme = document.querySelector('#editor-theme');
     const editorLanguage = document.querySelector('#editor-language');
     const editorFont = document.querySelector('#editor-font');
@@ -64,30 +67,32 @@ class HeaderContainer extends Component{
       fontSize: editorFontSize.value
     }
 
-    console.log(updateData);
-    this.props.updateUserState('setting', updateData);
+    this.props.updateUserState('setting', updateData).then(()=>{
+      this.props.onSession();
+    });
   }
 
   componentWillReceiveProps(nextProps){
-    console.log(nextProps.update);
+    console.log('[Header-Receive-Poprs]', nextProps.user);
   }
 
   render(){
     let popup = '';
     if( this.state.popup.visible === true ){
-      console.log('created popup')
       popup = (
         <PopUpWrapper
-          onSave={ this.handleSave }
-          onClosePopUp={ this.handleClosePopUp }
           popup={ this.state.popup }
+          defaultEditor={ this.props.user.editor }
+        
+          onSave={ this.handleSaveSetting }
+          onClosePopUp={ this.handleClosePopUp }
         />
       )
     }
 
     return (
       <header className="HeaderContainer">
-      { this.state.popup.visible === true && popup }
+        { this.state.popup.visible === true && popup }
         <HeaderWrapper
           onShowPopUp={ this.handleShowPopUp }
 
@@ -112,7 +117,7 @@ const mapDispatchToProps = ( dispatch )=>{
   return {
     updateUserState: ( mode, updateData )=>{
       return dispatch(userStateUpdateRequest( mode, updateData ));
-    },
+    }
   }
 }
 export default connect(

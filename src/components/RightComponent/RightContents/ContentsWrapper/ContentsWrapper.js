@@ -18,6 +18,9 @@ const ContentsWrapper = ( props )=>{
           <QuestionWrapper
             content={ props.content }
             onAlgorithmSolve={ props.onAlgorithmSolve }
+
+            isDashClicked={ props.isDashClicked }
+            onDashboard={ props.onDashboard }
           />
         );
       }

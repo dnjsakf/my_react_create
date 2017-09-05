@@ -17,7 +17,8 @@ class RightContainer extends Component{
 
     this.state = {
       mypage: {
-        isPwdChecked: false
+        isPwdChecked: false,
+        isDashClicked: false,
       }
     }
 
@@ -28,6 +29,8 @@ class RightContainer extends Component{
 
     this.handleUpdateUserState = this.handleUpdateUserState.bind(this);
     this.handleDeleteUserState = this.handleDeleteUserState.bind(this);
+
+    this.handleDashboard = this.handleDashboard.bind(this);
   }
 
   handlePasswordChange( event ){
@@ -74,6 +77,16 @@ class RightContainer extends Component{
 
     // TODO: action
   }
+  handleDashboard( event ){
+    const clicked = this.state.isDashClicked;
+    this.setState(
+      update( this.state, 
+        {
+          isDashClicked: { $set: !clicked }
+        }
+      )
+    )
+  }
 
   componentWillReceiveProps(nextProps){
     const nextMenu = nextProps.menu.toLowerCase();
@@ -107,6 +120,9 @@ class RightContainer extends Component{
           menu={ this.props.menu }
           content={ this.props.content }
           onAlgorithmSolve={ this.props.onAlgorithmSolve }
+          
+          isDashClicked={ this.state.isDashClicked }
+          onDashboard={ this.handleDashboard }
 
           onPasswordChange={ this.handlePasswordChange }
           onPasswordCheck={ this.handlePasswordCheck }

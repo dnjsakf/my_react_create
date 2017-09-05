@@ -122,7 +122,6 @@ export function authPasswordCheckRequest( username, password ){
 }
 
 
-// 회원가입 성공 
 export function authWaiting( mode ){
   switch( mode ){
     case 'session':

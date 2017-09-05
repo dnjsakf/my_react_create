@@ -44,7 +44,11 @@ router.post('/login', (req, res)=>{
     email: req.body.username,
     password: req.body.password,
     name: 'get',
-    date: 'get'
+    date: 'get',
+    setting_editor_theme: 'get',
+    setting_editor_language: 'get',
+    setting_editor_font: 'get',
+    setting_editor_fontsize: 'get'
   }
   const fields = Object.keys(condition);
   const findUser = `SELECT ${fields} FROM member WHERE email = ?`;
@@ -69,6 +73,12 @@ router.post('/login', (req, res)=>{
       username: exist[0].email,
       displayName: exist[0].name,
       regDate: exist[0].date,
+      editor:{
+        editorTheme: exist[0].setting_editor_theme,
+        editorLanguage: exist[0].setting_editor_language,
+        editorFont: exist[0].setting_editor_font,
+        editorFontSize: exist[0].setting_editor_fontsize
+      }
       /**
        * 기타 옵션들은
        * 추후에 필요할 때 추가하도록 하자. 

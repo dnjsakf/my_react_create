@@ -7,13 +7,13 @@ const PopUpWrapper = ( props )=>{
   if( typeof props.popup === 'undefined') return null;
   if( props.popup.visible === false) return null;
 
-  console.log(props);
-
   let popup = undefined;
   switch( props.popup.mode ){
     case 'setting':
       popup = (
         <Setting 
+          defaultEditor={ props.defaultEditor }
+
           onSave={ props.onSave }
           onClosePopUp={ props.onClosePopUp }
         />

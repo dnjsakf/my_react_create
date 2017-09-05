@@ -2,7 +2,19 @@ import React, { Component } from 'react';
 import QuestionTitle from '../QuestionTitle/QuestionTitle';
 import QuestionDetail from '../QuestionDetail/QuestionDetail';
 
+import { Dashboard } from '../QuestionDashboard';
+
 const QuestionWrapper = ( props )=>{
+
+  const dashboard = {
+    challenger: props.content.challenger_count,
+    prefect: props.content.perfect_count,
+    current: props.content.current_persent,
+    C: props.content.lang_c_count,
+    java: props.content.lang_java_count,
+    python: props.content.lang_python_count,
+  }
+  
   return (
     <section className='QuestionWrapper'>
       <QuestionTitle 
@@ -11,8 +23,12 @@ const QuestionWrapper = ( props )=>{
         onAlgorithmSolve={ props.onAlgorithmSolve }
       />
       <QuestionDetail
-        content={ props.content }
-      />
+        isDashClicked={ props.isDashClicked }
+        content={ props.content }>
+        <Dashboard
+          onDashboard={ props.onDashboard }
+          dashboard={ dashboard }/>
+      </QuestionDetail>
     </section>
   );
 }

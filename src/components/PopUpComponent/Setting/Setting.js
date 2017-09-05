@@ -17,7 +17,12 @@ const Setting = ( props )=>{
                 textClassName='white-text' 
                 title='Editor Theme' >
                 <Row key={1}>
-                  <Input id="editor-theme" s={12} type='select' label="afsdfafd" defaultValue='1'>
+                  <Input 
+                    id="editor-theme" 
+                    s={12} 
+                    type='select' 
+                    label="afsdfafd" 
+                    defaultValue={ props.defaultEditor.editorTheme }>
                     <option value='dracula'>dracula</option>
                     <option value='midnight'>midnight</option>
                   </Input>
@@ -30,7 +35,12 @@ const Setting = ( props )=>{
                 textClassName='white-text' 
                 title='Language' >
                 <Row key={1} >
-                  <Input id="editor-language"  s={12} type='select' label="afsdfafd" defaultValue='1'>
+                  <Input 
+                    id="editor-language"  
+                    s={12} 
+                    type='select' 
+                    label="afsdfafd" 
+                    defaultValue={ props.defaultEditor.editorLanguage }>
                     <option value='python'>python</option>
                     <option value='c'>c</option>
                     <option value='java'>java</option>
@@ -46,7 +56,12 @@ const Setting = ( props )=>{
                 textClassName='white-text' 
                 title='Font' >
                 <Row key={1} >
-                  <Input id="editor-font" s={12} type='select' label="afsdfafd" defaultValue='1'>
+                  <Input 
+                    id="editor-font" 
+                    s={12} 
+                    type='select' 
+                    label="afsdfafd" 
+                    defaultValue={ props.defaultEditor.editorFont }>
                     <option value='Arial'>Arial</option>
                     <option value='돋움'>돋움</option>
                   </Input>
@@ -59,7 +74,12 @@ const Setting = ( props )=>{
                 textClassName='white-text' 
                 title='Font Size' >
                 <Row key={1} >
-                  <Input id="editor-fontSize" s={12} type='select' label="afsdfafd" defaultValue='1'>
+                  <Input 
+                    id="editor-fontSize" 
+                    s={12} 
+                    type='select' 
+                    label="afsdfafd" 
+                    defaultValue={ props.defaultEditor.editorFontSize }>
                     <option value='15px'>15px</option>
                     <option value='16px'>16px</option>
                     <option value='18px'>18px</option>

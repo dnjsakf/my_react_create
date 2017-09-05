@@ -19,6 +19,7 @@ class MainApp extends Component{
   constructor(props){
     super(props);
     this.handleLogout = this.handleLogout.bind(this);
+    this.handleSession = this.handleSession.bind(this);
   }
   
   handleLogout(){
@@ -26,6 +27,13 @@ class MainApp extends Component{
       this.props.logout( this.props.session.user.username );
     }
   }
+  handleSession( event ){
+    if( this.props.isLogined === true ){
+      this.props.sessionCheck();
+    }
+  }
+
+
   componentDidMount(){
     this.props.sessionCheck();
   }
@@ -40,7 +48,9 @@ class MainApp extends Component{
         <Header
           isLogined={ this.props.isLogined }
           user={ this.props.session.user }
+
           onLogout={ this.handleLogout }
+          onSession={ this.handleSession }
         />
         <Section
           isLogined={ this.props.isLogined }

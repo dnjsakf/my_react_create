@@ -1,0 +1,10 @@
+.Dashboard *{
+  padding: 0;
+  margin: 0;
+  box-sizing: 0;
+}
+
+.Dashboard{
+  height: 140px;
+  padding: 10px;
+}

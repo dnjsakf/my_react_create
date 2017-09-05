@@ -86,15 +86,14 @@ router.post('/update/:mode', (req, res)=>{
       });
       break;
     case 'setting':
-      console.log('[setting]', req.body)
       const updateSetting = {};
       // 에디터_테마
       if( typeof req.body.theme !== 'undefined'){
         updateSetting.setting_editor_theme = req.body.theme;
       }
       // 에디터_기본언어
-      if( typeof req.body.langauge !== 'undefined' ){
-        updateSetting.setting_editor_language =req.body.langauge;
+      if( typeof req.body.language !== 'undefined' ){
+        updateSetting.setting_editor_language = req.body.language;
       }
       // 에디터_폰트
       if( typeof req.body.font !== 'undefined'){
@@ -104,7 +103,7 @@ router.post('/update/:mode', (req, res)=>{
       if( typeof req.body.fontSize !== 'undefined' ){
         updateSetting.setting_editor_fontsize = req.body.fontSize;
       }
-      
+
       if( Object.keys(updateSetting).length === 0){
         return res.status(400).json({
           error: 'Not found data',
@@ -120,6 +119,21 @@ router.post('/update/:mode', (req, res)=>{
             code: 4
           });
         }
+        
+        // 업데이트에 성공하면 session change
+        if( typeof updateSetting.setting_editor_theme !== 'undefined'){
+          session.user.editor.editorTheme = updateSetting.setting_editor_theme;
+        }
+        if( typeof updateSetting.setting_editor_language !== 'undefined'){
+          session.user.editor.editorLanguage = updateSetting.setting_editor_language;
+        }
+        if( typeof updateSetting.setting_editor_font !== 'undefined'){
+          session.user.editor.editorFont = updateSetting.setting_editor_font;
+        }
+        if( typeof updateSetting.setting_editor_fontsize !== 'undefined'){
+          session.user.editor.editorFontSize = updateSetting.setting_editor_fontsize;
+        }
+
         return res.status(200).json({
           success: true
         });

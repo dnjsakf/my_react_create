@@ -6,6 +6,7 @@ import { TabMenuWrapper } from '../components/RightComponent';
 import { ContentsWrapper } from '../components/RightComponent/RightContents';
 
 import { connect } from 'react-redux';
+import { questionStateRequest } from '../actions/Algorithm';
 import { authPasswordCheckRequest, authSessionRequest } from '../actions/Authorization';
 import { userStateUpdateRequest } from '../actions/UserState';
 
@@ -77,15 +78,21 @@ class RightContainer extends Component{
 
     // TODO: action
   }
-  handleDashboard( event ){
-    const clicked = this.state.isDashClicked;
-    this.setState(
-      update( this.state, 
-        {
-          isDashClicked: { $set: !clicked }
-        }
+  handleDashboard( dashboard ){
+    if( typeof dashboard ===  'undefined' ) return false;
+    if( typeof this.props.content.no === 'undefined' ) return false;
+
+    console.log(dashboard)
+    this.props.getQuestionState( this.props.content.no, dashboard ).then(()=>{
+      const clicked = this.state.isDashClicked;
+      this.setState(
+        update( this.state, 
+          {
+            isDashClicked: { $set: !clicked }
+          }
+        )
       )
-    )
+    });
   }
 
   componentWillReceiveProps(nextProps){
@@ -147,7 +154,10 @@ const mapStateToProps = ( state )=>{
     },
     update:{
       status: state.UserState.status,
-    }
+    },
+    question:{
+      state: state.RightContentControll.question.state
+    },
   }
 }
 const mapDispatchToProps = ( dispatch )=>{
@@ -160,6 +170,9 @@ const mapDispatchToProps = ( dispatch )=>{
     },
     sessionCheck: ()=>{
       return dispatch(authSessionRequest());
+    },
+    getQuestionState: ( questionNo, dashboard )=>{
+      return dispatch(questionStateRequest(questionNo, dashboard));
     }
   }
 }

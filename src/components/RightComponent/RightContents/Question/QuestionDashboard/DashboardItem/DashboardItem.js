@@ -4,7 +4,7 @@ import style from './DashboardItem.css';
 const DashboardItem = ( props )=>{
   return (
     <div className="DashboardItem"
-         onClick={ props.onDashboard }>
+         onClick={ ()=>{ props.onDashboard( props.title )} }>
       <div className="item-name">
         <a>{ props.title }</a>
       </div>

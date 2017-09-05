@@ -57,23 +57,31 @@ router.get('/algorithm/data/:questionNo', (req, res)=>{
 /**
  * Get Question State
  */
-router.get('/state', (req, res)=>{
-  const questionNo = req.body.questionNo;
-  const dashboard = req.body.dashboard;
-
-  if( typeof questionNo === 'undeinfed' ){
+const columnsStore={
+  qState: {
+    challenger: 'challenger_count',
+    perfect: 'perfect_count',
+    current: 'current_persent',
+    c: 'language',
+    java: 'language',
+    python: 'language'
+  }
+}
+router.get('/question/state', (req, res)=>{
+  if( typeof req.query.questionNo === 'undefined' ){
     return res.status(403).json({
       error: 'Invalid Question Number',
       code: 0
     });
   }
-  if( typeof dashboard === 'undefined' ){
+  if( typeof req.query.dashboard === 'undefined' ){
     return res.status(403).json({
       error: 'Invalid dashboard title',
       code: 1
     });
   }
 
+  const questionNo = req.query.questionNo;
   const table ='qState';
   const join = ['member', 'questions'];
   const fieldNames = [
@@ -85,35 +93,64 @@ router.get('/state', (req, res)=>{
     `${table}.result as result`,
     `${table}.date as date`
   ];
-  const select = joinQuery(table, [join1, join2], fieldNames);
-
+  const select = joinQuery(table, join, fieldNames, questionNo);
+  console.log('[get-qState-check]');
+  console.log(select);
   
-  return res.status(500).json({
-    error: 'Something broken',
-    code: 500
-  });
+  try{
+    conn.query( select, (error, exist)=>{
+      /**
+       * Failure
+       */
+      if( error ) throw error;
+      if( exist.length === 0 ){
+        return res.status(404).json({
+          error: 'Not found data',
+          code: 2
+        });
+      }
+
+      /**
+       * Success
+       */
+      req.session.question = { state: exist[0] }
+      return res.status(200).json({
+        success: true,
+        question:{
+          state: exist[0]
+        }
+      });
+    });  
+  } catch(e){
+    console.log('[exception]', e);
+    return res.status(500).json({
+      error: 'mySql query error',
+      code: 501
+    });
+  }
 });
 
 export default router;
 
 /**
  * Join 쿼리문 이어서 만들자
- * 
+ * qNo = subject
+ * mNo = username
  */
-function joinQuery( table, join ){
+function joinQuery( table, join, fieldNames, condition){
   let query = '';
   const sql = {
     select: `SELECT ${fieldNames}`,
     from: `FROM ${table}`,
-    join: `INNER JOIN ${join[0]} ON ${table}.regno = ${join[0]}.no`,
-    where: '',
+    join1: `INNER JOIN ${join[0]} ON ${table}.mNo = ${join[0]}.no`,
+    join2: `INNER JOIN ${join[1]} ON ${table}.qNo = ${join[1]}.no`,
+    where: `WHERE ${table}.qNo = ${condition}`,
     order: `ORDER BY no DESC`,
   }
   for(let key in sql){
     if(sql[key] !== ''){
-      selectSQL += (sql[key] + ' ');
+      query += (sql[key] + ' ');
     }
   }
   return query;
 }
-

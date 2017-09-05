@@ -1,14 +1,20 @@
 import {
-  GET_ALGORITHM_DATA,
+  GET_ALGORITHM_DATA_WAITING,
   GET_ALGORITHM_DATA_FAILURE,
+  GET_QUESTION_STATE_FAILURE,
+
   GET_ALGORITHM_DATA_SUCCESS,
+  GET_QUESTION_STATE_SUCCESS,
 } from '../actions/ActionTypes';
 
 import update from 'react-addons-update';
 
 const initialState = {
   status: 'INIT',
-  content: [],
+  content: 'INIT',
+  question:{
+    state: 'INIT'
+  }  
 }
 
 export default function RightContentControll(state, action){
@@ -16,14 +22,23 @@ export default function RightContentControll(state, action){
     state = initialState;
   }
   switch(action.type){
-    case GET_ALGORITHM_DATA:
-      return update( state,
+    
+    /**
+     * WAITING
+     */
+    case GET_ALGORITHM_DATA_WAITING:
+    case GET_QUESTION_STATE_SUCCESS:
+    return update( state,
         {
           status: { $set: 'waiting' },
         }
       );
     
+    /**
+     * FAILURE
+     */
     case GET_ALGORITHM_DATA_FAILURE:
+    case GET_QUESTION_STATE_FAILURE:
       return update( state,
         {
           status: { $set: 'ERROR' },
@@ -31,6 +46,9 @@ export default function RightContentControll(state, action){
         }
       );
     
+    /**
+     * SUCCESS
+     */
     case GET_ALGORITHM_DATA_SUCCESS:
       return update( state,
         {
@@ -38,6 +56,19 @@ export default function RightContentControll(state, action){
           content: { $set: action.data }          
         }
       );
+    /**
+     * action.data === question.state
+     * 이거 수정해야되 꼭
+     */
+    case GET_QUESTION_STATE_SUCCESS:
+      return update( state,
+        {
+          status: { $set: 'SUCCESS' },
+          question: {
+            state: { $set: action.data }
+          }
+        }
+      )
       
     default:
       return state;

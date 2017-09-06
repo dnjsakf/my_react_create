@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import style from './PopUpWrapper.css';
 
 import Setting from '../Setting/Setting';
+import Report from '../Report/Report';
+import Notice from '../Notice/Notice';
 
 const PopUpWrapper = ( props )=>{
   if( typeof props.popup === 'undefined') return null;
@@ -12,13 +14,34 @@ const PopUpWrapper = ( props )=>{
     case 'setting':
       popup = (
         <Setting 
-          defaultEditor={ props.defaultEditor }
+          defaultEditor={ props.user.editor }
 
-          onSave={ props.onSave }
-          onClosePopUp={ props.onClosePopUp }
+          onSave={ props.onSaveSetting }
+          onClose={ props.onClosePopUp }
         />
       );
       break;
+    case 'report':
+      popup = (
+        <Report
+          default={ props.defaultReport }
+
+          onSave={ props.onSaveReport }
+          onClose={ props.onClosePopUp }
+          />
+      );
+      break;
+    
+    case 'notice':
+      popup = (
+        <Notice
+          default={ props.defaultNotice }
+          
+          onClose={ props.onClosePopUp }
+          />
+      );
+      break;
+
     default:
       popup = (
         <a>Invalid mode</a>

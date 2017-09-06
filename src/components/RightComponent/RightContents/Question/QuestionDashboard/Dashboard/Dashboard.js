@@ -23,12 +23,6 @@ const Dashboard = ( props )=>{
       </Col>
     );
   });
-
-  const detail = (
-    <DashboardDetail 
-      // items={ props.question.state }
-    />
-  )
   
   return (
     <section className="Dashboard">

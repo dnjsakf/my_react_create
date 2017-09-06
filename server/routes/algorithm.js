@@ -80,8 +80,19 @@ router.get('/question/state', (req, res)=>{
       code: 1
     });
   }
+  if( typeof req.query.page === 'undefined' ){
+    return res.status(403).json({
+      error: 'Invalid page',
+      code: 1
+    });
+  }
+  if( typeof req.query.count === 'undefined' ){
+    return res.status(403).json({
+      error: 'Invalid count',
+      code: 1
+    });
+  }
 
-  const questionNo = req.query.questionNo;
   const table ='qState';
   const join = ['member', 'questions'];
   const fieldNames = [
@@ -93,8 +104,16 @@ router.get('/question/state', (req, res)=>{
     `${table}.result as result`,
     `${table}.date as date`
   ];
+  const conditions = {
+    where: req.query.questionNo,
+    limit: {
+      page: req.query.page,
+      count: req.query.count,
+    }
+  }
+
   const afterFields = ['no', 'name', 'subject', 'langauge', 'sourceCode', 'result', 'date'];
-  const select = joinQuery(table, join, fieldNames, questionNo);
+  const select = joinQuery(table, join, fieldNames, conditions);
   
   try{
     conn.query( select, (error, exist)=>{
@@ -132,20 +151,18 @@ router.get('/question/state', (req, res)=>{
 
 export default router;
 
-/**
- * Join 쿼리문 이어서 만들자
- * qNo = subject
- * mNo = username
- */
-function joinQuery( table, join, fieldNames, condition){
+function joinQuery( table, join, fieldNames, conditions){
   let query = '';
+  const count = conditions.limit.count;
+  const rows = (conditions.limit.page - 1) * count; 
   const sql = {
     select: `SELECT ${fieldNames}`,
     from: `FROM ${table}`,
     join1: `INNER JOIN ${join[0]} ON ${table}.mNo = ${join[0]}.no`,
     join2: `INNER JOIN ${join[1]} ON ${table}.qNo = ${join[1]}.no`,
-    where: `WHERE ${table}.qNo = ${condition}`,
+    where: `WHERE ${table}.qNo = ${conditions.where}`,
     order: `ORDER BY no DESC`,
+    limit: `LIMIT ${rows}, ${count}`
   }
   for(let key in sql){
     if(sql[key] !== ''){

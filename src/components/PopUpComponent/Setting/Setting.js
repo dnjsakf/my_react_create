@@ -96,7 +96,7 @@ const Setting = ( props )=>{
               Save
             </Button>
             <Button
-              onClick={ props.onClosePopUp }>
+              onClick={ props.onClose }>
               Cancle
             </Button>
           </Col>

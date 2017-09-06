@@ -214,8 +214,7 @@ class SectionContainer extends Component{
     const update = JSON.stringify(nextState) !== JSON.stringify(this.state);
     console.log('[업데이트 해야됨?]', update);
     
-    
-    return true;
+    return update;
   }
 
   render(){
@@ -241,6 +240,7 @@ class SectionContainer extends Component{
           menu={ this.state.right.menu }
           content={ this.state.right.content }
           
+          onShowPopUp={ this.props.onShowPopUp }
           onMenuClick={ this.handleMenuClick }
           onAlgorithmSolve={ this.handleAlgorithmSolve }
         />

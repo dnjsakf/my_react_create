@@ -6,10 +6,15 @@ const QuestionTitle = ( props )=>{
   console.log('[question-title]', props, props.subject)
   return(
     <Navbar className='QuestionTitle' brand={ `${props.no}  ${props.subject}` } right>
+      <NavItem
+        key={1}
+        onClick={ ()=>{ props.onShowPopUP( 'report' ) } }>
+        <a><Icon>bug_report</Icon></a>
+      </NavItem>
       <NavItem 
-        key={1} 
+        key={2} 
         onClick={ ()=>{ props.onAlgorithmSolve(props.no)} }>
-        <Icon>border_color</Icon>
+        <a><Icon>border_color</Icon></a>
       </NavItem>
     </Navbar>
   );

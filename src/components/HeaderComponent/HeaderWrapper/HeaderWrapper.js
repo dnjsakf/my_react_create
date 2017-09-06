@@ -11,19 +11,28 @@ const HeaderWrapper = ( props )=>{
   const logout = (
     <a onClick={ props.onLogout } ><Icon >vpn_key</Icon></a>
   )
-  const UserItems = (
-    [
+  // array
+  const UserItems = [
     <NavItem key={1}>
       <a>{ props.displayName }</a>
     </NavItem>,
+
+    // popup-notice
     <NavItem key={2}>
       <a
-        onClick={ ()=>{props.onShowPopUp('setting')} }>
+        onClick={ ()=>{ props.onShowPopUp('notice')} }>
+        <Icon>notifications</Icon>
+      </a>
+    </NavItem>,
+
+    // popup-setting
+    <NavItem key={3}>
+      <a
+        onClick={ ()=>{ props.onShowPopUp('setting')} }>
         <Icon>settings</Icon>
       </a>
     </NavItem>
-    ]
-  );
+  ];
   return (
     <Navbar className='HeaderWrapper' brand='Battle-Code' right>
       { props.isLogined === true && UserItems }

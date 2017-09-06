@@ -15,6 +15,7 @@ const QuestionDetail = ( props )=>{
     content = (
       <DashboardDetail
         questinoState={ props.questinoState }
+        onDashboard={ props.onDashboard }
       />
     )
   } else {

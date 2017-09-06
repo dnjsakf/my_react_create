@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table } from 'react-materialize';
+import { Table, Pagination } from 'react-materialize';
 
 import style from './DashboardDetail.css';
 
@@ -44,6 +44,11 @@ const DashboardDetail = ( props )=>{
   });
   return (
     <section className="DashboardDetail">
+      <Pagination 
+        items={ 20 }  // 으어어 이거 리미트도 설정해줘야되네
+        activePage={1}
+        maxButtons={8} 
+        onSelect={ (page)=>{ props.onDashboard( 'page_mode' , page) } } />
       <Table>
         <thead>
           { headers }

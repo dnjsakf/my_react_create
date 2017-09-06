@@ -9,7 +9,7 @@ import mysql from 'mysql';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 
-import { algorithm, auth, userstate } from './routes';
+import { algorithm, auth, userstate, report, notice } from './routes';
 
 const app = express();
 const expressPort = 8080;
@@ -36,6 +36,8 @@ app.use('/', express.static(path.join(__dirname, './../public')));
 app.use('/api/data', algorithm);
 app.use('/api/auth', auth);
 app.use('/api/userstate', userstate)
+app.use('/api/report', report);
+app.use('/api/notice', notice);
 app.get('*', (req,res)=>{
   return res.status(200).sendFile(path.join(__dirname, './../public/index.html'));
 });

@@ -14,17 +14,21 @@ const QuestionWrapper = ( props )=>{
     java: props.content.lang_java_count,
     python: props.content.lang_python_count,
   }
-  
+
   return (
     <section className='QuestionWrapper'>
       <QuestionTitle 
         no={ props.content.no}
         subject={ props.content.subject }
         onAlgorithmSolve={ props.onAlgorithmSolve }
+    
+        // 신고팝업
+        onShowPopUP={ props.onShowPopUP }
       />
       <QuestionDetail
         isDashClicked={ props.isDashClicked }
         questinoState={ props.questinoState }
+        onDashboard={ props.onDashboard }
         content={ props.content }>
         <Dashboard
           onDashboard={ props.onDashboard }

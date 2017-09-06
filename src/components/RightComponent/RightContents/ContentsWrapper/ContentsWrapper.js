@@ -16,8 +16,12 @@ const ContentsWrapper = ( props )=>{
       if(Object.keys(props.content).length > 0){
         content = (
           <QuestionWrapper
+            // 문제 타이틀
             content={ props.content }
             onAlgorithmSolve={ props.onAlgorithmSolve }
+            
+            // 신고팝업
+            onShowPopUP={ props.onShowPopUP }
 
             isDashClicked={ props.isDashClicked }
             questinoState={ props.questinoState }

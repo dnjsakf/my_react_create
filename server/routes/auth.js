@@ -41,6 +41,8 @@ router.post('/session', (req, res)=>{
 router.post('/login', (req, res)=>{
   const session = req.session;
   const condition = {
+    // get is syntax for save to session
+    no: 'get',
     email: req.body.username,
     password: req.body.password,
     name: 'get',
@@ -70,6 +72,7 @@ router.post('/login', (req, res)=>{
       });
     }
     session.user = {
+      no: exist[0].no,
       username: exist[0].email,
       displayName: exist[0].name,
       regDate: exist[0].date,

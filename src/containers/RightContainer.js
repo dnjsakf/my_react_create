@@ -7,8 +7,11 @@ import { ContentsWrapper } from '../components/RightComponent/RightContents';
 
 import { connect } from 'react-redux';
 import { questionStateRequest } from '../actions/Algorithm';
-import { authPasswordCheckRequest, authSessionRequest } from '../actions/Authorization';
 import { userStateUpdateRequest } from '../actions/UserState';
+import { 
+  authPasswordCheckRequest, 
+  authSessionRequest 
+} from '../actions/Authorization';
 
 import update from 'react-addons-update';
 
@@ -19,7 +22,14 @@ class RightContainer extends Component{
     this.state = {
       mypage: {
         isPwdChecked: false,
-        isDashClicked: false,
+      },
+      question: {
+        dashboard:{
+          isDashClicked: false,
+          mode: 'challenger',
+          page: 1,
+          count: 10
+        }
       }
     }
 
@@ -34,12 +44,14 @@ class RightContainer extends Component{
     this.handleDashboard = this.handleDashboard.bind(this);
   }
 
+  // 엔터키 입력
   handlePasswordChange( event ){
     if( event.which === 13 || event.keyCode === 13){
       this.handlePasswordCheck();
     }
   }
 
+  // 비밀번호 확인
   handlePasswordCheck( event ){
     if( this.props.isLogined === false ) return false;
     if( this.props.user === 'UNKNOWN') return false;
@@ -69,26 +81,33 @@ class RightContainer extends Component{
       label.classList.remove('active');
       this.props.sessionCheck();
     });
-    
-    // TODO: action
   }
+
   handleDeleteUserState( event ){
     if( this.props.isLogined === false ) return false;
     if( this.props.user === 'UNKNOWN') return false;
 
     // TODO: action
   }
-  handleDashboard( dashboard ){
-    if( typeof dashboard ===  'undefined' ) return false;
+  
+  handleDashboard( _dashboard, page ){
+    if( typeof _dashboard ===  'undefined' ) return false;
     if( typeof this.props.content.no === 'undefined' ) return false;
+  
+    const dashboard = (_dashboard === 'page_mode' ? this.state.question.dashboard.mode : _dashboard );
 
-    const page = 1;
-    this.props.getQuestionState( this.props.content.no, dashboard, page ).then(()=>{
+    const count = this.state.question.dashboard.count;
+    this.props.getQuestionState( this.props.content.no, dashboard, page, count ).then(()=>{
       const clicked = this.state.isDashClicked;
       this.setState(
         update( this.state, 
           {
-            isDashClicked: { $set: !clicked }
+            question:{
+              dashboard:{
+                isDashClicked: { $set: true },
+                mode: { $set: dashboard }
+              }
+            }
           }
         )
       )
@@ -124,21 +143,29 @@ class RightContainer extends Component{
           onMenuClick={ this.props.onMenuClick }
           />
         <ContentsWrapper
+          // question-title
           menu={ this.props.menu }
           content={ this.props.content }
           onAlgorithmSolve={ this.props.onAlgorithmSolve }
+
+          // question-title-report
+          onShowPopUP={ this.props.onShowPopUp }
           
-          isDashClicked={ this.state.isDashClicked }
+          // question-detail-dashboard
+          isDashClicked={ this.state.question.dashboard.isDashClicked }
           questinoState={ this.props.question }
           onDashboard={ this.handleDashboard }
 
+          // myPage-password-check
           onPasswordChange={ this.handlePasswordChange }
           onPasswordCheck={ this.handlePasswordCheck }
           passwordChecked={ this.state.mypage.isPwdChecked }
 
+          // myPage-update||delete
           onUpdateUserState={ this.handleUpdateUserState }
           onDeleteUserState={ this.handleDeleteUserState }
         
+          // all content
           user={ this.props.user }
           />
       </section>
@@ -173,8 +200,8 @@ const mapDispatchToProps = ( dispatch )=>{
     sessionCheck: ()=>{
       return dispatch(authSessionRequest());
     },
-    getQuestionState: ( questionNo, dashboard )=>{
-      return dispatch(questionStateRequest(questionNo, dashboard));
+    getQuestionState: ( questionNo, dashboard, page, count )=>{
+      return dispatch(questionStateRequest(questionNo, dashboard, page, count));
     }
   }
 }

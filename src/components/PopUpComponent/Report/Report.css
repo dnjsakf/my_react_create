@@ -1,0 +1,39 @@
+section.Report *{
+  box-sizing: border-box;
+}
+
+section.Report{
+  width: 800px;
+  height: 600px;
+
+  margin: 0 auto;
+  margin-top: 100px;
+
+  background-color: white;
+}
+
+section.Report > .header{
+  width: 100%;
+  height: 60px;
+}
+section.Report > .header > nav:first-child{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+section.Report > .content{
+  width: 100%;
+  height: 480px;
+
+  margin: 0;
+}
+
+section.Report > .buttons{
+  width: 100%;
+  height: 60px;
+
+  text-align: center;
+}
+section.Report button{
+  width: 120px;
+}

@@ -82,8 +82,8 @@ class RightContainer extends Component{
     if( typeof dashboard ===  'undefined' ) return false;
     if( typeof this.props.content.no === 'undefined' ) return false;
 
-    console.log(dashboard)
-    this.props.getQuestionState( this.props.content.no, dashboard ).then(()=>{
+    const page = 1;
+    this.props.getQuestionState( this.props.content.no, dashboard, page ).then(()=>{
       const clicked = this.state.isDashClicked;
       this.setState(
         update( this.state, 
@@ -129,6 +129,7 @@ class RightContainer extends Component{
           onAlgorithmSolve={ this.props.onAlgorithmSolve }
           
           isDashClicked={ this.state.isDashClicked }
+          questinoState={ this.props.question }
           onDashboard={ this.handleDashboard }
 
           onPasswordChange={ this.handlePasswordChange }
@@ -156,6 +157,7 @@ const mapStateToProps = ( state )=>{
       status: state.UserState.status,
     },
     question:{
+      fields: state.RightContentControll.question.fields,
       state: state.RightContentControll.question.state
     },
   }

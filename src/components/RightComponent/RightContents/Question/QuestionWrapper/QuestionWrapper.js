@@ -24,6 +24,7 @@ const QuestionWrapper = ( props )=>{
       />
       <QuestionDetail
         isDashClicked={ props.isDashClicked }
+        questinoState={ props.questinoState }
         content={ props.content }>
         <Dashboard
           onDashboard={ props.onDashboard }

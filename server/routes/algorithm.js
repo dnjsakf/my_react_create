@@ -93,9 +93,8 @@ router.get('/question/state', (req, res)=>{
     `${table}.result as result`,
     `${table}.date as date`
   ];
+  const afterFields = ['no', 'name', 'subject', 'langauge', 'sourceCode', 'result', 'date'];
   const select = joinQuery(table, join, fieldNames, questionNo);
-  console.log('[get-qState-check]');
-  console.log(select);
   
   try{
     conn.query( select, (error, exist)=>{
@@ -113,11 +112,12 @@ router.get('/question/state', (req, res)=>{
       /**
        * Success
        */
-      req.session.question = { state: exist[0] }
+      req.session.question = { state: exist }
       return res.status(200).json({
         success: true,
         question:{
-          state: exist[0]
+          fields: afterFields,
+          state: exist
         }
       });
     });  

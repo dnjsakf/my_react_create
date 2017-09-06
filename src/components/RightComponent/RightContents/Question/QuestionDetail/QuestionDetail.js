@@ -13,7 +13,9 @@ const QuestionDetail = ( props )=>{
   let content = '';
   if( props.isDashClicked === true ){
     content = (
-      <DashboardDetail />
+      <DashboardDetail
+        questinoState={ props.questinoState }
+      />
     )
   } else {
     let question = convertObjectToHtml(JSON.parse(props.content.text));

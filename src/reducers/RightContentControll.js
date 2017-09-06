@@ -1,5 +1,7 @@
 import {
   GET_ALGORITHM_DATA_WAITING,
+  GET_QUESTION_STATE_WAITING,
+
   GET_ALGORITHM_DATA_FAILURE,
   GET_QUESTION_STATE_FAILURE,
 
@@ -13,21 +15,21 @@ const initialState = {
   status: 'INIT',
   content: 'INIT',
   question:{
+    status: 'INIT',
+    fields: 'INIT',
     state: 'INIT'
   }  
 }
 
 export default function RightContentControll(state, action){
-  if(typeof state === 'undefined'){
-    state = initialState;
-  }
+  if(typeof state === 'undefined'){ state = initialState }
+
   switch(action.type){
-    
     /**
      * WAITING
      */
     case GET_ALGORITHM_DATA_WAITING:
-    case GET_QUESTION_STATE_SUCCESS:
+    case GET_QUESTION_STATE_WAITING:
     return update( state,
         {
           status: { $set: 'waiting' },
@@ -63,9 +65,10 @@ export default function RightContentControll(state, action){
     case GET_QUESTION_STATE_SUCCESS:
       return update( state,
         {
-          status: { $set: 'SUCCESS' },
           question: {
-            state: { $set: action.data }
+            status: { $set: 'SUCCESS' },
+            fields: { $set: action.data.question.fields },
+            state: { $set: action.data.question.state }
           }
         }
       )

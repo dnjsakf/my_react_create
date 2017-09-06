@@ -25,7 +25,9 @@ const Dashboard = ( props )=>{
   });
 
   const detail = (
-    <DashboardDetail />
+    <DashboardDetail 
+      // items={ props.question.state }
+    />
   )
   
   return (

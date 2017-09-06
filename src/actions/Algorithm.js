@@ -62,7 +62,7 @@ export function questionStateRequest( questionNo, dashboard ){
     dispatch( qusetionStateWaiting() );
 
     return axios.get('/api/data/question/state', { params:{ questionNo, dashboard }} )
-          .then((resopnse)=>{
+          .then((response)=>{
             console.log('[action-question-state-success]', response);
             dispatch( questionStateSuccess( response.data ) )
           })
@@ -131,7 +131,7 @@ export function algorithmDataSuccess(data){
 };
 export function questionStateSuccess(data){
   return {
-    type: GET_QUESTION_STATE_FAILURE,
+    type: GET_QUESTION_STATE_SUCCESS,
     data
   }
 }

@@ -20,6 +20,7 @@ const ContentsWrapper = ( props )=>{
             onAlgorithmSolve={ props.onAlgorithmSolve }
 
             isDashClicked={ props.isDashClicked }
+            questinoState={ props.questinoState }
             onDashboard={ props.onDashboard }
           />
         );

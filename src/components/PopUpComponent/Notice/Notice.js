@@ -44,10 +44,6 @@ const Notice = ( props )=>{
       <Row className="buttons">
         <Col m={12} s={6}>
           <Button
-            onClick={ props.onSave }>
-            Save
-          </Button>
-          <Button
             onClick={ props.onClose }>
             Cancle
           </Button>

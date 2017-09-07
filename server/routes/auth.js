@@ -89,7 +89,8 @@ router.post('/login', (req, res)=>{
     }
     console.log('[session-check-login]', session.user);
     return res.status(200).json({
-      success: true
+      success: true, 
+      user: session.user
     })
   });
 });

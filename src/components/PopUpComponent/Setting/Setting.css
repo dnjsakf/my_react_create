@@ -15,3 +15,15 @@ section.Setting{
 section.Setting div.card-content{
   padding: 10px;
 }
+
+section.Setting .buttons{
+  width: 100%;
+}
+section.Setting .buttons > div{
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+}
+section.Setting button{
+  width: 120px;
+}

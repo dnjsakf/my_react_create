@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import QuestionTitle from '../QuestionTitle/QuestionTitle';
 import QuestionDetail from '../QuestionDetail/QuestionDetail';
 
-import { Dashboard } from '../QuestionDashboard';
+import { 
+  DashboardWrapper, 
+  DashboardTable 
+} from './../../../../DashboardComponent';
 
 const QuestionWrapper = ( props )=>{
 
@@ -25,15 +28,14 @@ const QuestionWrapper = ( props )=>{
         // 신고팝업
         onShowPopUP={ props.onShowPopUP }
       />
-      <QuestionDetail
-        isDashClicked={ props.isDashClicked }
-        questionState={ props.questionState }
-        onDashboard={ props.onDashboard }
+      <QuestionDetail 
         content={ props.content }>
-        <Dashboard
-          onDashboard={ props.onDashboard }
-          dashboard={ dashboard }/>
+
+        { /* 여기에 Dashboard가 추가 될거임, Detail과 토글로 변경될 수 있도록 */ }
+        <DashboardWrapper />
+
       </QuestionDetail>
+
     </section>
   );
 }

@@ -26,20 +26,6 @@ class RightContainer extends Component{
   constructor(props){
     super(props);
 
-    this.state = {
-      mypage: {
-        isPwdChecked: false,
-      },
-      question: {
-        dashboard:{
-          isDashClicked: false,
-          mode: 'challenger',
-          page: 1,
-          count: 10
-        }
-      }
-    }
-
     this.modes = ['passwordCheck', 'infoUpdate', 'history' ];
 
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -47,8 +33,6 @@ class RightContainer extends Component{
 
     this.handleUpdateUserState = this.handleUpdateUserState.bind(this);
     this.handleDeleteUserState = this.handleDeleteUserState.bind(this);
-
-    this.handleDashboard = this.handleDashboard.bind(this);
   }
 
   // 엔터키 입력
@@ -60,13 +44,13 @@ class RightContainer extends Component{
 
   // 비밀번호 확인
   handlePasswordCheck( event ){
-    if( this.props.isLogined === false ) return false;
-    if( this.props.user === 'UNKNOWN') return false;
+    if( this.props.session.isLogined === false ) return false;
+    if( this.props.session.user === 'UNKNOWN') return false;
 
     const password = document.querySelector('input.PasswordCheck[name=password]').value;
     if( typeof password === 'undefined' ) return false;
 
-    this.props.passwordCheck( this.props.user.username, password);
+    this.props.passwordCheck( this.props.session.user.username, password);
   }
 
   handleUpdateUserState( event ){
@@ -96,31 +80,6 @@ class RightContainer extends Component{
 
     // TODO: action
   }
-  
-  // 대쉬보드 클릭 이벤트
-  handleDashboard( _dashboard, page ){
-    if( typeof _dashboard ===  'undefined' ) return false;
-    if( typeof this.props.content.no === 'undefined' ) return false;
-  
-    const dashboard = (_dashboard === 'page_mode' ? this.state.question.dashboard.mode : _dashboard );
-
-    const count = this.state.question.dashboard.count;
-    this.props.getQuestionState( this.props.content.no, dashboard, page, count ).then(()=>{
-      const clicked = this.state.isDashClicked;
-      this.setState(
-        update( this.state, 
-          {
-            question:{
-              dashboard:{
-                isDashClicked: { $set: true },
-                mode: { $set: dashboard }
-              }
-            }
-          }
-        )
-      )
-    });
-  }
 
   componentWillMount(){
     console.log('[right-will-mount]');
@@ -130,22 +89,11 @@ class RightContainer extends Component{
   }
   
   componentWillReceiveProps(nextProps){
-    const nextMenu = nextProps.menu.toLowerCase();
-    console.log('[right-receive]', nextMenu, nextProps.algorithmNo, nextProps.content.status);
+    const menu = nextProps.menu.toLowerCase();
+    console.log('[right-receive]', menu, nextProps.algorithmNo, nextProps.content.status);
     console.log('[right-receive]', nextProps.session.status);
 
-    switch( nextMenu ){
-      case 'mypage':
-        if( nextProps.pwdCheck.status === 'SUCCESS' ){
-          return this.setState(
-            update( this.state, 
-                {
-                  mypage: { isPwdChecked: { $set: true }}
-                }
-              )
-            );
-        }
-        break;
+    switch( menu ){
       case 'detail':
         if( nextProps.algorithmNo !== this.props.algorithmNo ){
           this.props.getAlgorithmData( nextProps.algorithmNo );
@@ -176,16 +124,11 @@ class RightContainer extends Component{
 
           // question-title-report
           onShowPopUP={ this.props.onShowPopUp }
-          
-          // question-detail-dashboard
-          isDashClicked={ this.state.question.dashboard.isDashClicked }
-          questionState={ this.props.question }
-          onDashboard={ this.handleDashboard }
 
           // myPage-password-check
           onPasswordChange={ this.handlePasswordChange }
           onPasswordCheck={ this.handlePasswordCheck }
-          passwordChecked={ this.state.mypage.isPwdChecked }
+          passwordChecked={ this.props.pwdCheck.checked }
 
           // myPage-update||delete
           onUpdateUserState={ this.handleUpdateUserState }
@@ -212,7 +155,7 @@ const mapStateToProps = ( state )=>{
     },
     pwdCheck:{
       status: state.Authorization.status,
-      passwordChecked: state.Authorization.checked,
+      checked: state.Authorization.pwdChecked,
     },
     update:{
       status: state.UserState.status,

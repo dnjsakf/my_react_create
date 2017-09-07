@@ -24,10 +24,6 @@ const ContentsWrapper = ( props )=>{
             
             // 신고팝업
             onShowPopUP={ props.onShowPopUP }
-
-            isDashClicked={ props.isDashClicked }
-            questionState={ props.questionState }
-            onDashboard={ props.onDashboard }
           />
         );
       }

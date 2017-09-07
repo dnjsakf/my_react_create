@@ -19,7 +19,6 @@ const defaultProps = {
 class MainApp extends Component{
   constructor(props){
     super(props);
-
     this.state = {
       popup:{
         mode: 'undefined',
@@ -72,8 +71,9 @@ class MainApp extends Component{
     console.log('[main-will-mount]');
   }
   componentDidMount(){
-    console.log('[main-did-mount]');
-    this.props.sessionCheck();
+    if( this.props.session.isLogined === false ){
+      this.props.sessionCheck();
+    }
   }
   shouldComponentUpdate(nextProps, nextState){
     if( nextProps.session.status === 'WAITING' ) return false;

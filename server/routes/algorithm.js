@@ -47,8 +47,8 @@ router.get('/algorithm/:type', (req, res)=>{
           code: 500
         });
       }
-      const myalgoQuery = `SELECT DISTINCT qNo FROM qState WHERE mNo = ?`;
-      conn.query(myalgoQuery, [ req.session.user.no ], (error, exists)=>{
+      const findSolved = `SELECT DISTINCT qNo FROM qState WHERE mNo = ?`;
+      conn.query(findSolved, [ req.session.user.no ], (error, exists)=>{
         if(error) throw error;
         if( exists.length === 0 ){
           return res.status(404).json({
@@ -57,9 +57,28 @@ router.get('/algorithm/:type', (req, res)=>{
           });
         }
 
-        return res.status(200).json({
-          success: true,
-          myalgo: exists
+        const inners = ((arr)=>{
+          let _in = [];
+          arr.map((obj, index)=>{
+            _in.push(arr[index].qNo);
+          });
+          return _in;
+        })(exists);
+
+        const solvedContent = `SELECT no, subject FROM questions WHERE no IN ( ? )`;
+        conn.query(solvedContent, [inners], (error, subjects)=>{
+          if(error) throw error;
+          if(subjects.length === 0){
+            return res.status(404).json({
+              success: false,
+              error: 'NOT FOUND',
+              code: 0
+            });
+          }
+          return res.status(200).json({
+            success: true,
+            subjects
+          });
         });
       });
       break;

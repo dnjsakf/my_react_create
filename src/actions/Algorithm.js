@@ -25,12 +25,7 @@ export function algorithmRequestList( params ){
     return axios.get(`/api/data/algorithm/${params}` )
           .then((response)=>{
             console.log('\n[action-algo-list-success]', response, '\n');
-            if( params === 'list' ){
-              dispatch( algorithmListSuccess(response.data.subjects));
-            } else {
-              dispatch( algorithmListSuccess(response.data.myalgo));
-            }
-
+            dispatch( algorithmListSuccess(response.data.subjects));
           })
           .catch((error)=>{
             console.error('\n[action-algo-list-failure]', error.response.data.error , '\n');

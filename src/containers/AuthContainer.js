@@ -91,7 +91,7 @@ class AuthContainer extends Component{
     }
   }
   componentWillReceiveProps(nextProps){
-    if( nextProps.mode === 'login' && nextProps.isLogined === true ){
+    if( this.state.mode === 'login' && nextProps.isLogined === true ){
       browserHistory.push('/');
     }
   }
@@ -117,7 +117,6 @@ import {
 
 const mapStateToProps = (state)=>{
   return {
-    mode: state.Authorization.mode,
     isLogined: state.Authorization.isLogined,
     status: state.Authorization.status,
   }

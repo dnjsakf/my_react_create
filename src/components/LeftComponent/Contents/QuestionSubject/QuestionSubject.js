@@ -14,7 +14,7 @@ const QuestionSubject = ( props )=>{
     list.push(
       <CollectionItem
         key={ index }
-        href={"#"}
+        href="#"
         onClick={ ()=>{ props.onAlgorithmClick( item.no )} }> 
         { item.subject }
       </CollectionItem>

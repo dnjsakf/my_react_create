@@ -21,14 +21,14 @@ import {
 import update from 'react-addons-update';
 
 const initialState = {
+  status: 'INIT',
   isLogined: false,
+  pwdChecked: false,
   user:{
     username: 'UNKNOWN EMAIL',
     displayName: 'UNKNOWN NAME',
     regDate: '2099-12-30'
   },
-  status: 'INIT',
-  result: 'INIT',
   error: 'INIT',
 };
 
@@ -47,15 +47,15 @@ export default function Authorization(state, action){
         }
       );
     /* SUCCESSC */
-    case AUTH_LOGIN_SUCCESS:
     case AUTH_LOGOUT_SUCCESS:
     case AUTH_REGISTER_SUCCESS:
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
-          isLogined: { $set: ( action.mode === 'login' ? true : false ) }
+          isLogined: { $set: false }
         }
       );
+    case AUTH_LOGIN_SUCCESS:
     case AUTH_SESSION_SUCCESS:
       return update( state, 
         {
@@ -68,7 +68,7 @@ export default function Authorization(state, action){
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
-          checked: { $set: action.success }
+          pwdChecked: { $set: action.success }
         }
       );
 
@@ -88,7 +88,7 @@ export default function Authorization(state, action){
       return update( state, 
         {
           status: { $set: 'FAILURE' },
-          checked: { $set: action.failure }
+          pwdChecked: { $set: action.failure }
         }
       );
 

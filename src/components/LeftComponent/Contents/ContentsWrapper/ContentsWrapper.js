@@ -4,12 +4,13 @@ import QuestionDetail from '../QuestionDetail/QuestionDetail';
 import style from './ContentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
-  console.log('[left-content-wrap]', props.menu)
+  console.log('[left-content-wrap]', props.menu, props.algorithmList)
   let content = '';
 
   const menu = props.menu;
   switch(menu.toLowerCase()){
     case 'algorithm':
+    case 'myalgorithm':
       content = (
         <QuestionSubject 
           subject={ props.algorithmList }

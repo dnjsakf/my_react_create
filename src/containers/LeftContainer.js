@@ -25,7 +25,22 @@ class LeftContainer extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    console.log('[left-receive]', nextProps.content.status);
+    console.log('[left-receive]');
+    const nextMenu = nextProps.menu.toLowerCase();
+    const prevMenu = this.props.menu.toLowerCase();
+
+    if( nextMenu !== prevMenu ){
+      switch( nextMenu ){
+        case 'algorithm':
+          this.props.getAlgorithmList('list');
+          break;
+        case 'myalgorithm':
+          this.props.getAlgorithmList('myalgo');
+          break;
+        default:
+          return false;
+      }
+    }
   }
   shouldComponentUpdate(nextProps, nextState){
     if( nextProps.session.status === 'WAITING' ) return false;

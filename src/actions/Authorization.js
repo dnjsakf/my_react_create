@@ -160,6 +160,7 @@ export function authSuccess( mode, data ){
     case 'login':
       return { 
         type: AUTH_LOGIN_SUCCESS,
+        user: data.user
       }
     case 'logout':
       return { 

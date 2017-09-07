@@ -32,7 +32,7 @@ export default function RightContentControll(state, action){
     case GET_QUESTION_STATE_WAITING:
     return update( state,
         {
-          status: { $set: 'waiting' },
+          status: { $set: 'WAITING' },
         }
       );
     

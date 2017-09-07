@@ -14,7 +14,7 @@ const QuestionDetail = ( props )=>{
   if( props.isDashClicked === true ){
     content = (
       <DashboardDetail
-        questinoState={ props.questinoState }
+        questionState={ props.questionState }
         onDashboard={ props.onDashboard }
       />
     )

@@ -4,7 +4,7 @@ import QuestionDetail from '../QuestionDetail/QuestionDetail';
 import style from './ContentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
-  console.log('[left-content-wrap]', props.menu, props.content, typeof props.menu)
+  console.log('[left-content-wrap]', props.menu)
   let content = '';
 
   const menu = props.menu;
@@ -12,14 +12,14 @@ const ContentsWrapper = ( props )=>{
     case 'algorithm':
       content = (
         <QuestionSubject 
-          subject={ props.content }
+          subject={ props.algorithmList }
           onAlgorithmClick={ props.onAlgorithmClick }/>
       );
       break;
     case 'detail':
       content = (
         <QuestionDetail 
-        content={ props.content }/>
+          content={ props.algorithmDetail }/>
       );
       break;
     // more add contents

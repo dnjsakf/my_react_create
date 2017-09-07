@@ -9,11 +9,7 @@ import {
 
 import Header from './HeaderContainer';
 import Section from './SectionContainer';
-import { PopUpWrapper } from '../components/PopUpComponent';
-
-import { userStateUpdateRequest } from '../actions/UserState';
-import { insertUserReportRequest } from '../actions/UserReport';
-import { getNoticeRequest } from '../actions/Notice';
+import PopUp from './PopUpContainer';
 
 const defaultProps = {
   isLogined: false,
@@ -27,38 +23,26 @@ class MainApp extends Component{
     this.state = {
       popup:{
         mode: 'undefined',
-        visible: false,
+        visible: false
       }
-    }
-    this.popupModes = ['notice', 'setting', 'report'];
+    };
     
-    this.handleLogout = this.handleLogout.bind(this);
-    this.handleSession = this.handleSession.bind(this);
-
+    this.popupModes = ['notice', 'setting', 'report'];
     this.handleShowPopUp = this.handleShowPopUp.bind(this);
     this.handleClosePopUp = this.handleClosePopUp.bind(this);
-    this.handleSaveReport = this.handleSaveReport.bind(this);
-    this.handleSaveSetting = this.handleSaveSetting.bind(this);
+    
+    this.handleLogout = this.handleLogout.bind(this);
   }
   
   handleLogout(){
-    if( this.props.isLogined === true ){
+    if( this.props.session.isLogined === true ){
       this.props.logout( this.props.session.user.username );
     }
   }
-  handleSession( event ){
-    if( this.props.isLogined === true ){
-      this.props.sessionCheck();
-    }
-  }
 
+  // 팝업창 열기
   handleShowPopUp( mode ){
     if( this.popupModes.indexOf(mode) === -1 ) return false;
-
-    if( mode === 'notice' ){
-      this.props.getNoticeList(1, 10);
-    }
-
     this.setState(
       update( this.state,
         {
@@ -70,7 +54,7 @@ class MainApp extends Component{
       )
     )
   }
-
+  // 팝업창 닫기
   handleClosePopUp( event ){
     event.preventDefault();
     this.setState(
@@ -84,99 +68,35 @@ class MainApp extends Component{
     )
   }
 
-  handleSaveSetting( event ){
-    if( this.state.popup.visible === false ) return false;
-
-    const editorTheme = document.querySelector('#editor-theme');
-    const editorLanguage = document.querySelector('#editor-language');
-    const editorFont = document.querySelector('#editor-font');
-    const editorFontSize = document.querySelector('#editor-fontSize');
- 
-    const updateData = {
-      username: this.props.session.user.username,
-      theme: editorTheme.value,
-      language: editorLanguage.value,
-      font: editorFont.value,
-      fontSize: editorFontSize.value
-    }
-
-    this.props.updateUserState('setting', updateData).then(()=>{
-      this.props.sessionCheck();
-    });
+  componentWillMount(){
+    console.log('[main-will-mount]');
   }
-
-  /**   
-   *    
-   *   report_description = {
-          1 : "오타가 있어요"
-          2 : "문제가 잘못되었어요"
-          3 : "테스트 케이스가 이상해요"
-          4 : "기타" 
-   *  }
-   */
-  handleSaveReport( event ){
-    if(this.state.popup.visible === false) return false;
-
-    const reportType = document.querySelector('#user-report-type');
-    const reportDetail = document.querySelector('#user-report-detail');
-
-    if(typeof reportType === 'undefined') return false;
-    if(typeof reportDetail === 'undefined') return false;
-    
-    const report = {
-      questionNo: this.props.question.no,
-      userNo: this.props.session.user.no,
-      reportType: reportType.value,
-      reportDetail: reportDetail.value,
-    }
-
-    this.props.insertUserReport( report );
-  }
-
   componentDidMount(){
+    console.log('[main-did-mount]');
     this.props.sessionCheck();
   }
-
-  componentWillReceiveProps(nextProps){
-
+  shouldComponentUpdate(nextProps, nextState){
+    if( nextProps.session.status === 'WAITING' ) return false;
+    return true;
   }
   
   render(){
-    let popup = '';
-    if( this.state.popup.visible === true ){
-      popup = (
-        <PopUpWrapper
-          popup={ this.state.popup }
-        
-          isLogined={ this.props.isLogined }
-          user={ this.props.session.user }  // default = editor
-          defaultReport={ this.props.question }
-          defaultNotice={ this.props.notice.list }
+    const popup = (
+      <PopUp 
+        popup={ this.state.popup }
+        onClosePopUp={ this.handleClosePopUp } />
+    )
 
-          onSaveSetting={ this.handleSaveSetting }
-          onSaveReport={ this.handleSaveReport }
-          onClosePopUp={ this.handleClosePopUp }
-        />
-      );
-    }
-    
     return (
       <section>
-        { this.state.popup.visible === true && popup }
+        { this.state.popup.visible === true && popup}
         <Header
-          isLogined={ this.props.isLogined }
-          user={ this.props.session.user }
-
           onShowPopUp={ this.handleShowPopUp }
           onLogout={ this.handleLogout }
-          onSession={ this.handleSession }
-        />
+          />
         <Section
-          isLogined={ this.props.isLogined }
-          user={ this.props.session.user }
-
           onShowPopUp={ this.handleShowPopUp }
-        />
+          />
       </section>
     );
   }
@@ -187,19 +107,10 @@ MainApp.defaultProps = defaultProps;
 // question.state
 const mapStateToProps = (state)=>{
   return {
-    mode: state.Authorization.mode,
-    isLogined: state.Authorization.isLogined,
-    status: state.Authorization.status,
     session:{
       status: state.Authorization.status,
+      isLogined: state.Authorization.isLogined,
       user: state.Authorization.user
-    },
-    question: {
-      no: state.RightContentControll.content.no,
-      subject: state.RightContentControll.content.subject
-    },
-    notice: {
-      list: state.AdminNotice.notice.list
     }
   }
 }
@@ -210,15 +121,6 @@ const mapDispatchToProps = (dispatch)=>{
     },
     sessionCheck: ()=>{
       return dispatch(authSessionRequest());
-    },
-    updateUserState: ( mode, updateData )=>{
-      return dispatch(userStateUpdateRequest( mode, updateData ));
-    },
-    insertUserReport: ( report )=>{
-      return dispatch(insertUserReportRequest( report ));
-    },
-    getNoticeList: ( page, count )=>{
-      return dispatch(getNoticeRequest( page, count));
     }
   }
 }

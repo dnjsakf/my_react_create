@@ -11,26 +11,67 @@ const conn = mysql.createConnection({
   database: 'battlecode'
 });
 conn.connect(function(){
-  console.log('[mysql-connected]');
+  console.log('[mysql-connected] - algorithm');
 });
 
-router.get('/algorithm/list', (req, res)=>{
-  console.log('[GetAlgorithmList]');
-  const sql = `SELECT no, subject FROM questions`;
-  conn.query(sql, (error, subjects)=>{
-    if(error) throw error;
-    if(subjects.length === 0){
-      return res.status(404).json({
-        success: false,
-        error: 'NOT FOUND',
-        code: 0
-      });
-    }
-    return res.status(200).json({
-      success: true,
-      subjects
+router.get('/algorithm/:type', (req, res)=>{
+  if( typeof req.params.type === 'undefined' ){
+    return res.status(403).json({
+      error: 'Invalid connection', 
+      code: 403
     });
-  });
+  }
+
+  switch( req.params.type ){
+    case 'list':
+      const listQuery = `SELECT no, subject FROM questions`;
+      conn.query(listQuery, (error, subjects)=>{
+        if(error) throw error;
+        if(subjects.length === 0){
+          return res.status(404).json({
+            success: false,
+            error: 'NOT FOUND',
+            code: 0
+          });
+        }
+        return res.status(200).json({
+          success: true,
+          subjects
+        });
+      });
+      break;
+    case 'myalgo':
+      if( typeof req.session.user === 'undefined' ){
+        return res.status(500).json({
+          error: 'Invalid user',
+          code: 500
+        });
+      }
+      const myalgoQuery = `SELECT DISTINCT qNo FROM qState WHERE mNo = ?`;
+      conn.query(myalgoQuery, [ req.session.user.no ], (error, exists)=>{
+        if(error) throw error;
+        if( exists.length === 0 ){
+          return res.status(404).json({
+            error: 'Not Found List',
+            code: 404
+          });
+        }
+
+        return res.status(200).json({
+          success: true,
+          myalgo: exists
+        });
+      });
+      break;
+
+    default:
+      return res.status(403).json({
+        error: 'Invalid connection',
+        code: 403
+      });
+  }
+  
+  
 });
 
 router.get('/algorithm/data/:questionNo', (req, res)=>{

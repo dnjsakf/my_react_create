@@ -8,7 +8,9 @@ import { MyPageWrapper } from '../MyPage';
 import style from './ContentsWrapper.css';
 
 const ContentsWrapper = ( props )=>{
-  console.log('right-content-wrap', props);
+  console.log('[right-content-wrap]', props);
+  if( props.menu.toLowerCase() === 'detail' && props.content === "INIT" ) return null;
+
   let content = '';
   const menu = props.menu;
   switch(menu.toLowerCase()){
@@ -24,7 +26,7 @@ const ContentsWrapper = ( props )=>{
             onShowPopUP={ props.onShowPopUP }
 
             isDashClicked={ props.isDashClicked }
-            questinoState={ props.questinoState }
+            questionState={ props.questionState }
             onDashboard={ props.onDashboard }
           />
         );

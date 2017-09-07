@@ -1,5 +1,5 @@
 import {
-  GET_ALGORITHM_LIST,
+  GET_ALGORITHM_LIST_WAITING,
   GET_ALGORITHM_LIST_FAILURE,
   GET_ALGORITHM_LIST_SUCCESS,
 } from '../actions/ActionTypes';
@@ -16,10 +16,10 @@ export default function LeftContetnControll(state, action){
     state = initialState;
   }
   switch(action.type){
-    case GET_ALGORITHM_LIST:
+    case GET_ALGORITHM_LIST_WAITING:
       return update( state,
         {
-          status: { $set: 'waiting' },
+          status: { $set: 'WAITING' },
         }
       );
     

@@ -13,11 +13,11 @@ export function insertUserReportRequest( report ){
 
     return axios.post('/api/report/submit', report )
           .then((response)=>{
-            console.log('[action-insert-report-success]', response);
+            console.log('[\naction-insert-report-success]', response, '\n');
             dispatch(insertUserReportSuccess());
           })
           .catch((error)=>{
-            console.error('[action-insert-report-failure]', error);
+            console.error('[\naction-insert-report-failure]', error.response.data.error, '\n');
             dispatch(insertUserReportFailure());
           });
   }

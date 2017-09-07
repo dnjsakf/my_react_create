@@ -17,18 +17,23 @@ import axios from 'axios';
 /**
  * action: get Algorithm List
  */
-export function algorithmRequestList(){
+export function algorithmRequestList( params ){
   return (dispatch)=>{
     // 현재 상태를 waiting 상태로 변경
     dispatch(algorithmListWaiting());
 
-    return axios.get('/api/data/algorithm/list',{})
+    return axios.get(`/api/data/algorithm/${params}` )
           .then((response)=>{
-            console.log('[액션-algo-list-성공]', response);
-            dispatch( algorithmListSuccess(response.data.subjects));
+            console.log('\n[action-algo-list-success]', response, '\n');
+            if( params === 'list' ){
+              dispatch( algorithmListSuccess(response.data.subjects));
+            } else {
+              dispatch( algorithmListSuccess(response.data.myalgo));
+            }
+
           })
           .catch((error)=>{
-            console.error('[액션-algo-list-실패]', error);
+            console.error('\n[action-algo-list-failure]', error.response.data.error , '\n');
             dispatch( algorithmListFailure(error.response.data.error));
           });
   }  
@@ -43,11 +48,11 @@ export function algorithmRequestData( questionNo ){
 
     return axios.get('/api/data/algorithm/data/'+questionNo, { questionNo : questionNo })
           .then((response)=>{
-            console.log('[액션-algo-data-성공]', response);
+            console.log('\n[action-algo-data-success]', response, '\n');
             dispatch( algorithmDataSuccess(response.data.question) );    // [qusetion] 서버에서 보내는 json
           })
           .catch((error)=>{
-            console.error('[액션-algo-data-실패]', error);
+            console.error('\n[action-algo-data-failure]', error.response.data.error , '\n');
             dispatch( algorithmDataFailure(error.response.data.error) ); // [error] 서버에서 보내는 json
           });
   }
@@ -63,11 +68,11 @@ export function questionStateRequest( questionNo, dashboard, page, count ){
 
     return axios.get('/api/data/question/state', { params:{ questionNo, dashboard, page, count }} )
           .then((response)=>{
-            console.log('[action-question-state-success]', response);
+            console.log('\n[action-question-state-success]', response, '\n');
             dispatch( questionStateSuccess( response.data ) )
           })
           .catch((error)=>{
-            console.log('[action-question-state-failure]', error);
+            console.log('\n[action-question-state-failure]', error.response.data.error , '\n');
             dispatch( questionStateFailure( error.response.data.error ) )
           });
   }
@@ -97,7 +102,7 @@ export function qusetionStateWaiting(){
  */
 export function algorithmListFailure(error){
   return {
-    type: GET_ALGORITHM__LIST_FAILURE,
+    type: GET_ALGORITHM_LIST_FAILURE,
     error
   }
 };

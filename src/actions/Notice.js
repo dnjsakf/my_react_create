@@ -12,11 +12,11 @@ export function getNoticeRequest( page, count ){
     
     return axios.get('/api/notice/list', {params: {page, count }})
         .then((response)=>{
-          console.log('[action-get-notice-success]', response);
+          console.log('\n[action-get-notice-success]', response, '\n');
           dispatch(getNoticeSuccess(response.data.data));
         })
         .catch((error)=>{
-          console.error('[action-get-notice-failure]', error);
+          console.error('\n[action-get-notice-failure]', error.response.data.error, '\n');
           dispatch(getNoticeFailure(error.response.data.error));
         });
   }

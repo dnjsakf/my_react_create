@@ -1,47 +1,14 @@
 import React, { Component } from 'react';
 import { Table, Pagination } from 'react-materialize';
+import { convertTable } from './../../../../../../utility/converter';
 
 import style from './DashboardDetail.css';
 
 const DashboardDetail = ( props )=>{
-  if( typeof props.questinoState !== 'object') return null;
+  if( typeof props.questionState !== 'object') return null;
   
-  const fields = props.questinoState.fields;
-  const datas = props.questinoState.state;
+  const tableItems = convertTable( props.questionState.state );
 
-  let headers = [];
-  let rows = [];
-
-  // set table header
-  headers.push(
-    <tr key={ 0 }>
-      {
-        (()=>{
-          let cols = []; 
-          fields.map((field, index)=>{
-            cols.push(<th key={ index }>{ field }</th>);
-          });
-          return cols;
-        })()
-      }
-    </tr> 
-  )
-  // set table rows
-  datas.map((data, rowIndex)=>{
-    rows.push(
-      <tr key={ rowIndex }>
-      {
-        (()=>{
-          let cols = [];
-          Object.keys(data).map((key, colIndex)=>{
-            cols.push(<td key={ colIndex }>{ data[key] }</td>);
-          });
-          return cols;
-        })()
-      }
-      </tr>
-    )
-  });
   return (
     <section className="DashboardDetail">
       <Pagination 
@@ -51,10 +18,10 @@ const DashboardDetail = ( props )=>{
         onSelect={ (page)=>{ props.onDashboard( 'page_mode' , page) } } />
       <Table>
         <thead>
-          { headers }
+          { tableItems.headers }
         </thead>
         <tbody>
-          { rows }
+          { tableItems.rows }
         </tbody>
       </Table>
     </section>

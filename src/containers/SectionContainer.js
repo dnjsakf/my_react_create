@@ -12,20 +12,17 @@ class SectionContainer extends Component{
 
     this.state ={
       left:{
-        status: 'INIT',
         isSolving: false,
         menuTitles: ['Algorithm', 'MyAlgorithm', 'Detail'],
         disableTitles: ['Detail'],
         menu:'Algorithm',
-        content:[],
       },
       right:{
-        status: 'INIT',
+        algorithmNo: undefined, 
         isSolving: false,
         menuTitles: ['Home', 'MyPage', 'Detail', 'Editor'],
         disableTitles: ['Detail', 'Editor'],
         menu: 'Home',
-        content: [],
       }
     }
     this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -38,106 +35,46 @@ class SectionContainer extends Component{
     console.log('\n[Tab-Menu-Click]', location, _menu);
     if(location === 'left'){
       // LEFT MENU
-
-      // 추가 기능 구현 필요
-      let check = true;
-      if(this.state.left.isSolving && _menu.toLowerCase() !== 'detail'){
-        if(!confirm('그만하시겠습니까?')){
-          return false;
-        }
-      }
-
-      switch(_menu.toLowerCase()){
-        case 'algorithm':
-          this.props.getAlgorithmList().then(()=>{
-            if( this.props.left.status === 'SUCCESS' ){
-              this.setState(
-                update( this.state,
-                  {
-                    left:{
-                      isSolving: { $set: false },
-                      status: { $set: this.props.left.status },
-                      menu: { $set: _menu },
-                      content: { $set: this.props.left.content }
-                    }
-                  }
-                )
-              );
+      this.setState(
+        update( this.state,
+          {
+            left:{
+              menu: { $set: _menu }
             }
-          });
-        case 'detail':
-          this.setState(
-            update( this.state,
-              {
-                left:{
-                  menu: { $set: _menu }
-                }
-              }
-            )
-          );
-          break;
-        case 'myalgorithm':
-          this.setState(
-            update( this.state,
-              {
-                isSolving: { $set: false },
-                left:{
-                  menu: { $set: _menu }
-                }
-              }
-            )
-          );
-          break;
-        default:
-          return false;
-      }
+          }
+        )
+      );
     } else {
-      // RIGHT MENU
-
-      // 추가 기능 구현 필요
-      let check = true;
-      if(this.state.right.isSolving && _menu.toLowerCase() !== 'editor'){
-        if(!confirm('그만하시겠습니까?')){
-          return false;
-        }
-      }
-      switch(_menu){
-        default:
-          this.setState(
-            update( this.state,
-              {
-                right:{
-                  menu: { $set: _menu }
-                }
-              }
-            )
-          );
-      }
+       // RIGHT MENU
+      this.setState(
+        update( this.state,
+          {
+            right:{
+              menu: { $set: _menu }
+            }
+          }
+        )
+      );
     }
   }
 
   // algorithm 선택 이벤트
   handleAlgorithmSelect( algorithmNo ){
     console.log('[Algorihtm-select ]', algorithmNo );
-    this.props.getAlgorithmData( algorithmNo ).then(()=>{
-      if(this.props.right.status === 'SUCCESS'){
-        const showLeftMenu = 'Detail';
-        const del = this.state.right.disableTitles.indexOf(showLeftMenu);
-        const delCount = del === -1 ? 0 : 1;
-        this.setState(
-          update( this.state,
-            {
-              right:{
-                status: { $set: this.props.right.status },
-                menu: { $set: showLeftMenu },
-                disableTitles: { $splice: [[del, delCount]]},
-                content: { $set: this.props.right.content }
-              }
-            }
-          )
-        );
-      }
-    });
+    const showLeftMenu = 'Detail';
+    const del = this.state.right.disableTitles.indexOf(showLeftMenu);
+    const delCount = del === -1 ? 0 : 1;
+    this.setState(
+      update( this.state,
+        {
+          right:{
+            algorithmNo: { $set: algorithmNo }, 
+            menu: { $set: showLeftMenu },
+            disableTitles: { $splice: [[del, delCount]]},
+          }
+        }
+      )
+    );
   }
 
   // algorithm solve 이벤트
@@ -158,7 +95,6 @@ class SectionContainer extends Component{
               isSolving: { $set: true },
               menu: { $set: getRightMenu },
               disableTitles: { $splice: [[delLeft, delLeftCount]]},
-              content: { $set: this.state.right.content }
             },
             right: {
               isSolving: { $set: true },
@@ -168,28 +104,6 @@ class SectionContainer extends Component{
           }
         )
       )
-    }
-  }
-
-
-  // 처음 들어왔을 때 알고리즘 목록을 먼저 보여줄 것인가?
-  componentDidMount(){
-    const leftMenu = this.state.left.menu;
-    const leftStatus = this.state.left.status;
-    if( this.state.left.status === 'INIT' && leftMenu.toLowerCase() === 'algorithm'){
-      this.props.getAlgorithmList().then(()=>{
-        this.setState(
-          update( this.state,
-            {
-              left: {
-                status: { $set: this.props.left.status },
-                menu: { $set: leftMenu },
-                content: { $set: this.props.left.content }
-              }
-            }
-          )
-        )
-      });
     }
   }
 
@@ -209,9 +123,10 @@ class SectionContainer extends Component{
 
   // 왼쪽이나 오른쪽 메뉴 state가 변경되면 업데이트해라.
   shouldComponentUpdate(nextProps, nextState){
+    const update = JSON.stringify(nextState) !== JSON.stringify(this.state);
+    
     console.log('[왼쪽 메뉴 변경]',this.state.left.menu, nextState.left.menu)
     console.log('[오른쪽 메뉴 변경]',this.state.right.menu, nextState.right.menu)
-    const update = JSON.stringify(nextState) !== JSON.stringify(this.state);
     console.log('[업데이트 해야됨?]', update);
     
     return update;
@@ -221,24 +136,18 @@ class SectionContainer extends Component{
     return (
       <section className="main-section">
         <LeftContainer 
-          isLogined={ this.props.isLogined }
-          
+          menu={ this.state.left.menu }
           disableTitles={ this.state.left.disableTitles }
           menuTitles={ this.state.left.menuTitles }
-          menu={ this.state.left.menu }
-          content={ this.state.left.content }
 
           onMenuClick={ this.handleMenuClick }
           onAlgorithmClick={ this.handleAlgorithmSelect }
           />
         <RightContainer 
-          isLogined={ this.props.isLogined }
-          user={ this.props.user }
-
+          menu={ this.state.right.menu }
+          algorithmNo={ this.state.right.algorithmNo }
           disableTitles={ this.state.right.disableTitles }
           menuTitles={ this.state.right.menuTitles }
-          menu={ this.state.right.menu }
-          content={ this.state.right.content }
           
           onShowPopUp={ this.props.onShowPopUp }
           onMenuClick={ this.handleMenuClick }
@@ -258,31 +167,8 @@ import {
 // store에 저장된 데이터를 여기에 불러올꺼야
 const mapStateToProps = (state)=>{
   return {
-    left:{
-      status: state.LeftContentControll.status,
-      content: state.LeftContentControll.content, 
-    },
-    right:{
-      status: state.RightContentControll.status,
-      content: state.RightContentControll.content, 
-    }
   };
 }
-// store에 저장된 리듀서를 여기에 불러올꺼야 :: 액션 -> 리듀서 -> 
-const mapDispatchToProps = (dispatch)=>{
-  return {
-    // 알고리즘 리스트 가져올 액션
-    getAlgorithmList: ()=>{ 
-      return dispatch( algorithmRequestList() ); 
-    },
-    // 알고리즘 상세정보를 가져올 액션
-    getAlgorithmData: ( algorithmNo ) =>{
-      return dispatch( algorithmRequestData( algorithmNo ) );
-    }
-  }
-}
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
 )(SectionContainer);

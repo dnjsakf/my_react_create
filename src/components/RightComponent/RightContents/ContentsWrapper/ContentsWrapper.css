@@ -1,3 +1,5 @@
 section.ContentsWrapper {
   height: calc(100% - 36px);
+
+  background-color: white;
 }

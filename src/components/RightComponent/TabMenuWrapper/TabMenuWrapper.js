@@ -3,7 +3,7 @@ import TabMenuItem from '../TabMenuItem/TabMenuItem';
 import style from './TabMenuWrapper.css';
 
 const TabMenuWrapper = ( props )=>{
-  console.log('right-tab-menu-wrap')
+  console.log('[right-tab-menu-wrap]')
 
   return(
     <div className="TabMenuWrapper right-tab">

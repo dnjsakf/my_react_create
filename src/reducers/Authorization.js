@@ -21,7 +21,6 @@ import {
 import update from 'react-addons-update';
 
 const initialState = {
-  mode: 'INIT',
   isLogined: false,
   user:{
     username: 'UNKNOWN EMAIL',
@@ -45,7 +44,6 @@ export default function Authorization(state, action){
       return update( state, 
         {
           status: { $set: 'WAITING' },
-          mode: { $set: action.mode },
         }
       );
     /* SUCCESSC */
@@ -55,7 +53,6 @@ export default function Authorization(state, action){
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
-          mode: { $set: action.mode },
           isLogined: { $set: ( action.mode === 'login' ? true : false ) }
         }
       );
@@ -63,7 +60,6 @@ export default function Authorization(state, action){
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
-          mode: { $set: action.mode },
           isLogined: { $set: true },
           user: { $set: action.user }
         }
@@ -72,7 +68,6 @@ export default function Authorization(state, action){
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
-          mode: { $set: action.mode },
           checked: { $set: action.success }
         }
       );
@@ -86,7 +81,6 @@ export default function Authorization(state, action){
         {
           status: { $set: 'FAILURE' },
           isLogined: { $set: false },
-          mode: { $set: action.mode },
           error: { $set: action.error }
         }
       );
@@ -94,7 +88,6 @@ export default function Authorization(state, action){
       return update( state, 
         {
           status: { $set: 'FAILURE' },
-          mode: { $set: action.mode },
           checked: { $set: action.failure }
         }
       );

@@ -37,6 +37,7 @@ const PopUpWrapper = ( props )=>{
         <Notice
           default={ props.defaultNotice }
           
+          onPage={ props.onPageNotice }
           onClose={ props.onClosePopUp }
           />
       );

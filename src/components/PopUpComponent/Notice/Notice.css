@@ -11,7 +11,7 @@ section.Notice{
   margin: 0 auto;
   margin-top: 100px;
 
-  background-color: grey;
+  background-color: white;
 }
 
 section.Notice > .header{
@@ -20,8 +20,28 @@ section.Notice > .header{
 }
 section.Notice > .content{
   width: 100%;
-  height: px;
+  height: 420px;
 }
+section.Notice tr{
+  cursor: pointer;
+}
+section.Notice td{
+  padding-top: 6px;
+  padding-bottom: 6px;
+  font-size: 20px;
+}
+
+section.Notice > .pages{
+  width: 100%;
+  height: 60px;
+}
+section.Notice > .pages > ul{
+  width: 50%;
+  margin: 0 auto;
+
+  text-align: center;
+}
+
 section.Notice > .buttons{
   width: 100%;
   height: 60px;

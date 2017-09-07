@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
-
+import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
+import update from 'react-addons-update';
 
 import { TabMenuWrapper } from '../components/RightComponent';
 import { ContentsWrapper } from '../components/RightComponent/RightContents';
 
-import { connect } from 'react-redux';
-import { questionStateRequest } from '../actions/Algorithm';
-import { userStateUpdateRequest } from '../actions/UserState';
+// Algoirhtm
+import { 
+  questionStateRequest,
+  algorithmRequestData 
+} from '../actions/Algorithm';
+// Authorization
 import { 
   authPasswordCheckRequest, 
   authSessionRequest 
 } from '../actions/Authorization';
+// UserState
+import { 
+  userStateUpdateRequest 
+} from '../actions/UserState';
 
-import update from 'react-addons-update';
 
 class RightContainer extends Component{
   constructor(props){
@@ -90,6 +97,7 @@ class RightContainer extends Component{
     // TODO: action
   }
   
+  // 대쉬보드 클릭 이벤트
   handleDashboard( _dashboard, page ){
     if( typeof _dashboard ===  'undefined' ) return false;
     if( typeof this.props.content.no === 'undefined' ) return false;
@@ -114,11 +122,21 @@ class RightContainer extends Component{
     });
   }
 
+  componentWillMount(){
+    console.log('[right-will-mount]');
+  }
+  componentDidMount(){
+    console.log('[right-did-mount]');
+  }
+  
   componentWillReceiveProps(nextProps){
     const nextMenu = nextProps.menu.toLowerCase();
+    console.log('[right-receive]', nextMenu, nextProps.algorithmNo, nextProps.content.status);
+    console.log('[right-receive]', nextProps.session.status);
+
     switch( nextMenu ){
       case 'mypage':
-        if( nextProps.pwdCheck.mode === 'passwordCheck' && nextProps.pwdCheck.status === 'SUCCESS' ){
+        if( nextProps.pwdCheck.status === 'SUCCESS' ){
           return this.setState(
             update( this.state, 
                 {
@@ -127,11 +145,19 @@ class RightContainer extends Component{
               )
             );
         }
+        break;
+      case 'detail':
+        if( nextProps.algorithmNo !== this.props.algorithmNo ){
+          this.props.getAlgorithmData( nextProps.algorithmNo );
+        }
+        break;
     }
   }
-  
-  componentWillUpdate(){
-    console.log(this.props.user)
+
+  shouldComponentUpdate(nextProps, nextState){
+    if( nextProps.content.status === 'WAITING' ) return false;
+    if( nextProps.session.status === 'WAITING' ) return false;
+    return true;
   }
 
   render(){
@@ -145,7 +171,7 @@ class RightContainer extends Component{
         <ContentsWrapper
           // question-title
           menu={ this.props.menu }
-          content={ this.props.content }
+          content={ this.props.content.detail }
           onAlgorithmSolve={ this.props.onAlgorithmSolve }
 
           // question-title-report
@@ -153,7 +179,7 @@ class RightContainer extends Component{
           
           // question-detail-dashboard
           isDashClicked={ this.state.question.dashboard.isDashClicked }
-          questinoState={ this.props.question }
+          questionState={ this.props.question }
           onDashboard={ this.handleDashboard }
 
           // myPage-password-check
@@ -166,7 +192,7 @@ class RightContainer extends Component{
           onDeleteUserState={ this.handleDeleteUserState }
         
           // all content
-          user={ this.props.user }
+          user={ this.props.session.user }
           />
       </section>
     )
@@ -175,9 +201,17 @@ class RightContainer extends Component{
 
 const mapStateToProps = ( state )=>{
   return {
+    session:{
+      status: state.Authorization.status,
+      isLogined: state.Authorization.isLogined,
+      user: state.Authorization.user
+    },
+    content:{
+      status: state.RightContentControll.status,
+      detail: state.RightContentControll.content
+    },
     pwdCheck:{
       status: state.Authorization.status,
-      mode: state.Authorization.mode,
       passwordChecked: state.Authorization.checked,
     },
     update:{
@@ -199,6 +233,9 @@ const mapDispatchToProps = ( dispatch )=>{
     },
     sessionCheck: ()=>{
       return dispatch(authSessionRequest());
+    },
+    getAlgorithmData: ( algorithmNo ) =>{
+      return dispatch( algorithmRequestData( algorithmNo ) );
     },
     getQuestionState: ( questionNo, dashboard, page, count )=>{
       return dispatch(questionStateRequest(questionNo, dashboard, page, count));

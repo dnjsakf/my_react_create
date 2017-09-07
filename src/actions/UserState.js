@@ -24,11 +24,11 @@ export function userStateInsertRequest( insertData ){
 
     return axios.put('/api/userstate/insert', insertData )
           .then((response)=>{
-            console.log('[userstate-insert-success]', response);
+            console.log('[\nuserstate-insert-success]', response, '\n');
             dispatch(userStateSuccess('insert', response.data));
           })
           .catch((error)=>{
-            console.error('[userstate-insert-failure]', error);
+            console.error('[\nuserstate-insert-failure]', error.response.data.error, '\n');
             dispatch(userStateFailure('insert', error.response.data.error));
           });
   }
@@ -45,11 +45,11 @@ export function userStateUpdateRequest( mode, updateData ){
 
     return axios.post(`/api/userstate/update/${mode}`, updateData )
           .then((response)=>{
-            console.log('[userstate-update-success]', response);
+            console.log('[\nuserstate-update-success]', response, '\n');
             dispatch(userStateSuccess('update', response.data));
           })
           .catch((error)=>{
-            console.error('[userstate-update-failure]', error);
+            console.error('[\nuserstate-update-failure]', error.response.data.error, '\n');
             dispatch(userStateFailure('update', error.response.data.error));
           });
   }
@@ -65,11 +65,11 @@ export function userStateDeleteRequest( deleteData ){
 
     return axios.delete('/api/userstate/delete', deleteData )
           .then((response)=>{
-            console.log('[userstate-delete-success]', response);
+            console.log('[\nuserstate-delete-success]', response, '\n');
             dispatch(userStateSuccess('delete', response.data));
           })
           .catch((error)=>{
-            console.error('[userstate-delete-failure]', error);
+            console.error('[\nuserstate-delete-failure]', error.response.data.error, '\n');
             dispatch(userStateFailure('delete', error.response.data.error));
           });
   }

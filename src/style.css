@@ -12,26 +12,24 @@ html, body{
 header.main-header{
   width: 100%;
   height: 50px;
-  background: lightcoral;
+  background-color: lightcoral;
 }
 section.main-section{
   width: 100%;
   height: calc(100% - 50px);
-  background: lightblue;
+  background-color: white;
 }
 section.main-section > section.left-tab{
   z-index: 2;
   position: absolute;
   width: 400px;
   height: inherit;
-  background: lightgreen;
 }
 section.main-section > section.right-tab{
   z-index: 1;
   position: absolute;
   width: 100%;
   height: inherit;
-  background: lightseagreen;
   padding-left: 400px;
 }
 

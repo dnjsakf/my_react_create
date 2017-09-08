@@ -1,0 +1,12 @@
+.DashboardWrapper{
+  width: 100%;
+  padding: 10px;
+}
+
+.DashboardWrapper > .stats{
+  width: 100%;
+  display: inline-flex;
+}
+.DashboardWrapper > .tables{
+  width: 100%;
+}

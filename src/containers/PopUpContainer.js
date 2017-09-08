@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import update from 'react-addons-update';
+import axios from 'axios';
 
 import { PopUpWrapper } from '../components/PopUpComponent';
 
@@ -71,6 +73,16 @@ class PopUpContainer extends Component{
     const count = this.default.count;
     this.props.getNoticeList( page, count );
   }
+
+  componentWillMount(){
+    const getNoticeStats = axios.get('/api/admin/stats/notice')
+      .then((response)=>{
+        console.log('[getNoticeStatsSuccess]', response.data);
+      })
+      .catch((error)=>{
+        console.error('[getNoticeStatsError]', error.response.data.error );
+      });
+  }
   
   componentDidMount(){
     if( this.props.popup.mode === 'notice' ){
@@ -106,11 +118,12 @@ const mapStateToProps = (state)=>{
       user: state.Authorization.user,
     },
     notice: {
-      list: state.AdminNotice.notice.list
+      list: state.AdminNotice.notice.list,
+      count: state.AdminNotice.notice.count,
     },
     question: {
-      no: state.RightContentControll.content.no,
-      subject: state.RightContentControll.content.subject
+      no: state.RightContentControll.question.content.no,
+      subject: state.RightContentControll.question.content.subject
     }
   }
 }

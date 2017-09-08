@@ -1,0 +1,13 @@
+.DashboardTable{
+  width: 100%;
+  padding: 10px;
+}
+
+.DashboardTable .pages{
+  width: 100%;
+  text-align: center;
+}
+
+.DashboardTable td, .DashboardTable th{
+  text-align: center;
+}

@@ -2,21 +2,22 @@ import React, { Component } from 'react';
 import QuestionTitle from '../QuestionTitle/QuestionTitle';
 import QuestionDetail from '../QuestionDetail/QuestionDetail';
 
+import style from './QuestionWrapper.css'
+
 import { 
-  DashboardWrapper, 
-  DashboardTable 
+  DashboardWrapper,
+  DashboardTable
 } from './../../../../DashboardComponent';
 
-const QuestionWrapper = ( props )=>{
 
-  const dashboard = {
-    challenger: props.content.challenger_count,
-    prefect: props.content.perfect_count,
-    current: props.content.current_persent,
-    C: props.content.lang_c_count,
-    java: props.content.lang_java_count,
-    python: props.content.lang_python_count,
-  }
+const QuestionWrapper = ( props )=>{
+  const dashboardTable = (
+    <DashboardTable
+      onChangeDashboard={ props.onChangeDashboard }
+      onFoldDashboard={ props.onFoldDashboard }
+      table={ props.dashboard.table }
+      />
+  )
 
   return (
     <section className='QuestionWrapper'>
@@ -28,14 +29,14 @@ const QuestionWrapper = ( props )=>{
         // 신고팝업
         onShowPopUP={ props.onShowPopUP }
       />
-      <QuestionDetail 
-        content={ props.content }>
-
-        { /* 여기에 Dashboard가 추가 될거임, Detail과 토글로 변경될 수 있도록 */ }
-        <DashboardWrapper />
-
-      </QuestionDetail>
-
+      <section className="detail-scroll">
+        <DashboardWrapper 
+          onChangeDashboard={ props.onChangeDashboard }
+          stats={ props.dashboard.stats }>
+          { props.dashboardVisible === true && dashboardTable }
+        </DashboardWrapper>
+        <QuestionDetail content={ props.content } />
+      </section>
     </section>
   );
 }

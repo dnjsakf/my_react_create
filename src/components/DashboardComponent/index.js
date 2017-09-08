@@ -1,9 +1,9 @@
 import DashboardItem from './DashboardItem/DashboardItem';
-import DashboardTable from './DashboardTable/DashboardTable';
 import DashboardWrapper from './DashboardWrapper/DashboardWrapper';
+import DashboardTable from './DashboardTable/DashboardTable';
 
 export {
+  DashboardWrapper,
   DashboardItem,
-  DashboardTable,
-  DashboardWrapper
+  DashboardTable
 }

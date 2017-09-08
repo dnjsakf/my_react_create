@@ -13,7 +13,7 @@ export function getNoticeRequest( page, count ){
     return axios.get('/api/notice/list', {params: {page, count }})
         .then((response)=>{
           console.log('\n[action-get-notice-success]', response, '\n');
-          dispatch(getNoticeSuccess(response.data.data));
+          dispatch(getNoticeSuccess(response.data));
         })
         .catch((error)=>{
           console.error('\n[action-get-notice-failure]', error.response.data.error, '\n');

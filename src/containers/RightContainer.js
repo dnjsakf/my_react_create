@@ -8,8 +8,8 @@ import { ContentsWrapper } from '../components/RightComponent/RightContents';
 
 // Algoirhtm
 import { 
-  questionStateRequest,
-  algorithmRequestData 
+  algorithmRequestData,
+  questionStateRequest
 } from '../actions/Algorithm';
 // Authorization
 import { 
@@ -26,13 +26,28 @@ class RightContainer extends Component{
   constructor(props){
     super(props);
 
-    this.modes = ['passwordCheck', 'infoUpdate', 'history' ];
+    this.state={
+      dashboard:{
+        visible: false
+      }
+    }
+    
+    this.default = {
+      dashboard:{
+        mode: "challenger",
+        page: 1,
+        count: 10
+      }
+    }
 
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handlePasswordCheck = this.handlePasswordCheck.bind(this);
 
     this.handleUpdateUserState = this.handleUpdateUserState.bind(this);
     this.handleDeleteUserState = this.handleDeleteUserState.bind(this);
+
+    this.handleDashboard = this.handleDashboard.bind(this);
+    this.handleFoldDashboard = this.handleFoldDashboard.bind(this);
   }
 
   // 엔터키 입력
@@ -57,13 +72,13 @@ class RightContainer extends Component{
     const displayName = document.querySelector('input.UserState[name=displayName]');
     // const password = document.querySelect('input.UserState[name=password]');
     
-    if( this.props.isLogined === false ) return false;
-    if( this.props.user === 'UNKNOWN') return false;
+    if( this.props.session.isLogined === false ) return false;
+    if( this.props.session.user === 'UNKNOWN') return false;
     if( typeof displayName === 'undefined' ) return false;
     if( displayName.value.length < 4) return false;
     
     const updateData = {
-      username: this.props.user.username,
+      username: this.props.session.user.username,
       displayName: displayName.value
     }
     this.props.updateUserState('default', updateData).then(()=>{
@@ -75,11 +90,33 @@ class RightContainer extends Component{
   }
 
   handleDeleteUserState( event ){
-    if( this.props.isLogined === false ) return false;
-    if( this.props.user === 'UNKNOWN') return false;
+    if( this.props.session.isLogined === false ) return false;
+    if( this.props.session.user === 'UNKNOWN') return false;
 
     // TODO: action
   }
+  
+  // Dashboard page changer 
+  handleDashboard( dashboard, page ){
+    console.log( dashboard, page);
+
+    if( typeof page === 'undefined' ) return false;
+    if( typeof dashboard !== 'undefined' && dashboard === 'page-mode'){
+      dashboard = this.default.dashboard.mode;
+    }
+
+    const questionNo = this.props.question.no;
+    const count = this.default.dashboard.count;
+    this.props.getDashboardState( questionNo, dashboard, page, count ).then(()=>{
+      this.setState( update( this.state, { dashboard: {visible: { $set: true } }} ));
+    })
+  }
+  handleFoldDashboard( event ){
+    if( this.state.dashboard.visible === true ){
+      this.setState( update( this.state, { dashboard: {visible: { $set: false } }} ));
+    }
+  }
+
 
   componentWillMount(){
     console.log('[right-will-mount]');
@@ -90,22 +127,35 @@ class RightContainer extends Component{
   
   componentWillReceiveProps(nextProps){
     const menu = nextProps.menu.toLowerCase();
-    console.log('[right-receive]', menu, nextProps.algorithmNo, nextProps.content.status);
+    console.log('[right-receive]', menu, nextProps.algorithmNo, nextProps.question.status);
     console.log('[right-receive]', nextProps.session.status);
+    console.log('[right-receive]', nextProps.dashboard);
 
     switch( menu ){
       case 'detail':
         if( nextProps.algorithmNo !== this.props.algorithmNo ){
-          this.props.getAlgorithmData( nextProps.algorithmNo );
+          this.props.getAlgorithmData( nextProps.algorithmNo ).then(()=>{
+            this.setState( update( this.state, { dashboard: {visible: { $set: false } }} ));
+          });
         }
         break;
     }
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    if( nextProps.content.status === 'WAITING' ) return false;
+    console.log( "[업데이트?-right-container]",
+            nextProps.session.status, 
+            nextProps.question.status, 
+            nextProps.dashboard.status,
+            );
     if( nextProps.session.status === 'WAITING' ) return false;
+    if( nextProps.question.status === 'WAITING' ) return false;
+    if( nextProps.dashboard.status === 'WAITING' ) return false;
     return true;
+  }
+
+  componentWillUpdate(){
+    console.log('[업데이트-right-container]')
   }
 
   render(){
@@ -119,8 +169,14 @@ class RightContainer extends Component{
         <ContentsWrapper
           // question-title
           menu={ this.props.menu }
-          content={ this.props.content.detail }
           onAlgorithmSolve={ this.props.onAlgorithmSolve }
+          content={ this.props.question.detail }
+
+          // dashboard-page-changer
+          dashboardVisible={ this.state.dashboard.visible }
+          onChangeDashboard={ this.handleDashboard }
+          onFoldDashboard={ this.handleFoldDashboard }
+          dashboard={ this.props.dashboard }
 
           // question-title-report
           onShowPopUP={ this.props.onShowPopUp }
@@ -149,9 +205,10 @@ const mapStateToProps = ( state )=>{
       isLogined: state.Authorization.isLogined,
       user: state.Authorization.user
     },
-    content:{
-      status: state.RightContentControll.status,
-      detail: state.RightContentControll.content
+    question:{
+      status: state.RightContentControll.question.status,
+      no: state.RightContentControll.question.content.no,
+      detail: state.RightContentControll.question.content
     },
     pwdCheck:{
       status: state.Authorization.status,
@@ -160,27 +217,42 @@ const mapStateToProps = ( state )=>{
     update:{
       status: state.UserState.status,
     },
-    question:{
-      fields: state.RightContentControll.question.fields,
-      state: state.RightContentControll.question.state
-    },
+    dashboard:{
+      status: state.RightContentControll.dashboard.status,
+      table: {
+        fields: state.RightContentControll.dashboard.fields,
+        records: state.RightContentControll.dashboard.records
+      },
+      stats:{
+        challenger: state.RightContentControll.question.content.challenger_count,
+        perfect: state.RightContentControll.question.content.perfect_count,
+        current: state.RightContentControll.question.content.current_persent,
+        c: state.RightContentControll.question.content.lang_c_count,
+        java: state.RightContentControll.question.content.lang_java_count,
+        python: state.RightContentControll.question.content.lang_python_count,
+      }
+    }
   }
 }
 const mapDispatchToProps = ( dispatch )=>{
   return {
+    // check user password
     passwordCheck: ( username, password )=>{
       return dispatch(authPasswordCheckRequest( username, password ));
     },
+    // updated user editor setting
     updateUserState: ( mode, updateData )=>{
       return dispatch(userStateUpdateRequest( mode, updateData ));
     },
+    // check user server connection
     sessionCheck: ()=>{
       return dispatch(authSessionRequest());
     },
+    // get algorihtm detail data
     getAlgorithmData: ( algorithmNo ) =>{
       return dispatch( algorithmRequestData( algorithmNo ) );
     },
-    getQuestionState: ( questionNo, dashboard, page, count )=>{
+    getDashboardState: ( questionNo, dashboard, page, count )=>{
       return dispatch(questionStateRequest(questionNo, dashboard, page, count));
     }
   }

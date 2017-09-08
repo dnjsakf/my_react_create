@@ -8,6 +8,7 @@ import {
 import style from './QuestionDetail.css';
 
 const QuestionDetail = ( props )=>{
+  if( typeof props.content === 'undefined' ) return false;
 
   let content = '';
   let question = convertObjectToHtml(JSON.parse(props.content.text));

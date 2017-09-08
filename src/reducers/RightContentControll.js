@@ -12,9 +12,11 @@ import {
 import update from 'react-addons-update';
 
 const initialState = {
-  status: 'INIT',
-  content: 'INIT',
   question:{
+    status: 'INIT',
+    content: 'INIT',
+  },
+  dashboard:{
     status: 'INIT',
     fields: 'INIT',
     state: 'INIT'
@@ -29,22 +31,40 @@ export default function RightContentControll(state, action){
      * WAITING
      */
     case GET_ALGORITHM_DATA_WAITING:
-    case GET_QUESTION_STATE_WAITING:
-    return update( state,
+      return update( state,
         {
-          status: { $set: 'WAITING' },
+          question:{
+            status: { $set: 'WAITING' },
+          }
         }
       );
-    
+    case GET_QUESTION_STATE_WAITING:
+      return update( state,
+        {
+          dashboard:{
+            status: { $set: 'WAITING' }
+          },
+        }
+      );
     /**
      * FAILURE
      */
     case GET_ALGORITHM_DATA_FAILURE:
+      return update( state,
+        {
+          question:{
+            status: { $set: 'ERROR' },
+          }
+        }
+      );
     case GET_QUESTION_STATE_FAILURE:
       return update( state,
         {
-          status: { $set: 'ERROR' },
-          content: { $set: action.error }          
+          dashboard:{
+            status: { $set: 'ERROR' },
+            fields: { $set: 'INIT' },
+            records: { $set: 'INIT' }
+          }
         }
       );
     
@@ -54,8 +74,10 @@ export default function RightContentControll(state, action){
     case GET_ALGORITHM_DATA_SUCCESS:
       return update( state,
         {
-          status: { $set: 'SUCCESS' },
-          content: { $set: action.data }          
+          question:{
+            status: { $set: 'SUCCESS' },
+            content: { $set: action.data }          
+          }
         }
       );
     /**
@@ -65,10 +87,10 @@ export default function RightContentControll(state, action){
     case GET_QUESTION_STATE_SUCCESS:
       return update( state,
         {
-          question: {
+          dashboard: {
             status: { $set: 'SUCCESS' },
             fields: { $set: action.data.question.fields },
-            state: { $set: action.data.question.state }
+            records: { $set: action.data.question.state }
           }
         }
       )

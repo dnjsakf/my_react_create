@@ -1,0 +1,6 @@
+.QuestionWrapper .detail-scroll{
+  width: 100%;
+  height: calc(100% - 68px);
+  
+  overflow-y: scroll;
+}

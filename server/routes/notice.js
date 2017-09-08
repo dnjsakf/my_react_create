@@ -33,10 +33,9 @@ router.get('/list', (req, res)=>{
   try{
     conn.query(noticeSelect, (error, exist)=>{
       if(error) throw error;
-      
       return res.status(200).json({
         success: true,
-        data: exist
+        data: exist,
       });
     });
   } catch(e){

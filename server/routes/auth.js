@@ -27,7 +27,7 @@ router.post('/session', (req, res)=>{
       error: 'Not found user session',
       code: 1,
     });
-  } 
+  }
   
   return res.status(200).json({
     user: session.user

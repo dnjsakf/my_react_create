@@ -82,7 +82,7 @@ const mapStateToProps = (state)=>{
     content:{
       status: state.LeftContentControll.status, 
       list: state.LeftContentControll.content,
-      detail: state.RightContentControll.content
+      detail: state.RightContentControll.question.content
     }
   }
 }

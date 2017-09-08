@@ -21,6 +21,12 @@ const ContentsWrapper = ( props )=>{
             // 문제 타이틀
             content={ props.content }
             onAlgorithmSolve={ props.onAlgorithmSolve }
+
+            // 대쉬보드
+            dashboardVisible={ props.dashboardVisible }
+            onChangeDashboard={ props.onChangeDashboard }
+            onFoldDashboard={ props.onFoldDashboard }
+            dashboard={ props.dashboard }
             
             // 신고팝업
             onShowPopUP={ props.onShowPopUP }

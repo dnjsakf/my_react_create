@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "updatestats": "node ./server/config/database/updateStats",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel server --out-dir build --presets=es2015 && webpack",
     "start": "cross-env NODE_ENV=production && nodemon ./build/index.js",

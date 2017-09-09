@@ -7,7 +7,7 @@ const DashboardItem = ( props )=>{
   
   const defaultPage = 1;
   return (
-    <div className="DashboardItem blue-grey darken-1"
+    <div className="DashboardItem"
          onClick={ ()=>{ props.onChangeDashboard( props.title, defaultPage)} }>
       <div className="item-name">
         <a>{ props.title }</a>
@@ -22,3 +22,5 @@ const DashboardItem = ( props )=>{
 }
 
 export default DashboardItem
+
+    // blue-grey darken-1

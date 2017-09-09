@@ -1,5 +1,6 @@
 import express from 'express';
 import mysql from 'mysql';
+import myQuery from './../config/database/query';
 
 const router = express.Router();
 const conn = mysql.createConnection({
@@ -26,24 +27,43 @@ router.get('/list', (req, res)=>{
     });
   }
 
-  const page = req.query.page;
   const count = req.query.count;
-  const rows = ( page - 1 ) * count;
-  const noticeSelect = `SELECT * FROM notice ORDER BY no DESC LIMIT ${rows}, ${count}`;
+  const rows = ( req.query.page - 1 ) * count;
+  const noticeRecords = `SELECT * FROM notice ORDER BY no DESC LIMIT ${rows}, ${count}`;
   try{
-    conn.query(noticeSelect, (error, exist)=>{
+    conn.query(noticeRecords, (error, exist)=>{
       if(error) throw error;
-      return res.status(200).json({
-        success: true,
-        data: exist,
-      });
+      try{
+        const reocrdsCount = myQuery.count('notice');
+        console.log( reocrdsCount );
+        conn.query( reocrdsCount, (error, result)=>{
+          if(error) throw error;
+  
+          let nmg = result[0].count % req.query.count;
+          let maxPage = parseInt( result[0].count / req.query.count );
+          if( nmg > 0 ) maxPage += 1;
+  
+          return res.status(200).json({
+            success: true,
+            maxPage,
+            records: exist,
+          });
+        });
+      } catch(exception) {
+        console.log('[exception]', exception);
+        return res.status(500).json({
+          error: 'MyQuery.count error',
+          code: 500,
+          exception
+        });
+      }
     });
-  } catch(e){
-    console.error('[Exception-notice-select]', e);
+  } catch(exception){
+    console.error('[Exception]', exception);
     return res.status(500).json({
-      error: 'Exception',
-      exception: e,
-      code: 444
+      error: 'MySQl noticeRecords',
+      exception,
+      code: 500
     });
   }
 

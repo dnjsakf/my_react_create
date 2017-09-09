@@ -8,8 +8,8 @@ import update from 'react-addons-update';
 const initialState = {
   status: 'INIT',
   notice: {
-    list: [],
-    count: 0
+    records: [],
+    maxPage: 0
   },
 }
 
@@ -28,15 +28,16 @@ export default function AdminNoticeReducer(state, action){
         {
           status: { $set: 'SUCCESS' },
           notice: {
-            list: { $set: action.data.data },
-            count: { $set: action.data.count }
+            records: { $set: action.data.records },
+            maxPage: { $set: action.data.maxPage }
           }
         }
       )
     case GET_NOTICE_FAILURE:
       return update( state, 
         {
-          status: 'FAILURE'
+          status: 'FAILURE',
+          notice: { $set: initialState.notice }
         }
       )
     default:

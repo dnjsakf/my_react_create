@@ -10,10 +10,10 @@ const DashboardTable = ( props )=>{
   if( props.table.records === 'INIT') return null;
   
   const options = {
-    except: ['subject', 'sourceCode']  
+    except: ['subject', 'sourceCode'],
   }
-  const tables = convertTable(props.table.records, options)
-  
+  const tables = convertTable(props.table.records, options);
+
   return (
     <section className="DashboardTable">
       <div className="tables">
@@ -29,9 +29,9 @@ const DashboardTable = ( props )=>{
       </div>
       <div className="pages">
         <Pagination 
-          items={ 3 }  // 으어어 이거 리미트도 설정해줘야되네
+          items={ props.table.maxPage }
           activePage={1}
-          maxButtons={8} 
+          maxButtons={ props.table.maxPage } 
           onSelect={ (page)=>{ props.onChangeDashboard('page-mode', page) } } />
       </div>
     </section>

@@ -42,7 +42,7 @@ router.post('/submit', (req, res)=>{
   }
   
   /**
-   * Logic
+   * Start Query
    */
   const insertObject = {
     qNo: req.body.questionNo,

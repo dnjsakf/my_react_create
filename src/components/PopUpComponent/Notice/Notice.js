@@ -6,6 +6,7 @@ import { Row, Col, Button, Table, Pagination } from 'react-materialize';
 
 const Notice = ( props )=>{
   if( typeof props.default === 'undefined' ) return null;
+  if( typeof props.default.records === 'undefined' ) return null;
 
   const tableOption = {
     except:['topic', 'content'],
@@ -13,7 +14,7 @@ const Notice = ( props )=>{
     //   records: false
     // },
   }
-  const tableItems = convertTable( props.default, tableOption );
+  const tableItems = convertTable( props.default.records, tableOption );
 
   return (
     <section className="Notice">
@@ -36,9 +37,9 @@ const Notice = ( props )=>{
       </Row>
       <Row className="pages">
         <Pagination 
-          items={ 3 }  // 으어어 이거 리미트도 설정해줘야되네
+          items={ props.default.maxPage }
           activePage={1}
-          maxButtons={8} 
+          maxButtons={ props.default.maxPage } 
           onSelect={ (page)=>{ props.onPage(page) } } />
       </Row>
       <Row className="buttons">

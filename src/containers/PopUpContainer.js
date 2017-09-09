@@ -101,7 +101,7 @@ class PopUpContainer extends Component{
         user={ this.props.session.user }  // default = editor
 
         defaultReport={ this.props.question }
-        defaultNotice={ this.props.notice.list }
+        defaultNotice={ this.props.notice }
 
         onClosePopUp={ this.props.onClosePopUp }
         onPageNotice={ this.handleNoticePage }
@@ -118,8 +118,8 @@ const mapStateToProps = (state)=>{
       user: state.Authorization.user,
     },
     notice: {
-      list: state.AdminNotice.notice.list,
-      count: state.AdminNotice.notice.count,
+      records: state.AdminNotice.notice.records,
+      maxPage: state.AdminNotice.notice.maxPage,
     },
     question: {
       no: state.RightContentControll.question.content.no,

@@ -18,8 +18,8 @@ const initialState = {
   },
   dashboard:{
     status: 'INIT',
-    fields: 'INIT',
-    state: 'INIT'
+    state: 'INIT',
+    count: 0
   }  
 }
 
@@ -62,8 +62,8 @@ export default function RightContentControll(state, action){
         {
           dashboard:{
             status: { $set: 'ERROR' },
-            fields: { $set: 'INIT' },
-            records: { $set: 'INIT' }
+            records: { $set: 'INIT' },
+            count: { $set: 0 }
           }
         }
       );
@@ -76,7 +76,7 @@ export default function RightContentControll(state, action){
         {
           question:{
             status: { $set: 'SUCCESS' },
-            content: { $set: action.data }          
+            content: { $set: action.data }
           }
         }
       );
@@ -89,8 +89,8 @@ export default function RightContentControll(state, action){
         {
           dashboard: {
             status: { $set: 'SUCCESS' },
-            fields: { $set: action.data.question.fields },
-            records: { $set: action.data.question.state }
+            records: { $set: action.data.records },
+            maxPage: { $set: action.data.maxPage }
           }
         }
       )

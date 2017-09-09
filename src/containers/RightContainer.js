@@ -26,17 +26,19 @@ class RightContainer extends Component{
   constructor(props){
     super(props);
 
-    this.state={
-      dashboard:{
-        visible: false
-      }
+    this.default={
+      sort: 'DESC'
     }
-    
-    this.default = {
+    this.state={
+      question: {
+        no: 0,
+      },
       dashboard:{
+        visible: false,
         mode: "challenger",
         page: 1,
-        count: 10
+        count: 10,
+        sort: 'ASC'
       }
     }
 
@@ -68,6 +70,7 @@ class RightContainer extends Component{
     this.props.passwordCheck( this.props.session.user.username, password);
   }
 
+  // 회원정보 수정 이벤트
   handleUpdateUserState( event ){
     const displayName = document.querySelector('input.UserState[name=displayName]');
     // const password = document.querySelect('input.UserState[name=password]');
@@ -89,6 +92,7 @@ class RightContainer extends Component{
     });
   }
 
+  // 회원탈퇴 이벤트
   handleDeleteUserState( event ){
     if( this.props.session.isLogined === false ) return false;
     if( this.props.session.user === 'UNKNOWN') return false;
@@ -96,21 +100,55 @@ class RightContainer extends Component{
     // TODO: action
   }
   
-  // Dashboard page changer 
-  handleDashboard( dashboard, page ){
-    console.log( dashboard, page);
+  sortToggle(prevSort, isPagingMode){
+    if( isPagingMode === true ){
+      return prevSort;
+    } else {
+      return (prevSort === 'ASC' ? 'DESC' : 'ASC' );
+    }
+  }
 
-    if( typeof page === 'undefined' ) return false;
-    if( typeof dashboard !== 'undefined' && dashboard === 'page-mode'){
-      dashboard = this.default.dashboard.mode;
+  // 대쉬보드 페이지 전환 && 대쉬보드 클릭 이벤트
+  handleDashboard( _dashboard, _page ){
+    console.log( _dashboard, _page);
+    console.log( this.state.question.no, this.props.question.no);
+    if( typeof _dashboard === 'undefined' ) return false;
+    if( typeof _page === 'undefined' ) return false;
+    
+    const isPagingMode = ( _dashboard === 'page-mode' ? true : false );
+    const isSameMode = this.state.dashboard.mode === _dashboard;
+    const isSameQuestion = this.state.question.no === this.props.question.no;
+    
+    const dashboard = ( isPagingMode ? this.state.dashboard.mode : _dashboard );
+    const questionNo = this.props.question.no;
+    const count = this.state.dashboard.count;
+
+    let sort = '';
+    if( isSameQuestion && isSameMode ){
+      sort = this.sortToggle(this.state.dashboard.sort, isPagingMode);
+    } else {
+      sort = this.default.sort;
     }
 
-    const questionNo = this.props.question.no;
-    const count = this.default.dashboard.count;
-    this.props.getDashboardState( questionNo, dashboard, page, count ).then(()=>{
-      this.setState( update( this.state, { dashboard: {visible: { $set: true } }} ));
-    })
+    this.props.getDashboardState( questionNo, dashboard, _page, count, sort ).then(()=>{
+      this.setState(
+        update( this.state, 
+          { 
+            question:{
+              no: { $set: questionNo }
+            },
+            dashboard: 
+            {
+              mode: { $set: dashboard },
+              visible: { $set: true },
+              sort : { $set: sort },
+            }
+          }
+        )
+      );
+    });
   }
+  // 대쉬보드 접기 이벤트
   handleFoldDashboard( event ){
     if( this.state.dashboard.visible === true ){
       this.setState( update( this.state, { dashboard: {visible: { $set: false } }} ));
@@ -151,6 +189,7 @@ class RightContainer extends Component{
     if( nextProps.session.status === 'WAITING' ) return false;
     if( nextProps.question.status === 'WAITING' ) return false;
     if( nextProps.dashboard.status === 'WAITING' ) return false;
+
     return true;
   }
 
@@ -220,8 +259,8 @@ const mapStateToProps = ( state )=>{
     dashboard:{
       status: state.RightContentControll.dashboard.status,
       table: {
-        fields: state.RightContentControll.dashboard.fields,
-        records: state.RightContentControll.dashboard.records
+        records: state.RightContentControll.dashboard.records,
+        maxPage: state.RightContentControll.dashboard.maxPage
       },
       stats:{
         challenger: state.RightContentControll.question.content.challenger_count,
@@ -252,8 +291,8 @@ const mapDispatchToProps = ( dispatch )=>{
     getAlgorithmData: ( algorithmNo ) =>{
       return dispatch( algorithmRequestData( algorithmNo ) );
     },
-    getDashboardState: ( questionNo, dashboard, page, count )=>{
-      return dispatch(questionStateRequest(questionNo, dashboard, page, count));
+    getDashboardState: ( questionNo, dashboard, page, count, sort )=>{
+      return dispatch(questionStateRequest(questionNo, dashboard, page, count, sort));
     }
   }
 }

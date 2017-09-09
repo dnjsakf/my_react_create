@@ -56,18 +56,20 @@ export function algorithmRequestData( questionNo ){
  * action: get Question State
  * example: no, subject, name, langauge, sourcecode, result, date
  */
-export function questionStateRequest( questionNo, dashboard, page, count ){
+export function questionStateRequest( questionNo, dashboard, page, count, sort ){
   return (dispatch)=>{
     
     dispatch( qusetionStateWaiting() );
 
-    return axios.get('/api/data/question/state', { params:{ questionNo, dashboard, page, count }} )
+    const options = { questionNo, dashboard, page, count, sort };
+    
+    return axios.get('/api/data/dashboard/state', { params: options } )
           .then((response)=>{
-            console.log('\n[action-question-state-success]', response, '\n');
+            console.log('\n[action-dashboard-state-success]', response, '\n');
             dispatch( questionStateSuccess( response.data ) )
           })
           .catch((error)=>{
-            console.log('\n[action-question-state-failure]', error.response.data.error , '\n');
+            console.log('\n[action-dashboard-state-failure]', error.response.data.error , '\n');
             dispatch( questionStateFailure( error.response.data.error ) )
           });
   }

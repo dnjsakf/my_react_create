@@ -52,9 +52,8 @@ class LeftContainer extends Component{
     return (
       <section className="left-tab">
         <TabMenuWrapper
-          isLogined = { this.props.session.isLogined }
-          menuTitles={ this.props.menuTitles }
-          disableTitles={ this.props.disableTitles }
+          titles={ this.props.titles }
+
           onMenuClick={ this.props.onMenuClick }
         />
         <ContentsWrapper

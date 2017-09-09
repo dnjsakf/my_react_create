@@ -201,8 +201,8 @@ class RightContainer extends Component{
     return (
       <section className="right-tab">
         <TabMenuWrapper
-          menuTitles={ this.props.menuTitles }
-          disableTitles={ this.props.disableTitles }
+          titles={ this.props.titles }
+
           onMenuClick={ this.props.onMenuClick }
           />
         <ContentsWrapper

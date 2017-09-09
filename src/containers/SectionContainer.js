@@ -10,19 +10,32 @@ class SectionContainer extends Component{
   constructor(props){
     super(props);
 
+    this.default={
+      title: {
+        left: ['Algorithm'],
+        right: ['Home']
+      }
+    }
+
     this.state ={
       left:{
-        isSolving: false,
-        menuTitles: ['Algorithm', 'MyAlgorithm', 'Detail'],
-        disableTitles: ['Detail'],
-        menu:'Algorithm',
+        menu: this.default.title.left[0],
+        title: this.default.title.left,
+        // temp:{
+        //   visitor: ['Algorithm'],
+        //   member: ['Algorithm', 'MyAlgorithm'],
+        //   disable: ['Detail']
+        // }
       },
       right:{
         algorithmNo: undefined, 
-        isSolving: false,
-        menuTitles: ['Home', 'MyPage', 'Detail', 'Editor'],
-        disableTitles: ['Detail', 'Editor'],
-        menu: 'Home',
+        menu: this.default.title.right[0],
+        title: this.default.title.right,
+        // temp:{
+        //   visitor: ['Home'],
+        //   member: ['Home', 'MyPage'],
+        //   disable: ['Detail', 'Editor']
+        // }
       }
     }
     this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -60,17 +73,18 @@ class SectionContainer extends Component{
 
   // algorithm 선택 이벤트
   handleAlgorithmSelect( algorithmNo ){
-    console.log('[Algorihtm-select ]', algorithmNo );
-    const showLeftMenu = 'Detail';
-    const del = this.state.right.disableTitles.indexOf(showLeftMenu);
-    const delCount = del === -1 ? 0 : 1;
+    console.log('[Algorihtm-select ]', algorithmNo, this.state.right.title );
+
+    const setLeftMenu = 'Detail';
+    const existMenu = this.state.right.title.indexOf(setLeftMenu);
+
     this.setState(
       update( this.state,
         {
           right:{
             algorithmNo: { $set: algorithmNo }, 
-            menu: { $set: showLeftMenu },
-            disableTitles: { $splice: [[del, delCount]]},
+            menu: { $set: setLeftMenu },
+            title: { $push: ( existMenu === -1 ? [setLeftMenu]  : [] ) }
           }
         }
       )
@@ -80,26 +94,23 @@ class SectionContainer extends Component{
   // algorithm solve 이벤트
   handleAlgorithmSolve(){
     console.log('[Algorihtm-Sovle-Click]', this.state);
-    const getRightMenu = this.state.right.menu;
+    const setLeftMenu = this.state.right.menu;
     const setRightMenu = 'Editor';
     
     if(this.state.right.menu.toLowerCase() === 'detail'){
-      const delLeft = this.state.left.disableTitles.indexOf(getRightMenu);
-      const delRight = this.state.right.disableTitles.indexOf(setRightMenu);
-      const delLeftCount = delLeft === -1 ? 0 : 1;
-      const delRightCount = delRight === -1 ? 0 : 1;
+      const existMenuLeft = this.state.left.title.indexOf(setLeftMenu);
+      const existMenuRight = this.state.right.title.indexOf(setRightMenu);
+
       this.setState(
         update( this.state,
           {
             left: {
-              isSolving: { $set: true },
-              menu: { $set: getRightMenu },
-              disableTitles: { $splice: [[delLeft, delLeftCount]]},
+              menu: { $set: setLeftMenu },
+              title: { $push: ( existMenuLeft === -1 ? [setLeftMenu]  : [] ) }
             },
             right: {
-              isSolving: { $set: true },
               menu: { $set: setRightMenu },
-              disableTitles: { $splice: [[delRight, delRightCount]]},
+              title: { $push: ( existMenuRight === -1 ? [setLeftMenu]  : [] ) }
             }
           }
         )
@@ -113,6 +124,59 @@ class SectionContainer extends Component{
   // 액션 발생 후 Props가 넘어오면 발생함.
   componentWillReceiveProps(nextProps){
     console.log('[메인 세션 컴포넌트 프롭스 받음]', nextProps, this.state);
+    if( nextProps.session.isLogined === true ){
+      const setLeftMenu = 'MyAlgorithm';
+      const setRightMenu = 'MyPage';
+      const existMenuLeft = this.state.left.title.indexOf(setLeftMenu);
+      const existMenuRight = this.state.right.title.indexOf(setRightMenu);
+      if( existMenuLeft === -1 && existMenuRight === -1){
+        this.setState(
+          update(this.state,  
+            {
+              left:{
+                title: { $push: [setLeftMenu] }
+              },
+              right:{
+                title: { $push: [setRightMenu] }
+              }
+            }
+          )
+        )
+      }
+    }
+  }
+
+  // 왼쪽이나 오른쪽 메뉴 state가 변경되면 업데이트해라.
+  shouldComponentUpdate(nextProps, nextState){
+    console.log( '[메인 세션 변경할꺼?]', nextProps, nextState);
+    console.log( '[메인 세션 변경할꺼?]', nextProps, nextState);
+    console.log( '[메인 세션 변경할꺼?]', nextProps, nextState);
+
+    const algorithmNoChanged = ( this.state.right.algorithmNo !== nextState.right.algorithmNo );
+    console.log('[문제 변경]', algorithmNoChanged, this.state.right.algorithmNo, nextState.right.algorithmNo );
+    if( algorithmNoChanged ) return true
+
+    const leftTitleChanged = ( this.state.left.title !== nextState.left.title );
+    const rightTitleChanged = ( this.state.right.title !== nextState.right.title );
+    console.log('[왼쪽 메뉴 추가]', leftTitleChanged, this.state.left.title, nextState.left.title)
+    console.log('[오른쪽 메뉴 추가]', rightTitleChanged, this.state.right.title, nextState.right.title)
+    if( leftTitleChanged || rightTitleChanged ) return true
+
+    const leftMenuChanged = ( this.state.left.menu !== nextState.left.menu );
+    const rightMenuChanged = ( this.state.right.menu !== nextState.right.menu );
+    console.log('[왼쪽 메뉴 변경]', leftMenuChanged, this.state.left.menu, nextState.left.menu)
+    console.log('[오른쪽 메뉴 변경]', rightMenuChanged, this.state.right.menu, nextState.right.menu)
+    if( leftMenuChanged || rightMenuChanged ) return true;
+    
+    if( nextProps.status.session === 'WAITING ') return false;
+    if( nextProps.status.userState === 'WAITING' ) return false;
+    if( nextProps.status.dashboard === 'WAITING' ) return false;
+    if( nextProps.status.leftContent === 'WAITING' ) return false;
+    if( nextProps.status.rightContent === 'WAITING' ) return false;
+    console.log('[FINISH STATUS WAITING]');
+    
+    console.log('[여기까지 왔으면 업데이트 안해도됨]');
+    return false;
   }
   componentWillUpdate(){
     console.log('[메인 세션 컴포넌트 업데이트 진행]');
@@ -121,33 +185,23 @@ class SectionContainer extends Component{
     console.log('[메인 세션 컴포넌트 업데이트 완료]');
   }
 
-  // 왼쪽이나 오른쪽 메뉴 state가 변경되면 업데이트해라.
-  shouldComponentUpdate(nextProps, nextState){
-    const update = JSON.stringify(nextState) !== JSON.stringify(this.state);
-    
-    console.log('[왼쪽 메뉴 변경]',this.state.left.menu, nextState.left.menu)
-    console.log('[오른쪽 메뉴 변경]',this.state.right.menu, nextState.right.menu)
-    console.log('[업데이트 해야됨?]', update);
-    
-    return update;
-  }
-
   render(){
     return (
       <section className="main-section">
         <LeftContainer 
           menu={ this.state.left.menu }
-          disableTitles={ this.state.left.disableTitles }
-          menuTitles={ this.state.left.menuTitles }
+          
+          titles={ this.state.left.title }
 
           onMenuClick={ this.handleMenuClick }
           onAlgorithmClick={ this.handleAlgorithmSelect }
           />
         <RightContainer 
           menu={ this.state.right.menu }
+
+          titles={ this.state.right.title }
+          
           algorithmNo={ this.state.right.algorithmNo }
-          disableTitles={ this.state.right.disableTitles }
-          menuTitles={ this.state.right.menuTitles }
           
           onShowPopUp={ this.props.onShowPopUp }
           onMenuClick={ this.handleMenuClick }
@@ -167,6 +221,16 @@ import {
 // store에 저장된 데이터를 여기에 불러올꺼야
 const mapStateToProps = (state)=>{
   return {
+    status:{
+      session: state.Authorization.status,
+      userState: state.UserState.status,
+      dashboard: state.RightContentControll.dashboard.status,
+      leftContent: state.LeftContentControll.status,
+      rightContent: state.RightContentControll.question.status
+    },
+    session:{
+      isLogined: state.Authorization.isLogined,
+    }
   };
 }
 export default connect(

@@ -7,17 +7,15 @@ import { Button } from 'react-materialize';
 
 const TabMenuItem = ( props )=>{
   let items = [];
-  props.menuTitles.map((item, index)=>{
-    if(props.disableTitles.indexOf(item) === -1 ){
-      items.push(
-        <li  key={ index }>
-          <Button 
-            onClick={ ()=>{ props.onMenuClick( 'right', item ) } }>
-            { item }
-          </Button>
-        </li>
-      );
-    }
+  props.titles.map((item, index)=>{
+    items.push(
+      <li  key={ index } >
+        <Button 
+          onClick={ ()=>{ props.onMenuClick( 'right', item ) } }>
+          { item }
+        </Button>
+      </li>
+    );
   });
   
   return (

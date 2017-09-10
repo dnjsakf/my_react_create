@@ -54,8 +54,14 @@ app.use((0, _expressSession2.default)({
 
 // Router Controll
 app.use('/', _express2.default.static(_path2.default.join(__dirname, './../public')));
-app.use('/api/data', [_routes.algorithm]);
-app.use('/api/auth', [_routes.auth]);
+app.use('/api/data', _routes.algorithm);
+app.use('/api/auth', _routes.auth);
+app.use('/api/userstate', _routes.userstate);
+app.use('/api/report', _routes.report);
+app.use('/api/notice', _routes.notice);
+app.use('/api/admin', _routes.admin);
+app.use('/api/compile', _routes.compile);
+
 app.get('*', function (req, res) {
   return res.status(200).sendFile(_path2.default.join(__dirname, './../public/index.html'));
 });

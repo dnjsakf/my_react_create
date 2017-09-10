@@ -4,6 +4,7 @@ import userstate from './userstate';
 import report from './report';
 import notice from './notice';
 import admin from './admin';
+import compile from './compile';
 
 export {
   algorithm,
@@ -11,5 +12,6 @@ export {
   userstate,
   report,
   notice,
+  compile,
   admin
 }

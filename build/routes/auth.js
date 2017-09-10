@@ -39,13 +39,14 @@ router.post('/session', function (req, res) {
 
   if (typeof session.user == 'undefined') {
     return res.status(400).json({
+      success: false,
       error: 'Not found user session',
       code: 1
     });
   }
 
   return res.status(200).json({
-    username: session.user.username
+    user: session.user
   });
 });
 
@@ -55,9 +56,16 @@ router.post('/session', function (req, res) {
 router.post('/login', function (req, res) {
   var session = req.session;
   var condition = {
+    // get is syntax for save to session
+    no: 'get',
     email: req.body.username,
     password: req.body.password,
-    name: 'get'
+    name: 'get',
+    date: 'get',
+    setting_editor_theme: 'get',
+    setting_editor_language: 'get',
+    setting_editor_font: 'get',
+    setting_editor_fontsize: 'get'
   };
   var fields = Object.keys(condition);
   var findUser = 'SELECT ' + fields + ' FROM member WHERE email = ?';
@@ -79,13 +87,24 @@ router.post('/login', function (req, res) {
       });
     }
     session.user = {
+      no: exist[0].no,
       username: exist[0].email,
       displayName: exist[0].name,
-      password: exist[0].password
-    };
+      regDate: exist[0].date,
+      editor: {
+        editorTheme: exist[0].setting_editor_theme,
+        editorLanguage: exist[0].setting_editor_language,
+        editorFont: exist[0].setting_editor_font,
+        editorFontSize: exist[0].setting_editor_fontsize
+        /**
+         * 기타 옵션들은
+         * 추후에 필요할 때 추가하도록 하자. 
+         */
+      } };
     console.log('[session-check-login]', session.user);
     return res.status(200).json({
-      success: true
+      success: true,
+      user: session.user
     });
   });
 });
@@ -154,6 +173,8 @@ router.post('/register', function (req, res) {
  * 비밀번호 체크 (MyPage)
  */
 router.post('/passwordCheck', function (req, res) {
+
+  console.log(req.body);
   var findUser = 'SELECT password FROM member WHERE email = ?';
   conn.query(findUser, [req.body.username], function (error, exist) {
     if (error) throw error;

@@ -44,7 +44,7 @@ export function algorithmRequestData( questionNo ){
     return axios.get('/api/data/algorithm/data/'+questionNo, { questionNo : questionNo })
           .then((response)=>{
             console.log('\n[action-algo-data-success]', response, '\n');
-            dispatch( algorithmDataSuccess(response.data.question) );    // [qusetion] 서버에서 보내는 json
+            dispatch( algorithmDataSuccess(response.data) );    // [qusetion] 서버에서 보내는 json
           })
           .catch((error)=>{
             console.error('\n[action-algo-data-failure]', error.response.data.error , '\n');

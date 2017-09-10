@@ -155,7 +155,6 @@ class RightContainer extends Component{
     }
   }
 
-
   componentWillMount(){
     console.log('[right-will-mount]');
   }
@@ -164,11 +163,8 @@ class RightContainer extends Component{
   }
   
   componentWillReceiveProps(nextProps){
+    console.log('[오른쪽 프롭스 받음]', this.props, nextProps);
     const menu = nextProps.menu.toLowerCase();
-    console.log('[right-receive]', menu, nextProps.algorithmNo, nextProps.question.status);
-    console.log('[right-receive]', nextProps.session.status);
-    console.log('[right-receive]', nextProps.dashboard);
-
     switch( menu ){
       case 'detail':
         if( nextProps.algorithmNo !== this.props.algorithmNo ){
@@ -181,21 +177,53 @@ class RightContainer extends Component{
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    console.log( "[업데이트?-right-container]",
-            nextProps.session.status, 
-            nextProps.question.status, 
-            nextProps.dashboard.status,
-            );
-    if( nextProps.session.status === 'WAITING' ) return false;
-    if( nextProps.question.status === 'WAITING' ) return false;
-    if( nextProps.dashboard.status === 'WAITING' ) return false;
+    if( nextProps.status.session === 'WAITING' ) return false;
+    if( nextProps.status.question === 'WAITING' ) return false;
+    if( nextProps.status.dashboard === 'WAITING' ) return false;
+    if( nextProps.status.update === 'WAITING' ) return false;
 
-    return true;
+    const menuChanged = ( this.props.menu !== nextProps.menu );
+    console.log('[오른쪽 메뉴 변경]', menuChanged, this.props.menu, nextProps.menu );
+    if( menuChanged ) return true;
+
+    const titlesChanged = ( this.props.titles !== nextProps.titles );
+    console.log('[오른쪽 메뉴 추가]', titlesChanged, this.props.titles, nextProps.titles );
+    if( titlesChanged ) return true;
+    
+    const sessionChanged = ( this.props.session.isLogined !== nextProps.session.isLogined );
+    console.log('[오른쪽 세션 변경]', sessionChanged, this.props.session.isLogined, nextProps.session.isLogined );
+    if( sessionChanged ) return true;
+
+    const questionChanged = ( this.props.question !== nextProps.question );
+    console.log('[오른쪽 문제 변경]', questionChanged, this.props.question, nextProps.question );
+    if( questionChanged ) return true;
+
+    const dashboardChanged = ( this.state.dashboard !== nextState.dashboard );
+    console.log('[오른쪽 대쉬보드 변경]', dashboardChanged, this.state.dashboard, nextState.dashboard );
+    if( dashboardChanged ) return true;
+    
+    const dashboardStatsChanged = ( this.props.dashboard.stats !== nextProps.dashboard.stats );
+    console.log('[오른쪽 대쉬보드 통계 변경]', dashboardStatsChanged, this.props.dashboard.stats, nextProps.dashboard.stats );
+    if( dashboardStatsChanged ) return true;
+
+    const dashboardTableChanged = ( this.props.dashboard.table !== nextProps.dashboard.table );
+    console.log('[오른쪽 대쉬보드 테이블 변경]', dashboardTableChanged, this.props.dashboard.table, nextProps.dashboard.table );
+    if( dashboardTableChanged ) return true;
+
+    const pwdCheckChanged = ( this.props.pwdCheck !== nextProps.pwdCheck );
+    console.log('[오른쪽 mypage 변경]', pwdCheckChanged, this.props.pwdCheck, nextProps.pwdCheck );
+    if( pwdCheckChanged ) return true;
+
+    console.log('[오른쪽 업데이트 안함]');
+    return false;
   }
-
   componentWillUpdate(){
-    console.log('[업데이트-right-container]')
+    console.log('[오른쪽 업데이트 진행]');
   }
+  componentDidUpdate(){
+    console.log('[오른쪽 업데이트 완료]');
+  }
+
 
   render(){
     return (
@@ -239,37 +267,29 @@ class RightContainer extends Component{
 
 const mapStateToProps = ( state )=>{
   return {
+    status:{
+      session: state.Authorization.status,
+      question: state.RightContentControll.question.status,
+      update: state.UserState.status,
+      dashboard: state.RightContentControll.dashboard.status,
+    },
     session:{
-      status: state.Authorization.status,
       isLogined: state.Authorization.isLogined,
       user: state.Authorization.user
     },
     question:{
-      status: state.RightContentControll.question.status,
       no: state.RightContentControll.question.content.no,
-      detail: state.RightContentControll.question.content
+      detail: state.RightContentControll.question.content,
     },
     pwdCheck:{
-      status: state.Authorization.status,
       checked: state.Authorization.pwdChecked,
     },
-    update:{
-      status: state.UserState.status,
-    },
     dashboard:{
-      status: state.RightContentControll.dashboard.status,
       table: {
         records: state.RightContentControll.dashboard.records,
         maxPage: state.RightContentControll.dashboard.maxPage
       },
-      stats:{
-        challenger: state.RightContentControll.question.content.challenger_count,
-        perfect: state.RightContentControll.question.content.perfect_count,
-        current: state.RightContentControll.question.content.current_persent,
-        c: state.RightContentControll.question.content.lang_c_count,
-        java: state.RightContentControll.question.content.lang_java_count,
-        python: state.RightContentControll.question.content.lang_python_count,
-      }
+      stats: state.RightContentControll.question.stats
     }
   }
 }

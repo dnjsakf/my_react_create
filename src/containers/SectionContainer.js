@@ -10,32 +10,30 @@ class SectionContainer extends Component{
   constructor(props){
     super(props);
 
+    console.log( '[섹션 프롭스]' ,props )
+
     this.default={
       title: {
-        left: ['Algorithm'],
-        right: ['Home']
+        visitor: {
+          left: ['Algorithm'],
+          right: ['Home']
+        },
+        member: {
+          left: ['Algorithm', 'MyAlgorithm'],
+          right: ['Home', 'MyPage']
+        }
       }
     }
-
     this.state ={
+      titleUpdated: false,
       left:{
-        menu: this.default.title.left[0],
-        title: this.default.title.left,
-        // temp:{
-        //   visitor: ['Algorithm'],
-        //   member: ['Algorithm', 'MyAlgorithm'],
-        //   disable: ['Detail']
-        // }
+        menu: this.default.title.visitor.left[0],
+        title: this.default.title.visitor.left,
       },
       right:{
         algorithmNo: undefined, 
-        menu: this.default.title.right[0],
-        title: this.default.title.right,
-        // temp:{
-        //   visitor: ['Home'],
-        //   member: ['Home', 'MyPage'],
-        //   disable: ['Detail', 'Editor']
-        // }
+        menu: this.default.title.visitor.right[0],
+        title: this.default.title.visitor.right,
       }
     }
     this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -110,7 +108,7 @@ class SectionContainer extends Component{
             },
             right: {
               menu: { $set: setRightMenu },
-              title: { $push: ( existMenuRight === -1 ? [setLeftMenu]  : [] ) }
+              title: { $push: ( existMenuRight === -1 ? [setRightMenu]  : [] ) }
             }
           }
         )
@@ -118,71 +116,94 @@ class SectionContainer extends Component{
     }
   }
 
-  // 두개의 Action이 동시에 발생할 일이 없으니까,
-  // 여기서 setState를 각각의 상태에 맞게 요청하면 되지 않을까?
-  // 여기는 첫로드에 실행은 안되고,
-  // 액션 발생 후 Props가 넘어오면 발생함.
+  componentDidMount(){
+    console.log('[섹션 마운트]', this.props);
+  }
+
+  // 근데 여기서 이거 만들면
+  // Props를 받을때마다 탐색해야되서
+  // 비용이 좀 들꺼같은데..
   componentWillReceiveProps(nextProps){
-    console.log('[메인 세션 컴포넌트 프롭스 받음]', nextProps, this.state);
-    if( nextProps.session.isLogined === true ){
-      const setLeftMenu = 'MyAlgorithm';
-      const setRightMenu = 'MyPage';
-      const existMenuLeft = this.state.left.title.indexOf(setLeftMenu);
-      const existMenuRight = this.state.right.title.indexOf(setRightMenu);
-      if( existMenuLeft === -1 && existMenuRight === -1){
+    console.log('[섹션 프롭스 받음]', this.props, nextProps);
+    // 기본 메뉴 세팅
+    if( this.state.titleUpdated === false ){
+      if( nextProps.session.isLogined === true ){
         this.setState(
-          update(this.state,  
+          update( this.state,  
             {
+              titleUpdated: { $set: true },
               left:{
-                title: { $push: [setLeftMenu] }
+                title: { $set: this.default.title.member.left }
               },
               right:{
-                title: { $push: [setRightMenu] }
+                title: { $set: this.default.title.member.right }
               }
             }
           )
-        )
+        );
+      }
+    } else {
+      if( nextProps.session.isLogined === false){
+        this.setState(
+          update( this.state,  
+            {
+              titleUpdated: { $set: false },
+              left:{
+                menu: { $set: this.default.title.visitor.left[0] },
+                title: { $set: this.default.title.visitor.left }
+              },
+              right:{
+                menu: { $set: this.default.title.visitor.right[0] },
+                title: { $set: this.default.title.visitor.right }
+              }
+            }
+          )
+        );
       }
     }
   }
 
   // 왼쪽이나 오른쪽 메뉴 state가 변경되면 업데이트해라.
   shouldComponentUpdate(nextProps, nextState){
-    console.log( '[메인 세션 변경할꺼?]', nextProps, nextState);
-    console.log( '[메인 세션 변경할꺼?]', nextProps, nextState);
-    console.log( '[메인 세션 변경할꺼?]', nextProps, nextState);
-
-    const algorithmNoChanged = ( this.state.right.algorithmNo !== nextState.right.algorithmNo );
-    console.log('[문제 변경]', algorithmNoChanged, this.state.right.algorithmNo, nextState.right.algorithmNo );
-    if( algorithmNoChanged ) return true
-
-    const leftTitleChanged = ( this.state.left.title !== nextState.left.title );
-    const rightTitleChanged = ( this.state.right.title !== nextState.right.title );
-    console.log('[왼쪽 메뉴 추가]', leftTitleChanged, this.state.left.title, nextState.left.title)
-    console.log('[오른쪽 메뉴 추가]', rightTitleChanged, this.state.right.title, nextState.right.title)
-    if( leftTitleChanged || rightTitleChanged ) return true
-
-    const leftMenuChanged = ( this.state.left.menu !== nextState.left.menu );
-    const rightMenuChanged = ( this.state.right.menu !== nextState.right.menu );
-    console.log('[왼쪽 메뉴 변경]', leftMenuChanged, this.state.left.menu, nextState.left.menu)
-    console.log('[오른쪽 메뉴 변경]', rightMenuChanged, this.state.right.menu, nextState.right.menu)
-    if( leftMenuChanged || rightMenuChanged ) return true;
+    const leftTitleInserted = ( this.state.left.title !== nextState.left.title );
+    console.log('[섹션-왼쪽 메뉴 추가]', leftTitleInserted, this.state.left.title, nextState.left.title)
+    if( leftTitleInserted ) return true;
     
+    const rightTitleInserted = ( this.state.right.title !== nextState.right.title );
+    console.log('[섹션-오른쪽 메뉴 추가]', rightTitleInserted, this.state.right.title, nextState.right.title)
+    if( rightTitleInserted ) return true;
+    
+    console.log('[섹션 status]', nextProps.status);
     if( nextProps.status.session === 'WAITING ') return false;
     if( nextProps.status.userState === 'WAITING' ) return false;
     if( nextProps.status.dashboard === 'WAITING' ) return false;
     if( nextProps.status.leftContent === 'WAITING' ) return false;
     if( nextProps.status.rightContent === 'WAITING' ) return false;
-    console.log('[FINISH STATUS WAITING]');
     
-    console.log('[여기까지 왔으면 업데이트 안해도됨]');
+    const sessionChanged = ( this.props.session.isLogined !== nextProps.session.isLogined );
+    console.log('[섹션 세션 변경]', sessionChanged, this.props.session.isLogined, nextProps.session.isLogined );
+    if( sessionChanged ) return true;
+
+    const algorithmChanged = ( this.state.right.algorithmNo !== nextState.right.algorithmNo );
+    console.log('[섹션 문제 변경]', algorithmChanged, this.state.right.algorithmNo, nextState.right.algorithmNo );
+    if( algorithmChanged ) return true;
+
+    const leftMenuChanged = ( this.state.left.menu !== nextState.left.menu );
+    console.log('[섹션-왼쪽 메뉴 변경]', leftMenuChanged, this.state.left.menu, nextState.left.menu)
+    if( leftMenuChanged ) return true;
+    
+    const rightMenuChanged = ( this.state.right.menu !== nextState.right.menu );
+    console.log('[섹션-오른쪽 메뉴 변경]', rightMenuChanged, this.state.right.menu, nextState.right.menu)
+    if( rightMenuChanged ) return true;
+    
+    console.log('[섹션 업데이트 안함]');
     return false;
   }
   componentWillUpdate(){
-    console.log('[메인 세션 컴포넌트 업데이트 진행]');
+    console.log('[섹션 업데이트 진행]');
   }
   componentDidUpdate(){
-    console.log('[메인 세션 컴포넌트 업데이트 완료]');
+    console.log('[섹션 업데이트 완료]');
   }
 
   render(){

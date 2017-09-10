@@ -13,9 +13,9 @@ class LeftContainer extends Component{
   }
 
   componentWillMount(){
-    if( this.props.content.status === 'INIT' ){
+    if( this.props.status.content === 'INIT' ){
       if( this.props.menu.toLowerCase() === 'algorithm'){
-        console.log('[left-will-mount]', this.props.content.status);
+        console.log('[left-will-mount]', this.props.status.content);
         this.props.getAlgorithmList('list'); 
       }
     }
@@ -25,7 +25,7 @@ class LeftContainer extends Component{
   }
 
   componentWillReceiveProps(nextProps){
-    console.log('[left-receive]');
+    console.log('[왼쪽 프롭스 받음]', this.props, nextProps);
     const nextMenu = nextProps.menu.toLowerCase();
     const prevMenu = this.props.menu.toLowerCase();
 
@@ -43,9 +43,37 @@ class LeftContainer extends Component{
     }
   }
   shouldComponentUpdate(nextProps, nextState){
-    if( nextProps.session.status === 'WAITING' ) return false;
-    if( nextProps.content.status === 'WAITING' ) return false;
-    return true;
+    if( nextProps.status.session === 'WAITING' ) return false;
+    if( nextProps.status.content === 'WAITING' ) return false;
+
+    const menuChanged = ( this.props.menu !== nextProps.menu );
+    console.log('[왼쪽 메뉴 변경]', menuChanged, this.props.menu, nextProps.menu );
+    if( menuChanged ) return true;
+
+    const sessionChanged = ( this.props.session !== nextProps.session );
+    console.log("[왼쪽 세션 변경]", sessionChanged, this.props.session, nextProps.session );
+    if( sessionChanged ) return true;
+
+    const tabTitleChanged = ( this.props.titles !== nextProps.titles );
+    console.log("[왼쪽 메뉴 변경]", tabTitleChanged, this.props.titles, nextProps.titles );
+    if( tabTitleChanged ) return true;
+
+    const algorithmListChanged = ( this.props.content.list !== nextProps.content.list );
+    console.log("[왼쪽 리스트 변경]", algorithmListChanged, this.props.content.list, nextProps.content.list );
+    if( algorithmListChanged ) return true;
+
+    const algorithmDetailChanged = ( this.props.content.detail !== nextProps.content.detail );
+    console.log("[왼쪽 문제 변경]", algorithmDetailChanged, this.props.content.detail, nextProps.content.detail );
+    if( algorithmDetailChanged ) return true;
+
+    console.log('[왼쪽 업데이트 안함]');
+    return false;
+  }
+  componentWillUpdate(){
+    console.log('[왼쪽 업데이트 진행]');
+  }
+  componentDidUpdate(){
+    console.log('[왼쪽 업데이트 완료]');
   }
 
   render(){
@@ -74,12 +102,14 @@ import {
 } from '../actions/Algorithm';
 const mapStateToProps = (state)=>{
   return {
+    status:{
+      session: state.Authorization.status,
+      content: state.LeftContentControll.status, 
+    },
     session:{
-      status: state.Authorization.status,
       isLogined: state.Authorization.isLogined,
     },
     content:{
-      status: state.LeftContentControll.status, 
       list: state.LeftContentControll.content,
       detail: state.RightContentControll.question.content
     }

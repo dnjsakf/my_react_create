@@ -9,10 +9,11 @@ const DashboardTable = ( props )=>{
   if( typeof props.table === 'undefined' ) return null;
   if( props.table.records === 'INIT') return null;
   
-  const options = {
-    except: ['subject', 'sourceCode'],
-  }
+  const options = { except: ['subject', 'sourceCode'] };
   const tables = convertTable(props.table.records, options);
+
+  const existMaxPage = ( typeof props.table.maxPage === 'undefined' ? false : true );
+  const maxPage = ( existMaxPage ? props.table.maxPage : 1 );
 
   return (
     <section className="DashboardTable">
@@ -29,9 +30,9 @@ const DashboardTable = ( props )=>{
       </div>
       <div className="pages">
         <Pagination 
-          items={ props.table.maxPage }
+          items={ maxPage }
           activePage={1}
-          maxButtons={ props.table.maxPage } 
+          maxButtons={ maxPage } 
           onSelect={ (page)=>{ props.onChangeDashboard('page-mode', page) } } />
       </div>
     </section>

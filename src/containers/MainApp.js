@@ -69,15 +69,34 @@ class MainApp extends Component{
 
   componentWillMount(){
     console.log('[main-will-mount]');
+    this.props.sessionCheck();
   }
   componentDidMount(){
-    if( this.props.session.isLogined === false ){
-      this.props.sessionCheck();
-    }
+    console.log('[main-did-mount]');
+  }
+
+  componentWillReceiveProps(nextProps){
+    console.log('[메인 프롭스 받음]', this.props, nextProps);
   }
   shouldComponentUpdate(nextProps, nextState){
-    if( nextProps.session.status === 'WAITING' ) return false;
-    return true;
+    if( nextProps.status.session === 'WAITING' ) return false;
+
+    const popupChanged = ( this.state.popup !== nextState.popup );
+    console.log('[메인 팝업 변경]', popupChanged, this.state.popup, nextState.popup );
+    if( popupChanged ) return true;
+    
+    const sessionChanged = ( this.props.session !== nextProps.session );
+    console.log('[메인 세션 변경]', sessionChanged, this.props.session, nextProps.session );
+    if( sessionChanged ) return true;
+    
+    console.log('[메인 업데이트 안함]');
+    return false;
+  }
+  componentWillUpdate(){
+    console.log('[메인 업데이트 진행]');
+  }
+  componentDidUpdate(){
+    console.log('[메인 업데이트 완료]');
   }
   
   render(){
@@ -107,8 +126,10 @@ MainApp.defaultProps = defaultProps;
 // question.state
 const mapStateToProps = (state)=>{
   return {
+    status:{
+      session: state.Authorization.status,
+    },
     session:{
-      status: state.Authorization.status,
       isLogined: state.Authorization.isLogined,
       user: state.Authorization.user
     }

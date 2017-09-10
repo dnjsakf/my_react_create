@@ -97,8 +97,6 @@ router.get('/algorithm/:type', (req, res)=>{
         code: 403
       });
   }
-  
-  
 });
 
 /**
@@ -112,8 +110,13 @@ router.get('/algorithm/data/:questionNo', (req, res)=>{
       code: 1
     });
   }
-  const sql = `SELECT * FROM questions WHERE no = ? `;
-  conn.query(sql, [req.params.questionNo] ,(error, question)=>{
+  const questionFields = [
+    'no', 'subject', 
+    'text', 'input_info', 'output_info',
+    'input','output', 'regno', 'date'
+  ].join(', ');
+  const question = `SELECT ${questionFields} FROM questions WHERE no = ? `;
+  conn.query(question, [req.params.questionNo] ,(error, question)=>{
     if(error) throw error;
     if(question.lenght === 0){
       return res.status(404).json({
@@ -121,10 +124,30 @@ router.get('/algorithm/data/:questionNo', (req, res)=>{
         error: 0
       });
     }
-    return res.status(200).json({
-      success: true,
-      question: question[0]
-    })
+    const dashboardFields = [
+      'challenger', 'current', 'perfect', 
+      'c','java', 'python'
+    ].join(', ')
+    const dashboard = [
+      `SELECT ${dashboardFields}`,
+      `FROM battlecode_stats.total`,
+      `WHERE question = ${req.params.questionNo}`
+    ].join(' ');
+    conn.query(dashboard, (error, stats)=>{
+      if(error) throw error;
+      if( stats.length === 0 ){
+        return res.status(404).json({
+          error: 'Not Found Dashboard Stats',
+          code: 404
+        });
+      }
+      console.log( stats[0] );
+      return res.status(200).json({
+        success: true,
+        question: question[0],
+        stats: stats[0]
+      })
+    });
   });
 });
 

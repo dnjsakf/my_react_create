@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import update from 'react-addons-update';
-import axios from 'axios';
 
 import { PopUpWrapper } from '../components/PopUpComponent';
 
+import { authSessionRequest } from '../actions/Authorization';
 import { insertUserReportRequest } from '../actions/UserReport';
 import { getNoticeRequest } from '../actions/Notice';
 import { userStateUpdateRequest } from '../actions/UserState';
@@ -74,16 +74,6 @@ class PopUpContainer extends Component{
     this.props.getNoticeList( page, count );
   }
 
-  componentWillMount(){
-    const getNoticeStats = axios.get('/api/admin/stats/notice')
-      .then((response)=>{
-        console.log('[getNoticeStatsSuccess]', response.data);
-      })
-      .catch((error)=>{
-        console.error('[getNoticeStatsError]', error.response.data.error );
-      });
-  }
-  
   componentDidMount(){
     if( this.props.popup.mode === 'notice' ){
       const page = this.default.page;
@@ -113,6 +103,11 @@ class PopUpContainer extends Component{
 }
 const mapStateToProps = (state)=>{
   return {
+    status:{
+      session: state.Authorization.status,
+      notice: state.AdminNotice.notice.status,
+      qusetion: state.RightContentControll.question.status
+    },
     session:{
       isLogined: state.Authorization.isLgoined,
       user: state.Authorization.user,
@@ -138,6 +133,9 @@ const mapDispatchToProps = (dispatch)=>{
     updateUserState: ( mode, updateData )=>{
       return dispatch(userStateUpdateRequest( mode, updateData ));
     },
+    sessionCheck: ()=>{
+      return dispatch(authSessionRequest());
+    }
   }
 }
 export default connect(

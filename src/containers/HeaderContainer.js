@@ -12,11 +12,16 @@ class HeaderContainer extends Component{
     console.log('[header-mount]');
   }
   componentWillReceiveProps(nextProps){
-    console.log('[header-receive]', nextProps.session.status);
+    console.log('[헤더 프롭스 받음]', this.props, nextProps);
   }
   shouldComponentUpdate(nextProps, nextState){
-    if( nextProps.session.status === 'WAITING' ) return false;
-    return true;
+    if( nextProps.status.session === 'WAITING' ) return false;
+    
+    const sessionChanged = ( this.props.session.isLogined !== nextProps.session.isLogined );
+    console.log('[헤더 세션 변경]', sessionChanged, this.props.session.isLogined, nextProps.session.isLogined );
+    if( sessionChanged ) return true;
+    
+    return false;
   }
 
   render(){
@@ -37,8 +42,10 @@ class HeaderContainer extends Component{
 
 const mapStateToProps = (state)=>{
   return {
+    status:{
+      session: state.Authorization.status,
+    },
     session:{
-      status: state.Authorization.status,
       isLogined: state.Authorization.isLogined,
       user: state.Authorization.user
     }

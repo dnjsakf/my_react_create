@@ -1,11 +1,20 @@
 /**
  * Update battlecode_stats queries
  */
-module.exports.all = (questionNo)=>{ 
+module.exports.challenger = (questionNo)=>{ 
   return [
     'SELECT qNo as question, count(*) as count',
     'FROM battlecode.qState',
     ( questionNo === 'all' ? 'WHERE qNo IN ( SELECT no FROM battlecode.questions )' : 'WHERE qNo = ' + questionNo ),
+    'GROUP BY qNo'
+  ].join(' ');
+}
+
+module.exports.current = (questionNo)=>{
+  return [
+    'SELECT qNo as question, result, avg(result) as avg',
+    'FROM battlecode.qState',
+    ( questionNo === 'all' ? ' WHERE qNo IN ( SELECT no FROM battlecode.questions )' : ' WHERE qNo = ' + questionNo ),
     'GROUP BY qNo'
   ].join(' ');
 }
@@ -27,7 +36,7 @@ module.exports.language = (questionNo, language, perfect)=>{
     ( questionNo === 'all' ? ' WHERE qNo IN ( SELECT no FROM battlecode.questions )' : ' WHERE qNo = ' + questionNo ),
     ( language === 'all' ? ' AND language IN ( \'java\', \'python\', \'c\' ) ' : ' AND language = "'+ language +'"' ),
     ( perfect === true ? ' AND result = 100' : '' ),
-    'GROUP BY qNo'
+    'GROUP BY qNo, language'
   ].join(' ');
 }
 module.exports.copyQuestion = (tableName)=>{

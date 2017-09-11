@@ -23,7 +23,7 @@ const initialState = {
   }  
 }
 
-export default function RightContentControll(state, action){
+export default function RightContentReducer(state, action){
   if(typeof state === 'undefined'){ state = initialState }
 
   switch(action.type){

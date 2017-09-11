@@ -1,17 +1,3 @@
-import express from 'express';
-import mysql from 'mysql';
-
-const router = express.Router();
-const conn = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'wjddns1',
-  database: 'battlecode'
-});
-conn.connect(()=>{
-  console.log('[mysql connection] - compile');
-});
-
 /**
  * TEST CODE
  */
@@ -42,81 +28,283 @@ const test_testcase=[
   }
 ];
 
-router.post('/python', (req, res)=>{
-  const test = compilePython( test_sourcecode, test_testcase );
 
-  return res.status(200).json({
-    success: true,
-    data: test
-  });
-})
-
-
-export default router
-
-import { spawn } from 'child_process';
+/**
+ * 음... 테스트케이스의 수 만큼 request를 받고 reponse 해주는게 좋을까?
+ * 아니면, request를 받고, 다 처리하고 reponse를 하는게 좋을까?
+ * 하나씩 받는게 좋을 것 같긴한데..
+ */
+import express from 'express';
+import mysql from 'mysql';
 import fs from 'fs';
+import childProcess from 'child_process';
+import path from 'path';
 
-function compilePython( sourcecode, testcase ){
-  // Need a sourcecode save path;
-  fs.writeFileSync( 'test.py', sourcecode.join('\n'), 'utf-8' );
+const router = express.Router();
+const conn = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'wjddns1',
+  database: 'battlecode'
+});
+conn.connect(()=>{
+  console.log('[mysql-connection] - compiler');
+});
 
-  return compile( testcase);
-}
 
+/**
+ * Save Source Code
+ */
+router.post('/save/sourceCode/:language', (req, res)=>{
+  let User = req.session.user;
+  /**
+   * 잘못된 접근
+   */
+  if( typeof req.params.language === 'undefined' ){
+    return res.status(400).json({
+      error: 'Invalid Connection',
+      code: 400
+    });
+  }
+  if( typeof User === 'undefined'){
+    return res.status(400).json({
+      error: 'Invalid Connection',
+      code: 400
+    });
+  }
+  /**
+   * 잘못된 값
+   */
+  if( typeof req.body.questionNo === 'undefined' ){
+    return res.status(403).json({
+      error: 'Type Error: Type of questionNo is undefined',
+      code: 403
+    });
+  }
+  if( typeof req.body.sourceCode !== 'string'){
+    return res.status(403).json({
+      error: 'Type Error: Type of sourceCode is only string',
+      code: 403
+    });
+  }
 
+  /**
+   * SAVE Source Code
+   */
+  let extension = undefined;
+  switch( req.params.language.toLowerCase() ){
+    case 'python':
+      extension = 'py';
+      break;
+    case 'java':
+      extension = 'java';
+      break;
+    case 'c':
+      extension = 'c';
+      break;
+  }
+  
+  const fileName = `qusetion_${req.body.questionNo}`;
+  const localPath = path.join(__dirname, './../../data/compile/username/');
+  const file = `${fileName}.${extension}`;
+  const savePath = path.join( localPath, file );
+  
+  fs.writeFile( savePath , req.body.sourceCode, 'utf-8', (error)=>{
+    /* 컴파일 정보를 세션에 저장 */
+    User.compile = {
+      compiler: req.params.language,
+      path: savePath,
+      error
+    }
+    console.log( '[SAVED SOURCECODE]' );
+    console.log( User.compile );
+    return res.status(200).json({
+      success: true
+    });
+  });
+});
 
-function compile( testcase ){
-  let compared = {};
-  testcase.map((CASE, index)=>{
-    console.log(`[CASE ${index}]`)
-    CASE.input.map((input, inputIndex)=>{
-      compared[index] = {};
+/**
+ * Python Compile
+ * usercode: 유저별로 compile url을 부여해주기 위함
+ */
+// router.post('/:usercode/:language', (req, res)=>{
+router.post('/python/:questionNo', (req, res)=>{
+  let User = req.session.user;
+  /**
+   * Valid Check
+   */
+  if( typeof User === 'undefined'){
+    return res.status(400).json({
+      error: 'Invalid Connection',
+      code: 400
+    });
+  }
+  /** 저장된 소스코드가 없을 경우 */
+  if( typeof User.compile === 'undefined' ){
+    return res.status(404).json({
+      error: 'Not Found: No exist user saved sourcecode',
+      code: 404
+    });
+  }
+  if( typeof req.params.questionNo === 'undefined' ){
+    return res.status(403).json({
+      error: 'Type Error: Type of questionNo is undefined',
+      code: 403
+    });
+  }
 
-      let subCompiler = spawn('python', ['test.py']);
-      subCompiler.stdout.setEncoding("utf8");
-      subCompiler.stderr.setEncoding("utf8");
-      // subCompiler.stdout.pipe(process.stdout);
-      // subCompiler.stdin.pipe(process.stdin);
-
-      const stdin = new Promise((resolve, reject)=>{
-        console.log(`[input] ${input}$`);
-        subCompiler.stdin.write(input);
-        subCompiler.stdin.end();
-        subCompiler.stdout.on('data', (data)=>{
-          resolve(data);
-        });
-        subCompiler.stderr.on('data', (error)=>{
-          reject(error);
-        });
+  /**
+   * Start Query
+   */
+  const sql = `SELECT input, output FROM questions WHERE no = ${req.params.questionNo}`;
+  conn.query(sql, (error, exist)=>{
+    if(error) throw error;
+    if( exist.length === 0){
+      return res.status(404).json({
+        error: 'Not Found',
+        code: 404
       });
-      
-      stdin.then((data)=>{
-        console.log(index,'[output end]', data);
-        compared[index] = data;
+    }
+
+    /**
+     * Exist Question
+     * setting testcase
+     */
+    let testcase = [];
+    const inputs = JSON.parse(exist[0].input);
+    const outputs = JSON.parse(exist[0].output);
+    inputs.map((input, index)=>{
+      testcase.push(
+        {
+          input: input,
+          output: outputs[index]
+        }
+      )
+    });
+
+    const options = {
+      compiler: User.compile.compiler,
+      path: User.compile.path,    // 이건 세션에 저장했다가 가져오도록 하자.
+      size: testcase.length
+    }
+    // console.log( '[Compile env]');
+    // console.log( '[questionNo ]', req.params.questionNo );
+    // console.log( '[ testcase  ]\n', testcase );
+    // console.log( '[ options   ]\n', options );
+    
+    const compilers = createCompiler(options);
+    const result = runCompile(compilers, testcase);
+    Promise.all(result)
+    .then((data)=>{
+      console.log('[compile-success]\n', data);
+      return res.status(200).json({
+        success: true,
+        result: data
+      });
+    })
+    .catch((error)=>{
+      console.log('[compile-fail]\n', error);
+      return res.status(200).json({
+        success: false,
+        result: error
       });
     });
-  }); 
+  });
+});
 
-  return compared;
+export default router;
+
+/**
+ * 언어별 컴파일러 생성
+ */
+function createCompiler( options ){
+  let compilers = [];
+  switch( options.compiler.toLowerCase() ){
+    case 'python':
+      for(let index = 0; index < options.size; index++){
+        
+        const child = childProcess.spawn('python',[options.path]);
+      
+        child.stdout.setEncoding("utf8");
+        child.stderr.setEncoding("utf8");
+
+        child.domain = `python_${index}`;
+
+        compilers.push(child);
+      }
+      return compilers;
+    case 'java':
+      return 0;
+    case 'c':
+      return 0;
+    default:
+      return false;
+  }
 }
 
 /**
- * 
-        child.stdin.end(()=>{
-          console.log('[1. STDIN END]');
-        });
-        child.stdout.on('end', ()=>{
-          console.log('[3. STDOUT END]');
-        })
-        child.on('error', (error)=>{
-          console.log('[5. ERROR]', error);
-          reject(error);
-        });
-        child.on('exit', ()=>{
-          console.log('[6. EXIT]');
-        });
-        child.on('close', ()=>{
-          console.log('[7. CLOSE]');
-        });
+ * 전체 case에서 한 개씩 처리
  */
+function runCompile(compilers, testcases){
+  let promise = [];
+  compilers.map( (compiler, index)=>{
+    promise.push(
+      new Promise((resolve, reject)=>{
+        let input = testcases[index].input;
+        processSingleCase(compiler, input, resolve, reject);
+      })
+    )
+  });
+  return promise;
+}
+/**
+ * 단위 처리
+ */
+function processSingleCase(compiler, inputs, resolve, reject){
+  console.log( '[compiler]', compiler.domain, compiler.pid );
+  /**
+   * stdin
+   * INPUT이 여러개 여러 줄 일 수 있음
+   */
+  let result = {};
+  result.input = inputs;
+  inputs.map((input)=>{
+    compiler.stdin.write( `${input}\n` );
+  });
+  compiler.stdin.end(()=>{
+    console.log( '[end-stdin]', compiler.domain );
+  });
+  /**
+   * stdout
+   */
+  compiler.stdout.on('data', (output)=>{
+    let outputs = [];
+    outputs = clearLastBlank(output.toString().split(/\r?\n/gm));
+    console.log( '[stdout]', compiler.domain, outputs);
+    result.output = outputs;
+    resolve(result);
+  });
+  /**
+   * stderr
+   */
+  compiler.stderr.on('data', (error)=>{
+    console.log( '[stderr]', compiler.domain, error );
+    reject(error);
+  });
+  compiler.stdout.on('end', ()=>{
+    // console.log('[end]', compiler.domain );
+  });
+}
+/**
+ * split 하면 맨 뒤에 공백이 하나 추가됨 이를 제거함
+ */
+function clearLastBlank(arr){
+  let cleared = arr;
+  cleared.map((item, index)=>{
+    if( item === ''){
+      cleared.splice(index, 1);
+    }
+  });
+  return cleared;
+}

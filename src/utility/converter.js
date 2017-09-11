@@ -31,7 +31,8 @@ export function convertTestcaseToHtml(title, testcase, isEditor){
         <tr key={ dataIndex } className={`case-${title}-${ caseIndex }`}>
           <td className={`case-${ caseIndex } no`}>{number}</td>
           <td className={`case-${ caseIndex } data`}>{el}</td>
-          { isEditor === true ? (<td className="test" data-field="test"></td>) : null }
+          {/* 테이블에서 컴파일 버튼 사용할 때 
+            isEditor === true ? (<td className="test" data-field="test"></td>) : null */}
         </tr>
       );
     });
@@ -47,7 +48,8 @@ export function convertTestcaseToHtml(title, testcase, isEditor){
             <tr>
               <th className="no" data-field="no">no</th>
               <th className="data" data-field="data">data</th>
-              { isEditor === true ? (<th className="test" data-field="test"><button> TEST </button></th>) : null }
+              {/* 테이블에서 컴파일 버튼 사용할 때 
+                isEditor === true ? (<th className="test" data-field="test"><button> TEST </button></th>) : null */}
             </tr>
           </thead>
           <tbody key={ caseIndex }>

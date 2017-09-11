@@ -13,6 +13,7 @@ module.exports = {
     publicPath: '/',
   },
   plugins:[
+    new webpack.IgnorePlugin(/test/),
     new webpack.optimize.UglifyJsPlugin({
       compress:{
         warnings: false,

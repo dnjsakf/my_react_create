@@ -19,7 +19,7 @@ const initialState = {
   error: 'INIT',
 }
 
-export default function UserState(state, action){
+export default function UserStateReducer(state, action){
   if( typeof state === 'undefined' ){ state = initialState }
 
   switch( action.type ){

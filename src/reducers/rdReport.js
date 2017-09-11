@@ -9,7 +9,7 @@ const initialState = {
   status: 'INIT'
 }
 
-export default function UserReportReducer(state, action){
+export default function ReportReducer(state, action){
   if( typeof state === 'undefined' ) { state = initialState }
 
   switch( action.type ){

@@ -11,7 +11,7 @@ const initialState = {
   content: [],
 }
 
-export default function LeftContetnControll(state, action){
+export default function LeftContetnReducer(state, action){
   if(typeof state === 'undefined'){
     state = initialState;
   }

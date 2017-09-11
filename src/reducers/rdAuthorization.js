@@ -32,7 +32,7 @@ const initialState = {
   error: 'INIT',
 };
 
-export default function Authorization(state, action){
+export default function AuthorizationReducer(state, action){
   if( typeof state === 'undefined' ){ state = initialState; }
   switch( action.type ){
     /* WAITING */

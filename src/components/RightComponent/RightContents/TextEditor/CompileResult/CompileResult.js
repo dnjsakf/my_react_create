@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Card } from 'react-materialize';
+import { Row, Col, Card, Button } from 'react-materialize';
 import style from './CompileResult.css';
 import { 
   convertObjectToHtml, 
@@ -12,6 +12,12 @@ const CompileResult = ( props )=>{
 
   return (
     <Row className='CompileResult-scroll'>
+      <Col key={0} m={12} s={0}>
+        <Button
+          onClick={ props.handleRunCompile }>
+          TEST
+        </Button>
+      </Col>
       <Col key={4} m={6} s={0} className='CompileResult-InputCase'>
         { inputcase }
       </Col>

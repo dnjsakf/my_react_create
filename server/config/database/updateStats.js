@@ -95,6 +95,9 @@ function searchChallenger( questionNo ){
     const select = query.challenger( questionNo );
     conn.query( select, (error, result)=>{
       if(error) reject(error);
+
+      console.log( select );
+      console.log( result );
       
       let promise = [];
       const updateData = JSON.parse(JSON.stringify(result));

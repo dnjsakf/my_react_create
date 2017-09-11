@@ -105,7 +105,7 @@ export function algorithmListFailure(error){
 };
 export function algorithmDataFailure(error){
   return {
-    type: GET_ALGORITHM__DATA_FAILURE,
+    type: GET_ALGORITHM_DATA_FAILURE,
     error
   }
 };

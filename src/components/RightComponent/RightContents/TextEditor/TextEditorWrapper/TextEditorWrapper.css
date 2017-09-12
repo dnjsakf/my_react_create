@@ -1,3 +1,7 @@
 section.TextEditorWrapper{
   height: 100%;
 }
+
+.TextEditorWrapper > .col.input-field{
+  height: 40px;
+}

@@ -10,10 +10,11 @@ import cmThemeDracula from 'codemirror/theme/dracula.css';
 import cmThemeMidnight from 'codemirror/theme/Midnight.css';
 
 import style from './CodemirrorEditor.css';
+import { Input } from 'react-materialize';
 
 const CodemirrorEditor = ( props )=>{
   let editorMode = 'clike';
-  if( props.default.editorLanguage === 'python' ){
+  if( props.default.language === 'python' ){
     editorMode = 'python';
   }
 
@@ -23,18 +24,32 @@ const CodemirrorEditor = ( props )=>{
     lineWrapping: true,
     matchBrackets: true,
     readOnly: readOnly,
-    theme: props.default.editorTheme,
+    theme: props.default.theme,
     mode: editorMode
   }
-
   return (
-    <CodeMirror
-      autoFocus={ true }
-      onFocusChange={ props.handleFocus }
-      defaultValue={ props.defaultSource }
-      options={ option }
-      onChange={ props.handleTyping }
-      />
+    <div>
+      <div className="language-selector">
+        <Input
+          s={6}
+          type='select' 
+          defaultValue={ props.default.language }
+          onChange={ props.handleSelect }>
+          <option value='c'>c</option>
+          <option value='java'>java</option>
+          <option value='python'>python</option>
+        </Input>
+      </div>
+      <div className="text-editor">
+        <CodeMirror
+          autoFocus={ true }
+          onFocusChange={ props.handleFocus }
+          value={ props.default.source }
+          options={ option }
+          onChange={ props.handleTyping }
+          />
+      </div>
+    </div>
   );
 }
 

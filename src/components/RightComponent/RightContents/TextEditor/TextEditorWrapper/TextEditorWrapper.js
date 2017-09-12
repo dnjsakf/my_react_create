@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import update from 'react-addons-update';
 import axios from 'axios';
 
-import { compilePythonRequest } from './../../../../../actions/Compile';
+import { compileRequest } from './../../../../../actions/Compile';
 
 import CodemirrorEditor from './../CodemirrorEditor/CodemirrorEditor';
 import CompileResult from './../CompileResult/CompileResult';
@@ -18,17 +18,14 @@ class TextEditorWrapper extends Component{
     this.state = {
       focus: false,
       language: props.session.editor.editorLanguage,
-      sourceCode: '',
-      default: 
-        `Editor Language: ${props.session.editor.editorLanguage}\n`+
-        `Editor Theme: ${props.session.editor.editorTheme}\n`+
-        `Editor Font: ${props.session.editor.editorFont}\n`+
-        `Editor FontSize: ${props.session.editor.editorFontSize}`
+      sourceCode: ''
     }
 
     this.handleSaveFile = this.handleSaveFile.bind(this);
     this.handleTyping = this.handleTyping.bind(this);
     this.handleRunCompile = this.handleRunCompile.bind(this);
+
+    this.handleLanguageSelect = this.handleLanguageSelect.bind(this);
   }
   componentDidMount(){
     
@@ -63,7 +60,7 @@ class TextEditorWrapper extends Component{
     }
   }
   /**
-   * 타이핑 할 때 마다 저장하자.
+   * 타이핑 할 때 마다 state를 업데이트 하자.
    */
   handleTyping( typing ){
     this.setState( 
@@ -82,12 +79,31 @@ class TextEditorWrapper extends Component{
     if( typeof this.props.status.compile === 'WAITING' ) return false;
     if( typeof this.props.question.no === 'undefined' ) return false;
 
+    console.log( this.state.language );
     console.log( this.props.question.no );
     console.log( this.state.sourceCode );
 
-    this.props.compilePython( this.props.question.no, this.state.sourceCode );
+    this.props.compileRun( this.state.language, this.props.question.no, this.state.sourceCode );
+  }
+  /**
+   * Select에서 언어를 선택하면 state.language를 업데이트.
+   */
+  handleLanguageSelect( event ){
+    console.log( this.state.language, event.target.value );
+    /** 언어가 같으면 업데이트 안해도됨 */
+    if( this.state.language === event.target.value ) return false;
+    this.setState(
+      update( this.state, 
+        {
+          language: { $set: event.target.value   }
+        }
+      )
+    )
   }
 
+  /**
+   * 옵션에서 언어 변경하면 state.language를 업데이트.
+   */
   componentWillReceiveProps(nextProps){
     console.log('[에디터 프롭스 받음]', nextProps);
     if( this.props.session.editor.editorLanguage !== nextProps.session.editor.editorLanguage){
@@ -107,6 +123,10 @@ class TextEditorWrapper extends Component{
     
     if( nextProps.status.session === 'WAITING' ) return false;
     if( nextProps.status.compile === 'WAITING' ) return false;
+
+    const languageChanged = ( this.state.language !== nextState.language );
+    console.log('[에디터 언어 변경]', languageChanged, this.state.language, nextState.language);
+    if( languageChanged ) return true;
 
     const resultChanged = ( this.props.result !== nextProps.result );
     console.log('[에디터 결과 변경]', resultChanged, this.props.result, nextProps.result);
@@ -128,6 +148,15 @@ class TextEditorWrapper extends Component{
   }
 
   render(){
+    const values = {
+      language: this.state.language,
+      theme: this.props.session.editor.editorTheme,
+      source: 'class INIT_JAVA{\n'
+        +'  public static void main(String[] args){\n'
+        +'    System.out.println("Hello, JAVA");\n'
+        +'  }\n'    
+        +'}'
+    }
     return (
       <section className='TextEditorWrapper'>
         {/*  select 필요하구나.. */}
@@ -135,8 +164,9 @@ class TextEditorWrapper extends Component{
           handleFocus={ this.handleSaveFile }
           handleTyping={ this.handleTyping }
 
-          default={ this.props.session.editor }
-          defaultSource={ this.state.default }
+          default={ values }
+
+          handleSelect={ this.handleLanguageSelect }
           />
         <CompileResult
           handleRunCompile={ this.handleRunCompile } 
@@ -168,8 +198,8 @@ const mapStateToProps = (state)=>{
 };
 const mapDispatchToProps = (dispatch)=>{
   return {
-    compilePython: ( questionNo, sourceCode )=>{
-      return dispatch( compilePythonRequest(questionNo, sourceCode) );
+    compileRun: ( language, questionNo, sourceCode )=>{
+      return dispatch( compileRequest( language, questionNo, sourceCode ) );
     }
   };
 };

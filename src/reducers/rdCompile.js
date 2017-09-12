@@ -1,7 +1,7 @@
 import {
-  COMPILE_PYTHON_WAITING,
-  COMPILE_PYTHON_SUCCESS,
-  COMPILE_PYTHON_FAILURE
+  COMPILE_WAITING,
+  COMPILE_SUCCESS,
+  COMPILE_FAILURE
 } from '../actions/ActionTypes';
 import update from 'react-addons-update';
 
@@ -16,7 +16,7 @@ export default function CompileReducer(state, action){
   if( typeof state === 'undefined' ) state = initialState;
 
   switch( action.type ){
-    case COMPILE_PYTHON_WAITING:
+    case COMPILE_WAITING:
       return update( state, 
         {
           python: {
@@ -24,7 +24,7 @@ export default function CompileReducer(state, action){
           }
         }
       )
-    case COMPILE_PYTHON_SUCCESS:
+    case COMPILE_SUCCESS:
       return update( state, 
         {
           python: {
@@ -33,7 +33,7 @@ export default function CompileReducer(state, action){
           }
         }
       )
-    case COMPILE_PYTHON_FAILURE:
+    case COMPILE_FAILURE:
       return update( state, 
         {
           python: {

@@ -1,42 +1,42 @@
 import {
-  COMPILE_PYTHON_WAITING,
-  COMPILE_PYTHON_SUCCESS,
-  COMPILE_PYTHON_FAILURE
+  COMPILE_WAITING,
+  COMPILE_SUCCESS,
+  COMPILE_FAILURE
 } from './ActionTypes';
 
 import axios from 'axios';
 
-export function compilePythonRequest( questionNo, sourceCode ){
+export function compileRequest( language, questionNo, sourceCode ){
   return (dispatch)=>{
     //대기
-    dispatch(compilePythonWaiting());
+    dispatch(compileWaiting());
     
-    return axios.post(`/api/compile/python/${questionNo}`, { sourceCode })
+    return axios.post(`/api/compile/${language}/${questionNo}`, { sourceCode })
       .then((response)=>{
-        console.log('[action-compile-python-success]', response);
-        dispatch(compilePythonSuccess(response.data));
+        console.log(`[action-compile-${language}-success]`, response);
+        dispatch(compileSuccess(response.data));
       })  
       .catch((error)=>{
-        console.error('[action-compile-python-failure]', error);
-        dispatch(compilePythonFailure(error.response.data.error));
+        console.error(`[action-compile-${language}-failure]`, error);
+        dispatch(compileFailure(error.response.data.error));
       });
   };
 }
 
-export function compilePythonWaiting(){
+export function compileWaiting(){
   return {
-    type: COMPILE_PYTHON_WAITING
+    type: COMPILE_WAITING
   }
 }
-export function compilePythonFailure(error){
+export function compileFailure(error){
   return {
-    type: COMPILE_PYTHON_FAILURE,
+    type: COMPILE_FAILURE,
     error
   }
 }
-export function compilePythonSuccess(data){
+export function compileSuccess(data){
   return {
-    type: COMPILE_PYTHON_SUCCESS,
+    type: COMPILE_SUCCESS,
     data
   }
 }

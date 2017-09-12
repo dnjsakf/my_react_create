@@ -104,23 +104,73 @@ router.post('/save/sourceCode/:language', (req, res)=>{
       break;
   }
   
-  const fileName = `qusetion_${req.body.questionNo}`;
+  const fileName = `question_${req.body.questionNo}`;
   const localPath = path.join(__dirname, './../../data/compile/username/');
   const file = `${fileName}.${extension}`;
   const savePath = path.join( localPath, file );
   
   fs.writeFile( savePath , req.body.sourceCode, 'utf-8', (error)=>{
     /* 컴파일 정보를 세션에 저장 */
-    User.compile = {
-      compiler: req.params.language,
-      path: savePath,
-      error
-    }
     console.log( '[SAVED SOURCECODE]' );
     console.log( User.compile );
-    return res.status(200).json({
-      success: true
-    });
+    
+    if( req.params.language.toLowerCase() === 'java' ){
+      const javaClasses = path.join(localPath, 'classes');
+      const javac = childProcess.spawn('javac', ['-d', javaClasses, '-encoding', 'utf-8', file], {cwd: localPath});
+      /* 에러 확인용 코드 */
+      // javac.stderr.setEncoding('utf8');
+      // javac.stdout.setEncoding('utf8');
+
+      // javac.stderr.on('data', (error)=>{
+      //   console.log('[JAVAC STDERR]\n', error);
+      // });
+      // javac.on('error', ( error )=>{
+      //   console.log('[JAVAC ERROR]\n', error);
+      // });
+
+      javac.on('exit', ()=>{
+        console.log('[JAVAC CLEAR]\n', javac.spawnargs.join(' '));
+        console.log(fs.readdirSync(javaClasses,{encoding:'utf-8'}));
+        /* 상위 폴더에 저장 */
+        const jarFile = `${fileName}.jar`;
+        const jar = childProcess.spawn('jar',[`-cvmf`, 'manifest.txt', `../${jarFile}`, '*.class'], {cwd: javaClasses});
+        /* 에러 확인용 코드 */
+        // jar.stderr.setEncoding('utf8');
+        // jar.stdout.setEncoding('utf8');
+        
+        // jar.stdout.on('data', (data)=>{
+        //   console.log('[JAR STDOUT]\n', data); 
+        // });
+        // jar.stderr.on('data', (error)=>{
+        //   console.log('[JAR STDERR]\n', error);
+        // });
+        // jar.on('error', (error)=>{
+        //   console.log('[JAR ERROR]\n', error);
+        // });
+        jar.on('exit', ()=>{
+          User.compile = {
+            compiler: req.params.language,
+            path: path.join(localPath, jarFile),
+            error
+          }
+          console.log('[JAR END]\n', jar.spawnargs.join(' '));
+          return res.status(200).json({
+            success: true
+          });
+        });
+      });
+      // const command = `javac -encoding utf-8 ${file} && jar -cvmf mainfest.txt ${filename}.jar *.class`;
+      // const options = ['-encoding utf-8 ']
+    } else {
+      User.compile = {
+        compiler: req.params.language,
+        path: savePath,
+        error
+      }
+      return res.status(200).json({
+        success: true
+      });
+    }
   });
 });
 
@@ -129,7 +179,7 @@ router.post('/save/sourceCode/:language', (req, res)=>{
  * usercode: 유저별로 compile url을 부여해주기 위함
  */
 // router.post('/:usercode/:language', (req, res)=>{
-router.post('/python/:questionNo', (req, res)=>{
+router.post('/:language/:questionNo', (req, res)=>{
   let User = req.session.user;
   /**
    * Valid Check
@@ -137,6 +187,14 @@ router.post('/python/:questionNo', (req, res)=>{
   if( typeof User === 'undefined'){
     return res.status(400).json({
       error: 'Invalid Connection',
+      code: 400
+    });
+  }
+
+  console.log('[USER COMPILE]', User.compile);
+  if( typeof User.compile === 'undefined' ){
+    return res.status(400).json({
+      error: 'Invalid Connection: None saved compile data',
       code: 400
     });
   }
@@ -194,6 +252,13 @@ router.post('/python/:questionNo', (req, res)=>{
     // console.log( '[ options   ]\n', options );
     
     const compilers = createCompiler(options);
+    if( compilers === false ){
+      return res.status(500).json({
+        error: 'compiler created error',
+        code: 500
+      });
+    }
+
     const result = runCompile(compilers, testcase);
     Promise.all(result)
     .then((data)=>{
@@ -223,7 +288,6 @@ function createCompiler( options ){
   switch( options.compiler.toLowerCase() ){
     case 'python':
       for(let index = 0; index < options.size; index++){
-        
         const child = childProcess.spawn('python',[options.path]);
       
         child.stdout.setEncoding("utf8");
@@ -235,9 +299,19 @@ function createCompiler( options ){
       }
       return compilers;
     case 'java':
-      return 0;
+      for(let index = 0; index < options.size; index++){
+        const child = childProcess.spawn('java',['-jar', options.path]);
+      
+        child.stdout.setEncoding("utf8");
+        child.stderr.setEncoding("utf8");
+
+        child.domain = `java_${index}`;
+
+        compilers.push(child);
+      }
+      return compilers;
     case 'c':
-      return 0;
+      return false;
     default:
       return false;
   }

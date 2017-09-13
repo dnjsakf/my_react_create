@@ -6,10 +6,8 @@ import {
 import update from 'react-addons-update';
 
 const initialState = {
-  python:{
-    status: 'INIT',
-    result: 'INIT',
-  },
+  status: 'INIT',
+  result: 'INIT'
 }
 
 export default function CompileReducer(state, action){
@@ -19,29 +17,23 @@ export default function CompileReducer(state, action){
     case COMPILE_WAITING:
       return update( state, 
         {
-          python: {
-            status: { $set: 'WAITING' },
-          }
+          status: { $set: 'WAITING' },
         }
-      )
+      );
     case COMPILE_SUCCESS:
       return update( state, 
         {
-          python: {
-            status: { $set: 'SUCCESS' },
-            result: { $set: action.data.result }
-          }
+          status: { $set: 'SUCCESS' },
+          result: { $set: action.data.result }
         }
-      )
+      );
     case COMPILE_FAILURE:
       return update( state, 
         {
-          python: {
-            status: { $set: 'FAILURE' },
-            result: { $set: action.error }
-          }
+          status: { $set: 'FAILURE' },
+          result: { $set: action.error }
         }
-      )
+      );
 
     default:
       return state;

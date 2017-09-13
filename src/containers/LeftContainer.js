@@ -32,9 +32,11 @@ class LeftContainer extends Component{
     if( nextMenu !== prevMenu ){
       switch( nextMenu ){
         case 'algorithm':
+          console.log('[ALGORITHM]')
           this.props.getAlgorithmList('list');
           break;
         case 'myalgorithm':
+          console.log('[MY-ALGORITHM]')
           this.props.getAlgorithmList('myalgo');
           break;
         default:

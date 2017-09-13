@@ -46,7 +46,6 @@ module.exports.copyQuestion = (tableName)=>{
   ].join(' ');
 }
 
-
 /**
  * dashboard mdoe = ['challenger', 'perfect', 'current' ,'c', 'java', 'python' ];
  * 1: the "challenger" is count that all record;

@@ -41,12 +41,7 @@ const ContentsWrapper = ( props )=>{
       break;
     case 'editor':
       content = (
-        <TextEditorWrapper
-          content={{
-            inputcase: props.content.input,
-            outputcase: props.content.output
-          }}
-        />
+        <TextEditorWrapper />
       );
       break;
     case 'mypage':

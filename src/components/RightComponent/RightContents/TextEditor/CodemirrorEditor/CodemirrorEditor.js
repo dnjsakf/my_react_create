@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 import CodeMirror from 'react-codemirror';
+
+import cmJavascript from 'codemirror/lib/codemirror.js';
 import cmStyle from 'codemirror/lib/codemirror.css';
 
 import cmModePython from 'codemirror/mode/python/python';
@@ -27,6 +29,8 @@ const CodemirrorEditor = ( props )=>{
     theme: props.default.theme,
     mode: editorMode
   }
+  // 컴파일 옵션 확인
+  // console.log('[CODEMIRROR OPTIONS]\n', option);
   return (
     <div>
       <div className="language-selector">

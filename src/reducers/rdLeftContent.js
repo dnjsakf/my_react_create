@@ -9,6 +9,7 @@ import update from 'react-addons-update';
 const initialState = {
   status: 'INIT',
   content: [],
+  error: 'INIT'
 }
 
 export default function LeftContetnReducer(state, action){
@@ -27,7 +28,8 @@ export default function LeftContetnReducer(state, action){
       return update( state,
         {
           status: { $set: 'ERROR' },
-          content: { $set: action.error },
+          content: { $set: initialState.content },
+          error: { $set: action.error }
         }
       );
     

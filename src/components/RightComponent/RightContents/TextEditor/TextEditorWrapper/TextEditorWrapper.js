@@ -17,6 +17,7 @@ class TextEditorWrapper extends Component{
 
     this.state = {
       focus: false,
+      compiling: false,
       language: props.session.editor.editorLanguage,
       sourceCode: ''
     }
@@ -42,22 +43,6 @@ class TextEditorWrapper extends Component{
         }
       )
     )
-    // 컴파일 세이브
-    if( !focus ){
-      console.log('[SAVE]',this.state.language, this.state.sourceCode.length );
-      /* 한번도 타이핑 안했으면 저장도 안함 */
-      // if( this.state.sourceCode.length === 0) return false
-
-      const url = `/api/compile/save/sourceCode/${this.state.language}`;
-      const bodys = {
-        questionNo: this.props.question.no,
-        sourceCode: this.state.sourceCode
-      };
-      const saved = axios.post(url, bodys );
-      saved.then((response)=>{
-        console.log('[SAVE COMPLITED]', response.data );
-      });
-    }
   }
   /**
    * 타이핑 할 때 마다 state를 업데이트 하자.
@@ -78,12 +63,32 @@ class TextEditorWrapper extends Component{
     /* 컴파일 중에는 재 컴파일을 실행하지 못하도록 */
     if( typeof this.props.status.compile === 'WAITING' ) return false;
     if( typeof this.props.question.no === 'undefined' ) return false;
+    if( this.state.sourceCode.length === 0 ) return false;
 
     console.log( this.state.language );
     console.log( this.props.question.no );
     console.log( this.state.sourceCode );
-
-    this.props.compileRun( this.state.language, this.props.question.no, this.state.sourceCode );
+    console.log('[SAVE]',this.state.language, this.state.sourceCode.length );
+    
+    this.setState(
+      update( this.state, 
+        {
+          compiling: { $set: true }
+        }
+      )
+    );
+    const url = `/api/compile/save/sourceCode/${this.state.language}`;
+    const bodys = {
+      questionNo: this.props.question.no,
+      sourceCode: this.state.sourceCode
+    };
+    const saved = axios.post(url, bodys );
+    saved.then((response)=>{
+      console.log('[SAVE COMPLITED]', response.data );
+      if( response.data.success === true ){
+        this.props.compileRun( this.state.language, this.props.question.no, this.state.sourceCode );
+      }
+    });
   }
   /**
    * Select에서 언어를 선택하면 state.language를 업데이트.
@@ -115,21 +120,31 @@ class TextEditorWrapper extends Component{
         )
       )
     }
+    if( nextProps.status.compile !== 'WAITING' ){
+      this.setState(
+        update( this.state, 
+          {
+            compiling: { $set: false }
+          }
+        )
+      );
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState){
     /* 타이핑 중일 땐 업데이트 안함 */
-    if( nextState.focus === true ) return false;
+    if( nextState.focus === true ) return false; 
     
+    /* 컴파일이 끝나기 전에 다시 누르지 못하게 하기 */
+    if( nextProps.status.compile !== 'WAITING' ) return true;
     if( nextProps.status.session === 'WAITING' ) return false;
-    if( nextProps.status.compile === 'WAITING' ) return false;
 
     const languageChanged = ( this.state.language !== nextState.language );
     console.log('[에디터 언어 변경]', languageChanged, this.state.language, nextState.language);
     if( languageChanged ) return true;
 
-    const resultChanged = ( this.props.result !== nextProps.result );
-    console.log('[에디터 결과 변경]', resultChanged, this.props.result, nextProps.result);
+    const resultChanged = ( this.props.compile !== nextProps.compile );
+    console.log('[에디터 결과 변경]', resultChanged, this.props.compile, nextProps.compile);
     if( resultChanged ) return true;
     
     const editorChanged = ( this.props.session.editor !== nextProps.session.editor );
@@ -157,6 +172,7 @@ class TextEditorWrapper extends Component{
         +'  }\n'    
         +'}'
     }
+  
     return (
       <section className='TextEditorWrapper'>
         {/*  select 필요하구나.. */}
@@ -171,18 +187,21 @@ class TextEditorWrapper extends Component{
         <CompileResult
           handleRunCompile={ this.handleRunCompile } 
 
-          inputcase={ this.props.content.inputcase }
-          outputcase={ this.props.content.outputcase }
+          compiling={ this.state.compiling }
+
+          results={ this.props.compile.result }
           />
       </section>
     );
   }
 }
 const mapStateToProps = (state)=>{
+  console.log('[RECEIVE REDUCER]', state.Compile);
+  
   return {
     status:{
       session: state.Authorization.status,
-      compile: state.Compile.python.status
+      compile: state.Compile.status
     },
     session:{
       isLogined: state.Authorization.isLogined,
@@ -191,8 +210,8 @@ const mapStateToProps = (state)=>{
     question:{
       no: state.RightContentControll.question.content.no
     },
-    result:{
-      python: state.Compile.python.result
+    compile:{
+      result: state.Compile.result
     }
   };
 };

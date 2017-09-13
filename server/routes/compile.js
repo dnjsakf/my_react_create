@@ -39,6 +39,7 @@ import mysql from 'mysql';
 import fs from 'fs';
 import childProcess from 'child_process';
 import path from 'path';
+import moment from 'moment';
 
 const router = express.Router();
 const conn = mysql.createConnection({
@@ -114,19 +115,12 @@ router.post('/save/sourceCode/:language', (req, res)=>{
     console.log( '[SAVED SOURCECODE]' );
     console.log( User.compile );
     
+    /**
+     * javac -> jar 변환 -> java -jar 실행
+     */
     if( req.params.language.toLowerCase() === 'java' ){
       const javaClasses = path.join(localPath, 'classes');
       const javac = childProcess.spawn('javac', ['-d', javaClasses, '-encoding', 'utf-8', file], {cwd: localPath});
-      /* 에러 확인용 코드 */
-      // javac.stderr.setEncoding('utf8');
-      // javac.stdout.setEncoding('utf8');
-
-      // javac.stderr.on('data', (error)=>{
-      //   console.log('[JAVAC STDERR]\n', error);
-      // });
-      // javac.on('error', ( error )=>{
-      //   console.log('[JAVAC ERROR]\n', error);
-      // });
 
       javac.on('exit', ()=>{
         console.log('[JAVAC CLEAR]\n', javac.spawnargs.join(' '));
@@ -134,19 +128,7 @@ router.post('/save/sourceCode/:language', (req, res)=>{
         /* 상위 폴더에 저장 */
         const jarFile = `${fileName}.jar`;
         const jar = childProcess.spawn('jar',[`-cvmf`, 'manifest.txt', `../${jarFile}`, '*.class'], {cwd: javaClasses});
-        /* 에러 확인용 코드 */
-        // jar.stderr.setEncoding('utf8');
-        // jar.stdout.setEncoding('utf8');
-        
-        // jar.stdout.on('data', (data)=>{
-        //   console.log('[JAR STDOUT]\n', data); 
-        // });
-        // jar.stderr.on('data', (error)=>{
-        //   console.log('[JAR STDERR]\n', error);
-        // });
-        // jar.on('error', (error)=>{
-        //   console.log('[JAR ERROR]\n', error);
-        // });
+     
         jar.on('exit', ()=>{
           User.compile = {
             compiler: req.params.language,
@@ -211,7 +193,12 @@ router.post('/:language/:questionNo', (req, res)=>{
       code: 403
     });
   }
-
+  if( typeof req.body.sourceCode === 'undefined' ){
+    return res.status(403).json({
+      error: 'Type Error: Type of sourceCode is undefined',
+      code: 403
+    });
+  }
   /**
    * Start Query
    */
@@ -243,14 +230,10 @@ router.post('/:language/:questionNo', (req, res)=>{
 
     const options = {
       compiler: User.compile.compiler,
-      path: User.compile.path,    // 이건 세션에 저장했다가 가져오도록 하자.
+      path: User.compile.path,
       size: testcase.length
     }
-    // console.log( '[Compile env]');
-    // console.log( '[questionNo ]', req.params.questionNo );
-    // console.log( '[ testcase  ]\n', testcase );
-    // console.log( '[ options   ]\n', options );
-    
+
     const compilers = createCompiler(options);
     if( compilers === false ){
       return res.status(500).json({
@@ -263,12 +246,33 @@ router.post('/:language/:questionNo', (req, res)=>{
     Promise.all(result)
     .then((data)=>{
       console.log('[compile-success]\n', data);
-      return res.status(200).json({
-        success: true,
-        result: data
+
+      const conditions = {
+        qNo: req.params.questionNo,
+        mNo: User.no,
+        language: req.params.language,
+        sourceCode: req.body.sourceCode,
+        result: 0,
+        date: moment().format('YYYY-MM-DD')
+      }
+      const info = ((_data)=>{
+        let keys = Object.keys(_data);
+        let values = [];
+        keys.map((key)=>{
+          values.push( _data[key] );
+        });
+        return {keys, values};
+      })(conditions);
+      
+      const INSERT = `INSERT INTO qState ( ${info.keys.join(', ')} ) values ( ? )`;
+      conn.query(INSERT, [ info.values ], (error, result)=>{
+        if( error ) throw error;
+        return res.status(200).json({
+          success: true,
+          result: data
+        });
       });
-    })
-    .catch((error)=>{
+    }).catch((error)=>{
       console.log('[compile-fail]\n', error);
       return res.status(200).json({
         success: false,
@@ -279,6 +283,9 @@ router.post('/:language/:questionNo', (req, res)=>{
 });
 
 export default router;
+
+
+
 
 /**
  * 언어별 컴파일러 생성
@@ -370,6 +377,11 @@ function processSingleCase(compiler, inputs, resolve, reject){
     // console.log('[end]', compiler.domain );
   });
 }
+
+
+
+
+
 /**
  * split 하면 맨 뒤에 공백이 하나 추가됨 이를 제거함
  */

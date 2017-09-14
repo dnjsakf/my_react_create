@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Col, Card, Table } from 'react-materialize';
+import { Col, Card, Table, Button } from 'react-materialize';
 
 export function convertObjectToHtml(object){
   let converted = [];
@@ -31,8 +31,6 @@ export function convertTestcaseToHtml(title, testcase, isEditor){
         <tr key={ dataIndex } className={`case-${title}-${ caseIndex }`}>
           <td className={`case-${ caseIndex } no`}>{number}</td>
           <td className={`case-${ caseIndex } data`}>{el}</td>
-          {/* 테이블에서 컴파일 버튼 사용할 때 
-            isEditor === true ? (<td className="test" data-field="test"></td>) : null */}
         </tr>
       );
     });
@@ -48,8 +46,6 @@ export function convertTestcaseToHtml(title, testcase, isEditor){
             <tr>
               <th className="no" data-field="no">no</th>
               <th className="data" data-field="data">data</th>
-              {/* 테이블에서 컴파일 버튼 사용할 때 
-                isEditor === true ? (<th className="test" data-field="test"><button> TEST </button></th>) : null */}
             </tr>
           </thead>
           <tbody key={ caseIndex }>
@@ -80,6 +76,7 @@ export function convertTable( listData, tableOption ){
     headers: false,
     records: false
   }
+  let existsReplace = {}
 
   // 필요없는 필드 삭제
   if( typeof tableOption !== 'undefined' ){
@@ -96,6 +93,10 @@ export function convertTable( listData, tableOption ){
       Object.keys(tableOption.onClick).map(( type, index)=>{
         existOnClick[type] = tableOption.onClick[type];
       });
+    }
+
+    if( typeof tableOption.replace !== 'undefined' ){
+      existsReplace = tableOption.replace;
     }
   }
 
@@ -124,7 +125,26 @@ export function convertTable( listData, tableOption ){
           ((_fields, _row)=>{
             let cols = [];
             _fields.map((field, colIndex)=>{
-              cols.push(<td value={row.no} key={ colIndex }>{ _row[field] }</td>);
+              if( Object.keys(existsReplace).indexOf(field) > -1 ){
+                cols.push(
+                  <td value={ rowIndex } 
+                      key={ colIndex } >
+                      { 
+                        <button value={ rowIndex } 
+                                onClick={ (event)=>{ existsReplace[field].onClick('compare', event.target.value) } } >
+                          상세보기
+                        </button>
+                      }
+                  </td>
+                ); 
+              } else {
+                cols.push(
+                  <td value={ rowIndex } 
+                      key={ colIndex }>
+                    {  _row[field] }
+                  </td>
+                ); 
+              }
             });
             return cols;
           })(fields, row)

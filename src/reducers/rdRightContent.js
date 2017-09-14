@@ -19,6 +19,8 @@ const initialState = {
   },
   dashboard:{
     status: 'INIT',
+    records: [],
+    myRecords: [],
     count: 0,
   }  
 }
@@ -65,6 +67,7 @@ export default function RightContentReducer(state, action){
           dashboard:{
             status: { $set: 'ERROR' },
             records: { $set: initialState.dashboard.records },
+            myRecords: { $set: initialState.dashboard.myRecords },
             count: { $set: initialState.dashboard.count }
           }
         }
@@ -93,6 +96,7 @@ export default function RightContentReducer(state, action){
           dashboard: {
             status: { $set: 'SUCCESS' },
             records: { $set: action.data.records },
+            myRecords: { $set:action.data.myRecords },
             maxPage: { $set: action.data.maxPage }
           }
         }

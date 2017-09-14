@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import style from './PopUpWrapper.css';
 
-import Setting from '../Setting/Setting';
-import Report from '../Report/Report';
-import Notice from '../Notice/Notice';
+import Setting from './../Setting/Setting';
+import Report from './../Report/Report';
+import Notice from './../Notice/Notice';
+import { CompareWrapper } from './../../ComapreComponent';
 
 const PopUpWrapper = ( props )=>{
   if( typeof props.popup === 'undefined') return null;
@@ -42,7 +43,14 @@ const PopUpWrapper = ( props )=>{
           />
       );
       break;
-
+    case 'compare':
+      popup = (
+        <CompareWrapper
+          value={ props.popup.value }
+          onClose={ props.onClosePopUp }
+          />
+      )
+      break;
     default:
       popup = (
         <a>Invalid mode</a>

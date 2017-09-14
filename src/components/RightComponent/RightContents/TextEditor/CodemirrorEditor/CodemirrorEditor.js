@@ -22,6 +22,7 @@ const CodemirrorEditor = ( props )=>{
 
   const readOnly = false;
   const option = {
+    value:  props.default.source,
     lineNumbers: true,
     lineWrapping: true,
     matchBrackets: true,
@@ -31,28 +32,14 @@ const CodemirrorEditor = ( props )=>{
   }
   // 컴파일 옵션 확인
   // console.log('[CODEMIRROR OPTIONS]\n', option);
+
   return (
-    <div>
-      <div className="language-selector">
-        <Input
-          s={6}
-          type='select' 
-          defaultValue={ props.default.language }
-          onChange={ props.handleSelect }>
-          <option value='c'>c</option>
-          <option value='java'>java</option>
-          <option value='python'>python</option>
-        </Input>
-      </div>
-      <div className="text-editor">
-        <CodeMirror
-          autoFocus={ true }
-          onFocusChange={ props.handleFocus }
-          value={ props.default.source }
-          options={ option }
-          onChange={ props.handleTyping }
-          />
-      </div>
+    <div className="CodemirrorEditor">
+      <CodeMirror
+        onFocusChange={ props.handleFocus }
+        defaultValue={ props.default.source }
+        options={ option }
+        onChange={ props.handleTyping }/>
     </div>
   );
 }

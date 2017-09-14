@@ -21,12 +21,13 @@ class MainApp extends Component{
     super(props);
     this.state = {
       popup:{
-        mode: 'undefined',
-        visible: false
+        visible: false,
+        mode: undefined,
+        value: undefined
       }
     };
     
-    this.popupModes = ['notice', 'setting', 'report'];
+    this.popupModes = ['notice', 'setting', 'report', 'compare'];
     this.handleShowPopUp = this.handleShowPopUp.bind(this);
     this.handleClosePopUp = this.handleClosePopUp.bind(this);
     
@@ -40,7 +41,7 @@ class MainApp extends Component{
   }
 
   // 팝업창 열기
-  handleShowPopUp( mode ){
+  handleShowPopUp( mode, value ){
     if( this.popupModes.indexOf(mode) === -1 ) return false;
     this.setState(
       update( this.state,
@@ -48,6 +49,7 @@ class MainApp extends Component{
           popup:{
             visible: { $set: true },
             mode: { $set: mode },
+            value: { $set: value }
           }
         }
       )

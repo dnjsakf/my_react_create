@@ -1,3 +1,28 @@
-section.TextEditorWrapper{
+.TextEditorWrapper{
   height: 100%;
+}
+
+/* Language-selector */
+.language-selector {
+  height: 40px
+}
+.language-selector > .input-field {
+  height: 100%;
+  margin: 0;
+}
+.language-selector > .input-field > .select-wrapper > .select-dropdown{
+  margin: 0;
+}
+
+
+/* text-editor */
+.text-editor {
+  width: 100%;
+  height: 60%;
+}
+
+/* compile-result */
+.compile-result{
+  width: 100%;
+  height: calc(40% - 40px);
 }

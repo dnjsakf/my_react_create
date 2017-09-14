@@ -9,7 +9,14 @@ const DashboardTable = ( props )=>{
   if( typeof props.table === 'undefined' ) return null;
   if( props.table.records === 'INIT') return null;
   
-  const options = { except: ['subject', 'sourceCode'] };
+  const options = { 
+    except: ['subject'],
+    replace: {
+      sourceCode: {
+        onClick: props.onShowPopUP
+      }
+    }
+  };
   const tables = convertTable(props.table.records, options);
 
   const existMaxPage = ( typeof props.table.maxPage === 'undefined' ? false : true );
@@ -18,7 +25,7 @@ const DashboardTable = ( props )=>{
   return (
     <section className="DashboardTable">
       <div className="tables">
-        <button onClick={ props.onFoldDashboard }>접기</button>
+        {/* <button onClick={ props.onFoldDashboard }>접기</button> */}
         <Table>
           <thead>
             { tables.headers }

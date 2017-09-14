@@ -1,15 +1,15 @@
 import { combineReducers } from 'redux';
 
-import LeftContentControll from './rdLeftContent';
-import RightContentControll from './rdRightContent';
+import LeftContent from './rdLeftContent';
+import RightContent from './rdRightContent';
 import Authorization from './rdAuthorization';
 import UserState from './rdUserState';
 import AdminNotice from './rdNotice';
 import Compile from './rdCompile';
 
 const reducers = combineReducers({
-  LeftContentControll,
-  RightContentControll,
+  LeftContent,
+  RightContent,
   Authorization,
   UserState,
   AdminNotice,

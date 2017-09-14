@@ -106,14 +106,14 @@ const mapStateToProps = (state)=>{
   return {
     status:{
       session: state.Authorization.status,
-      content: state.LeftContentControll.status, 
+      content: state.LeftContent.status, 
     },
     session:{
       isLogined: state.Authorization.isLogined,
     },
     content:{
-      list: state.LeftContentControll.content,
-      detail: state.RightContentControll.question.content
+      list: state.LeftContent.content,
+      detail: state.RightContent.question.content
     }
   }
 }

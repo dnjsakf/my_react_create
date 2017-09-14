@@ -7,6 +7,11 @@ const QuestionTitle = ( props )=>{
   return(
     <Navbar className='QuestionTitle' brand={ `${props.no}  ${props.subject}` } right>
       <NavItem
+        key={0}
+        onClick={ ()=>{ props.onShowPopUP( 'compare' ) } }>
+        <a>비교하기</a>
+      </NavItem>
+      <NavItem
         key={1}
         onClick={ ()=>{ props.onShowPopUP( 'report' ) } }>
         <a><Icon>bug_report</Icon></a>

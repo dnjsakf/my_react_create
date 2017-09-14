@@ -174,14 +174,14 @@ class SectionContainer extends Component{
     if( rightTitleInserted ) return true;
     
     console.log('[섹션 status]', nextProps.status);
-    if( nextProps.status.session === 'WAITING ') return false;
-    if( nextProps.status.userState === 'WAITING' ) return false;
-    if( nextProps.status.dashboard === 'WAITING' ) return false;
-    if( nextProps.status.leftContent === 'WAITING' ) return false;
-    if( nextProps.status.rightContent === 'WAITING' ) return false;
+    if( nextProps.status.session !== 'WAITING ') return true;
+    if( nextProps.status.userState !== 'WAITING' ) return true;
+    if( nextProps.status.dashboard !== 'WAITING' ) return true;
+    if( nextProps.status.leftContent !== 'WAITING' ) return true;
+    if( nextProps.status.rightContent !== 'WAITING' ) return true;
     
-    const sessionChanged = ( this.props.session.isLogined !== nextProps.session.isLogined );
-    console.log('[섹션 세션 변경]', sessionChanged, this.props.session.isLogined, nextProps.session.isLogined );
+    const sessionChanged = ( this.props.session !== nextProps.session );
+    console.log('[섹션 세션 변경]', sessionChanged, this.props.session, nextProps.session );
     if( sessionChanged ) return true;
 
     const algorithmChanged = ( this.state.right.algorithmNo !== nextState.right.algorithmNo );
@@ -245,9 +245,9 @@ const mapStateToProps = (state)=>{
     status:{
       session: state.Authorization.status,
       userState: state.UserState.status,
-      dashboard: state.RightContentControll.dashboard.status,
-      leftContent: state.LeftContentControll.status,
-      rightContent: state.RightContentControll.question.status
+      dashboard: state.RightContent.dashboard.status,
+      leftContent: state.LeftContent.status,
+      rightContent: state.RightContent.question.status
     },
     session:{
       isLogined: state.Authorization.isLogined,

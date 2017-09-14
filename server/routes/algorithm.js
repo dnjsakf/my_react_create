@@ -209,16 +209,16 @@ router.get('/dashboard/state', (req, res)=>{
      * 1. Query: Get Dashboard List
      */
     const dashboardRecords = myQuery.dashboard(mode, tables, conditions, sort);
-    conn.query( dashboardRecords, (error, exist)=>{
+    conn.query( dashboardRecords, (error, exists)=>{
       if( error ) throw error;
-      if( exist.length === 0 ){
+      if( exists.length === 0 ){
         return res.status(404).json({
           error: 'Not found data',
           code: 2
         });
       }
       // 이거 왜 저장했지??
-      req.session.question = { state: exist }
+      req.session.question = { state: exists }
 
       /**
        * 2. Query: Get Dashboard Some-Field Total Count
@@ -236,10 +236,24 @@ router.get('/dashboard/state', (req, res)=>{
           let maxPage = parseInt( result[0].count / req.query.count );
           if( nmg > 0 ) maxPage += 1;
           
+          let myRecords = {
+            'java':[],
+            'python':[],
+            'c':[]
+          };
+          if( req.session.user !== 'undefined' ){
+            exists.map((row, index)=>{
+              if( row.name === req.session.user.displayName ){
+                myRecords[row.language].push(row);
+              }
+            });
+          }
+          
           return res.status(200).json({
             success: true,
             maxPage,
-            records: exist,
+            records: exists,
+            myRecords
           });
         });
       } catch(exception) {
@@ -258,6 +272,74 @@ router.get('/dashboard/state', (req, res)=>{
       code: 500
     });
   }
+});
+
+
+router.get('/compare/:target/:mode/:questionNo/:language/:no/', (req, res)=>{
+  if( typeof req.params.target === 'undefined' ){
+    return res.status(403).json({
+      error: 'Type Error: target is undefined',
+      code: 403
+    });
+  }
+  if( typeof req.params.mode === 'undefined'){
+    return res.status(403).json({
+      error: 'Type Error: mode is undefined',
+      code: 403
+    });
+  }
+  if( typeof req.params.questionNo === 'undefined' ){
+    return res.status(403).json({
+      error: 'Type Error: questionNo is undefined',
+      code: 403
+    });
+  }
+  if( typeof req.params.language === 'undefined'){
+    return res.status(403).json({
+      error: 'Type Error: language is undefined',
+      code: 403
+    });
+  }
+  if( typeof req.params.no === 'undefined' ){
+    return res.status(403).json({
+      error: 'Type Error: no is undefined',
+      code: 403
+    });
+  }
+  
+  let query = [
+    'SELECT',[
+      'qState.no as no',
+      'member.name as name',
+      'qState.language as language',
+      'qState.sourceCode as sourceCode',
+      'qState.result as result',
+      'qState.date as date' 
+    ].join(', '),
+    'FROM qState',
+    'INNER JOIN member ON qState.mNo = member.no',
+    `WHERE qState.qNo = ${req.params.questionNo}`,
+    `AND qState.language = "${req.params.language}"`,
+    ( req.params.target === 'my' ? `AND qState.mNo = ${req.session.user.no}` : `AND NOT qState.mNo = ${req.session.user.no}`),
+    ( req.params.mode === 'next' ? `AND qState.no > ${req.params.no}` : `AND qState.no < ${req.params.no}` ),
+    ( req.params.mode === 'next' ? `ORDER BY qState.no ASC` : `ORDER BY qState.no DESC`),
+    `LIMIT 1`
+  ].join(' ');
+
+  conn.query( query, (error, exist)=>{
+    if( error ) throw error;
+    if( exist.length === 0 ){
+      return res.status(404).json({
+        error: 'Not Found Data',
+        code: 403
+      });
+    }
+    
+    return res.status(200).json({
+      success: true,
+      data: exist[0]
+    });
+  });
 });
 
 export default router;

@@ -177,10 +177,10 @@ class RightContainer extends Component{
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    if( nextProps.status.session === 'WAITING' ) return false;
-    if( nextProps.status.question === 'WAITING' ) return false;
-    if( nextProps.status.dashboard === 'WAITING' ) return false;
-    if( nextProps.status.update === 'WAITING' ) return false;
+    if( nextProps.status.session !== 'WAITING' ) return true;
+    if( nextProps.status.question !== 'WAITING' ) return true;
+    if( nextProps.status.dashboard !== 'WAITING' ) return true;
+    if( nextProps.status.update !== 'WAITING' ) return true;
 
     const menuChanged = ( this.props.menu !== nextProps.menu );
     console.log('[오른쪽 메뉴 변경]', menuChanged, this.props.menu, nextProps.menu );
@@ -190,8 +190,8 @@ class RightContainer extends Component{
     console.log('[오른쪽 메뉴 추가]', titlesChanged, this.props.titles, nextProps.titles );
     if( titlesChanged ) return true;
     
-    const sessionChanged = ( this.props.session.isLogined !== nextProps.session.isLogined );
-    console.log('[오른쪽 세션 변경]', sessionChanged, this.props.session.isLogined, nextProps.session.isLogined );
+    const sessionChanged = ( this.props.session !== nextProps.session );
+    console.log('[오른쪽 세션 변경]', sessionChanged, this.props.session, nextProps.session );
     if( sessionChanged ) return true;
 
     const questionChanged = ( this.props.question !== nextProps.question );
@@ -269,27 +269,27 @@ const mapStateToProps = ( state )=>{
   return {
     status:{
       session: state.Authorization.status,
-      question: state.RightContentControll.question.status,
+      question: state.RightContent.question.status,
       update: state.UserState.status,
-      dashboard: state.RightContentControll.dashboard.status,
+      dashboard: state.RightContent.dashboard.status,
     },
     session:{
       isLogined: state.Authorization.isLogined,
       user: state.Authorization.user
     },
     question:{
-      no: state.RightContentControll.question.content.no,
-      detail: state.RightContentControll.question.content,
+      no: state.RightContent.question.content.no,
+      detail: state.RightContent.question.content,
     },
     pwdCheck:{
       checked: state.Authorization.pwdChecked,
     },
     dashboard:{
       table: {
-        records: state.RightContentControll.dashboard.records,
-        maxPage: state.RightContentControll.dashboard.maxPage
+        records: state.RightContent.dashboard.records,
+        maxPage: state.RightContent.dashboard.maxPage
       },
-      stats: state.RightContentControll.question.stats
+      stats: state.RightContent.question.stats
     }
   }
 }

@@ -94,6 +94,7 @@ class PopUpContainer extends Component{
         defaultNotice={ this.props.notice }
 
         onClosePopUp={ this.props.onClosePopUp }
+        
         onPageNotice={ this.handleNoticePage }
         onSaveSetting={ this.handleSaveSetting }
         onSaveReport={ this.handleSaveReport }
@@ -106,7 +107,7 @@ const mapStateToProps = (state)=>{
     status:{
       session: state.Authorization.status,
       notice: state.AdminNotice.notice.status,
-      qusetion: state.RightContentControll.question.status
+      qusetion: state.RightContent.question.status
     },
     session:{
       isLogined: state.Authorization.isLgoined,
@@ -117,8 +118,8 @@ const mapStateToProps = (state)=>{
       maxPage: state.AdminNotice.notice.maxPage,
     },
     question: {
-      no: state.RightContentControll.question.content.no,
-      subject: state.RightContentControll.question.content.subject
+      no: state.RightContent.question.content.no,
+      subject: state.RightContent.question.content.subject
     }
   }
 }

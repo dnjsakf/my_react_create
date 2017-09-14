@@ -1,18 +1,13 @@
+
+.CodemirrorEditor{
+  height: 100%;
+}
 .ReactCodeMirror{
-  height: calc(60% - 40px);
+  height: 100%;
 }
 .ReactCodeMirror .CodeMirror{
   height: 100%;
 }
 .ReactCodeMirror .CodeMirror-scroll{
   padding-bottom: 0;
-}
-
-/* Language-selector */
-.language-selector > .input-field {
-  height: 40px;
-  margin: 0;
-}
-.language-selector > .input-field > .select-wrapper > .select-dropdown{
-  margin: 0;
 }

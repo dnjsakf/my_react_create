@@ -15,10 +15,10 @@ class HeaderContainer extends Component{
     console.log('[헤더 프롭스 받음]', this.props, nextProps);
   }
   shouldComponentUpdate(nextProps, nextState){
-    if( nextProps.status.session === 'WAITING' ) return false;
+    if( nextProps.status.session !== 'WAITING' ) return true;
     
-    const sessionChanged = ( this.props.session.isLogined !== nextProps.session.isLogined );
-    console.log('[헤더 세션 변경]', sessionChanged, this.props.session.isLogined, nextProps.session.isLogined );
+    const sessionChanged = ( this.props.session !== nextProps.session );
+    console.log('[헤더 세션 변경]', sessionChanged, this.props.session, nextProps.session );
     if( sessionChanged ) return true;
     
     return false;

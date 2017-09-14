@@ -10,6 +10,7 @@ import CodemirrorEditor from './../CodemirrorEditor/CodemirrorEditor';
 import CompileResult from './../CompileResult/CompileResult';
 
 import style from './TextEditorWrapper.css';
+import { Input } from 'react-materialize';
 
 class TextEditorWrapper extends Component{
   constructor(props){
@@ -176,21 +177,35 @@ class TextEditorWrapper extends Component{
     return (
       <section className='TextEditorWrapper'>
         {/*  select 필요하구나.. */}
-        <CodemirrorEditor
-          handleFocus={ this.handleSaveFile }
-          handleTyping={ this.handleTyping }
+        <div className="language-selector">
+          <Input
+            s={6}
+            type='select' 
+            defaultValue={ this.state.language }
+            onChange={ this.handleLanguageSelect }>
 
-          default={ values }
+            <option value='c'>c</option>
+            <option value='java'>java</option>
+            <option value='python'>python</option>
+          </Input>
+        </div>
+        <div className="text-editor">
+          <CodemirrorEditor
+            handleFocus={ this.handleSaveFile }
+            handleTyping={ this.handleTyping }
 
-          handleSelect={ this.handleLanguageSelect }
-          />
-        <CompileResult
-          handleRunCompile={ this.handleRunCompile } 
+            default={ values }
+            />
+        </div>
+        <div className="compile-result">
+          <CompileResult
+            handleRunCompile={ this.handleRunCompile } 
 
-          compiling={ this.state.compiling }
+            compiling={ this.state.compiling }
 
-          results={ this.props.compile.result }
-          />
+            results={ this.props.compile.result }
+            />
+        </div>
       </section>
     );
   }
@@ -208,7 +223,7 @@ const mapStateToProps = (state)=>{
       editor: state.Authorization.user.editor
     },
     question:{
-      no: state.RightContentControll.question.content.no
+      no: state.RightContent.question.content.no
     },
     compile:{
       result: state.Compile.result

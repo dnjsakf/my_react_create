@@ -10,12 +10,18 @@ import {
 } from './../../../../DashboardComponent';
 
 
+
+function test( event ){
+  console.log( event.target.value );
+}
+
 const QuestionWrapper = ( props )=>{
   const dashboardTable = (
     <DashboardTable
       onChangeDashboard={ props.onChangeDashboard }
       onFoldDashboard={ props.onFoldDashboard }
       table={ props.dashboard.table }
+      onShowPopUP={ props.onShowPopUP }
       />
   )
 

@@ -3,18 +3,14 @@ import { Navbar, NavItem, Icon } from 'react-materialize';
 import style from './QuestionTitle.css';
 
 const QuestionTitle = ( props )=>{
-  console.log('[question-title]', props, props.subject)
   return(
-    <Navbar className='QuestionTitle' brand={ `${props.no}  ${props.subject}` } right>
-      <NavItem
-        key={0}
-        onClick={ ()=>{ props.onShowPopUP( 'compare' ) } }>
-        <a>비교하기</a>
-      </NavItem>
+    <Navbar className='QuestionTitle'
+            brand={ `${props.no}  ${props.subject}` }
+            right>
       <NavItem
         key={1}
         onClick={ ()=>{ props.onShowPopUP( 'report' ) } }>
-        <a><Icon>bug_report</Icon></a>
+        <a><Icon className='QuestionReport'>bug_report</Icon></a>
       </NavItem>
       <NavItem 
         key={2} 

@@ -13,6 +13,7 @@ const QuestionSubject = ( props )=>{
   Array.from(subject).map((item, index)=>{
     list.push(
       <CollectionItem
+        className="animated fadeInDown"
         key={ index }
         href="#"
         onClick={ ()=>{ props.onAlgorithmClick( item.no )} }> 
@@ -22,9 +23,11 @@ const QuestionSubject = ( props )=>{
   });
 
   return (
-    <Collection>
-      { list }
-    </Collection>
+    <section className="QuestionSubject">
+      <Collection>
+        { list }
+      </Collection>
+    </section>
   );
 }
 

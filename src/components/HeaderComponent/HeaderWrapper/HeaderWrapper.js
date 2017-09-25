@@ -6,10 +6,10 @@ import style from './HeaderWrapper.css';
 
 const HeaderWrapper = ( props )=>{
   const login = (
-    <Link to="/login"><Icon >fingerprint</Icon></Link>
+    <Link to="/login"><Icon className='login-fingerprint'>fingerprint</Icon></Link>
   );
   const logout = (
-    <a onClick={ props.onLogout } ><Icon >vpn_key</Icon></a>
+    <a onClick={ props.onLogout } ><Icon>vpn_key</Icon></a>
   )
   // array
   const UserItems = [

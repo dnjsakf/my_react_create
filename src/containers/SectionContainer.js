@@ -72,7 +72,7 @@ class SectionContainer extends Component{
   // algorithm 선택 이벤트
   handleAlgorithmSelect( algorithmNo ){
     console.log('[Algorihtm-select ]', algorithmNo, this.state.right.title );
-
+    
     const setLeftMenu = 'Detail';
     const existMenu = this.state.right.title.indexOf(setLeftMenu);
 

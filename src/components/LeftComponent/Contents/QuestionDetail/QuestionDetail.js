@@ -16,7 +16,7 @@ const QuestionDetail = ( props )=>{
 
   return (
     <Row className='QusetionDetail-scroll left'>
-      <Col key={1} m={12} s={0} className='QuestionDetail-Content'>  
+      <Col key={1} m={12} s={0} className='QuestionDetail-Content animated fadeInRight p3s'>  
           <Card 
             className='blue-grey darken-1 content' 
             textClassName='white-text' 
@@ -24,7 +24,7 @@ const QuestionDetail = ( props )=>{
             { question }
           </Card>  
       </Col>
-      <Col key={2} m={12} s={0} className='QuestionDetail-InputInfo'>  
+      <Col key={2} m={12} s={0} className='QuestionDetail-InputInfo animated fadeInRight p3s'>  
           <Card 
             className='blue-grey darken-1 input-info' 
             textClassName='white-text' 
@@ -32,7 +32,7 @@ const QuestionDetail = ( props )=>{
             { inputInfo }
           </Card>  
       </Col>
-      <Col key={3} m={12} s={0} className='QuestionDetail-OutputInfo'>  
+      <Col key={3} m={12} s={0} className='QuestionDetail-OutputInfo animated fadeInRight p3s'>  
           <Card 
             className='blue-grey darken-1 output-info' 
             textClassName='white-text' 
@@ -40,10 +40,10 @@ const QuestionDetail = ( props )=>{
             { outputInfo }
           </Card>  
       </Col>
-      <Col key={4} m={12} s={0} className='QuestionDetail-InputCase'>
+      <Col key={4} m={12} s={0} className='QuestionDetail-InputCase animated fadeInRight p3s'>
         { inputcase }
       </Col>
-      <Col key={5} m={12} s={0} className='QuestionDetail-OutputCase'>
+      <Col key={5} m={12} s={0} className='QuestionDetail-OutputCase animated fadeInRight p3s'>
         { outputcase }
       </Col>
     </Row>

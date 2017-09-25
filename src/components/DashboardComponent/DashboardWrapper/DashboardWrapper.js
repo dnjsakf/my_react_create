@@ -21,7 +21,7 @@ const DashboardWrapper = ( props )=>{
   });
 
   return (
-    <section className="DashboardWrapper">
+    <section className="DashboardWrapper animated bounceInRight p1s">
       <div className="stats">
         { items }
       </div>

@@ -241,7 +241,7 @@ router.get('/dashboard/state', (req, res)=>{
             'python':[],
             'c':[]
           };
-          if( req.session.user !== 'undefined' ){
+          if( typeof req.session.user !== 'undefined' ){
             exists.map((row, index)=>{
               if( row.name === req.session.user.displayName ){
                 myRecords[row.language].push(row);

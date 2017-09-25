@@ -1,4 +1,9 @@
-ul.collection, div.collection{
+
+.QuestionSubject > ul.collection,
+.QuestionSubject > div.collection{
   margin-top: 0;
   margin-bottom: 0;
+}
+.QuestionSubject > .nav-wrapper {
+  height: 100%;
 }

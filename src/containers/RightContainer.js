@@ -258,7 +258,7 @@ class RightContainer extends Component{
           onDeleteUserState={ this.handleDeleteUserState }
         
           // all content
-          user={ this.props.session.user }
+          session={ this.props.session }
           />
       </section>
     )

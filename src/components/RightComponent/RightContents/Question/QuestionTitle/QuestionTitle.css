@@ -1,5 +1,20 @@
+.QuestionTitle a {
+  color: black;
+}
+
 nav.QuestionTitle {
   padding-left: 12px;
   padding-right: 12px;
   height: 63px;
+
+  background-color: white;
+  color: black;
+}
+
+i.QuestionReport:hover{
+  animation-name: shake;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+
+  color: #ef5350;
 }

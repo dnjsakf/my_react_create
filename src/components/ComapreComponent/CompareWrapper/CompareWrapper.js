@@ -18,10 +18,12 @@ import CompareState from './../CompareState/CompareState';
 import style from './CompareWrapper.css';
 import { Button, Icon } from 'react-materialize';
 
+/* 유틸 */
+import { analysis } from './../../../utility/analysis.test.js';
+
 class CompareWrapper extends Component{
   constructor(props){
     super(props);
-
     this.state={
       my:{
         no: props.dashboard.myRecords['python'][0].no,
@@ -39,12 +41,33 @@ class CompareWrapper extends Component{
         sourceCode: props.dashboard.records[props.value].sourceCode,
         result: props.dashboard.records[props.value].result,
         date: props.dashboard.records[props.value].datae
+      },
+      analysis:{
+        my: {},
+        other: {}
       }
     }
 
     this.handleFindSource = this.handleFindSource.bind(this);
+    this.handleRunCompare = this.handleRunCompare.bind(this);
+    this.handleOnScroll = this.handleOnScroll.bind(this);
   }
-  
+
+  componentWillMount(){
+    /** 내 데이터만 가져오기 */
+    // const questionNo = this.props.question.no;
+    // const language = this.state.other.language;
+    // const url = `/api/data/compare/my/next/${questionNo}/${language}/true`;
+    // axios.get(url)
+    // .then((response)=>{
+
+    // })
+    // .catch((error)=>{
+      
+    // })
+  }
+
+  // Get prev && next source-code
   handleFindSource( mode, target ){
     const questionNo = this.props.question.no;
     const language = this.state[target].language;
@@ -57,13 +80,25 @@ class CompareWrapper extends Component{
         if( target === 'my'){
           this.setState(
             update( this.state,
-              { my: { $set: response.data.data } }
+              { 
+                my: { $set: response.data.data },
+                analysis: { 
+                  my: {$set : {}},
+                  other: {$set : {}},
+                }
+              }
             )
           )
         } else {
           this.setState(
             update( this.state,
-              { other: { $set: response.data.data } }
+              {
+                other: { $set: response.data.data },
+                analysis: { 
+                  my: {$set : {}},
+                  other: {$set : {}},
+                }
+              }
             )
           )
         }
@@ -73,6 +108,17 @@ class CompareWrapper extends Component{
       });
   }
 
+  handleRunCompare(){
+    this.setState(
+      update( this.state,
+      {
+        analysis:{
+          my: {$set: analysis( this.state.my.language, this.state.my.sourceCode )},
+          other: {$set: analysis( this.state.other.language, this.state.other.sourceCode )},
+        }
+      }
+    ));
+  }
 
   shouldComponentUpdate(nextProps, nextState){
     const otherSourceChanged = ( this.state.other !== nextState.other );
@@ -82,14 +128,47 @@ class CompareWrapper extends Component{
     const mySourceChanged = ( this.state.my !== nextState.my );
     console.log('[비교하기 내 소스 변경]', mySourceChanged, this.state.my, nextState.my );
     if( mySourceChanged ) return true;
+    
+    const mySourceAnalysis = ( this.state.analysis.my !== nextState.analysis.my );
+    console.log('[비교하기 내 소스 분석]', mySourceAnalysis, this.state.analysis.my, nextState.analysis.my );
+    if( mySourceAnalysis ) return true;
+
+    const otherSourceAnalysis = ( this.state.analysis.other !== nextState.analysis.other );
+    console.log('[비교하기 상대 소스 분석]', otherSourceAnalysis, this.state.analysis.other, nextState.analysis.other );
+    if( otherSourceAnalysis ) return true;
 
     return false;
   }
+
   componentWillUpdate(){
     console.log('[비교하기 업데이트 진행]');
   }
-  componentWillUpdate(){
+
+  componentDidUpdate(){
     console.log('[비교하기 업데이트 완료]', this.state);
+    this.handleOnScroll();
+  }
+
+  handleOnScroll( ){
+    const scroller = document.querySelectorAll('div.compare-state');
+    const simple = document.querySelectorAll('.blue-grey.simple.card');
+    for(let i=0; i<scroller.length; i++){
+      this.scrollDown( scroller[i], simple[i].scrollHeight, 20, 10 );
+    }
+  }
+
+  scrollDown( element, end, speed, duration ){
+    if( element.scrollTop+speed >= end ) return false
+    const animation = setInterval(()=>{
+      if( element.scrollTop >= end ){
+        element.scrollTop = end;
+        return clearInterval(animation);
+      } else {
+        element.scrollTop += ( speed + element.scrollTop * 0.1 );
+      }
+    }, duration);
+    // 강제종료
+    setTimeout(()=>{ return clearInterval(animation); }, 1000);
   }
 
   render(){
@@ -124,7 +203,8 @@ class CompareWrapper extends Component{
             </div>
             <div className="compare-state">
               <CompareState className="CompareState"
-                            state={ this.state.my } />
+                            state={ this.state.my }
+                            analysis={ this.state.analysis.my } />
             </div>
           </div>
 
@@ -153,7 +233,8 @@ class CompareWrapper extends Component{
             </div>
             <div className="compare-state">
               <CompareState className="CompareState"
-                            state={ this.state.other } />
+                            state={ this.state.other }
+                            analysis={ this.state.analysis.other } />
             </div>
           </div>
         </section>
@@ -163,7 +244,7 @@ class CompareWrapper extends Component{
           </Button>
         </nav>
         <div id="btn-compare">
-          <a alt="비교하기"><Icon className="medium">compare_arrows</Icon></a>
+          <a alt="비교하기" onClick={this.handleRunCompare}><Icon className="medium">compare_arrows</Icon></a>
         </div>
       </section>
     );

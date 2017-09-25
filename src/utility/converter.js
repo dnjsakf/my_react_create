@@ -130,7 +130,8 @@ export function convertTable( listData, tableOption ){
                   <td value={ rowIndex } 
                       key={ colIndex } >
                       { 
-                        <button value={ rowIndex } 
+                        <button className="btn-compare"
+                                value={ rowIndex } 
                                 onClick={ (event)=>{ existsReplace[field].onClick('compare', event.target.value) } } >
                           상세보기
                         </button>

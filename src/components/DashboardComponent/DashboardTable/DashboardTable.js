@@ -8,22 +8,29 @@ import { convertTable } from './../../../utility/converter';
 const DashboardTable = ( props )=>{
   if( typeof props.table === 'undefined' ) return null;
   if( props.table.records === 'INIT') return null;
-  
-  const options = { 
-    except: ['subject'],
-    replace: {
-      sourceCode: {
-        onClick: props.onShowPopUP
-      }
+  let options = {};
+  if( props.isLogined ){
+    options = {
+      except: ['subject'],
+      replace: {
+        sourceCode: {
+          onClick: props.onShowPopUP
+        }
+      } 
     }
-  };
+  } else {
+    options = {
+      except: ['subject', 'sourceCode']
+    }
+  }
+  
   const tables = convertTable(props.table.records, options);
 
   const existMaxPage = ( typeof props.table.maxPage === 'undefined' ? false : true );
   const maxPage = ( existMaxPage ? props.table.maxPage : 1 );
 
   return (
-    <section className="DashboardTable">
+    <section className="DashboardTable animated bounceInRight">
       <div className="tables">
         {/* <button onClick={ props.onFoldDashboard }>접기</button> */}
         <Table>

@@ -18,6 +18,8 @@ const ContentsWrapper = ( props )=>{
       if(Object.keys(props.content).length > 0){
         content = (
           <QuestionWrapper
+            session={ props.session }
+
             // 문제 타이틀
             content={ props.content }
             onAlgorithmSolve={ props.onAlgorithmSolve }
@@ -53,7 +55,7 @@ const ContentsWrapper = ( props )=>{
 
           onUpdateUserState={ props.onUpdateUserState }
 
-          user={ props.user }
+          user={ props.session.user }
         />
       );
       break;

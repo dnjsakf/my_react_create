@@ -10,3 +10,17 @@
 .HeaderWrapper .material-icons{
   height: 100%;
 }
+
+.HeaderWrapper a:hover{
+  animation-name: whiteToBlack;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
+@keyframes whiteToBlack{
+  from{
+    color:white;
+  }
+  to {
+    color: black;
+  }
+}

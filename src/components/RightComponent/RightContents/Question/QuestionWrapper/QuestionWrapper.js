@@ -22,6 +22,7 @@ const QuestionWrapper = ( props )=>{
       onFoldDashboard={ props.onFoldDashboard }
       table={ props.dashboard.table }
       onShowPopUP={ props.onShowPopUP }
+      isLogined={ props.session.isLogined }
       />
   )
 

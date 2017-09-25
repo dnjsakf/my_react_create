@@ -10,7 +10,7 @@ const TabMenuItem = ( props )=>{
   
   props.titles.map((item, index)=>{
     items.push(
-      <li  key={index}>
+      <li className="animated bounceInDown" key={index}>
         <Button 
           onClick={ ()=>{ props.onMenuClick('left', item)} } >
           { item }

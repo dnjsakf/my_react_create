@@ -11,3 +11,15 @@
 .DashboardTable td, .DashboardTable th{
   text-align: center;
 }
+
+.DashboardTable .btn-compare{
+  outline: none;
+  border: none;
+  background: white;
+  color: grey;
+}
+
+.DashboardTable .btn-compare:hover{
+  background: black;
+  color: white;
+}

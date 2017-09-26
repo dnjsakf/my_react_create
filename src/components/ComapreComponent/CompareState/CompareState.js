@@ -9,8 +9,8 @@ const CompareState = ( props )=>{
   if( typeof props.analysis.line !== 'undefined' ){
     analysised = (
       <Card key={1}
-              className='blue-grey darken-1 detail'
-              textClassName='white-text' 
+              className='detail'
+              textClassName='black-text' 
               title={ "상세정보" } 
               actions={ props.handleCompare }>
             <Table>
@@ -29,7 +29,8 @@ const CompareState = ( props )=>{
                 {
                   props.analysis.import.map((el,index)=>{
                     return (
-                      <tr key={"import"+index}>
+                      <tr className="import"
+                          key={"import"+index}>
                         <td>import</td>
                         <td>{el[1]}</td>
                         <td>{el[0]}</td>
@@ -40,7 +41,8 @@ const CompareState = ( props )=>{
                 {
                   props.analysis.define.class.map((el,index)=>{
                     return (
-                      <tr key={"define-class"+index}>
+                      <tr className="define-class"
+                          key={"define-class"+index}>
                         <td>define-class</td>
                         <td>{el[1]}</td>
                         <td>{el[0]}</td>
@@ -51,7 +53,8 @@ const CompareState = ( props )=>{
                 {
                   props.analysis.define.func.map((el,index)=>{
                     return (
-                      <tr key={"define-func"+index}>
+                      <tr className="define-func"
+                          key={"define-func"+index}>
                         <td>define-function</td>
                         <td>{el[1]}</td>
                         <td>{el[0]}</td>
@@ -62,7 +65,8 @@ const CompareState = ( props )=>{
                 {
                   props.analysis.used.class.map((el,index)=>{
                     return (
-                      <tr key={"use-class"+index}>
+                      <tr className="use-class"
+                          key={"use-class"+index}>
                         <td>use-class</td>
                         <td>{el[1]}</td>
                         <td>{el[0]}</td>
@@ -73,7 +77,8 @@ const CompareState = ( props )=>{
                 {
                   props.analysis.used.func.map((el,index)=>{
                     return (
-                      <tr key={"use-func"+index}>
+                      <tr className="use-func"
+                          key={"use-func"+index}>
                         <td>use-function</td>
                         <td>{el[1]}</td>
                         <td>{el[0]}</td>
@@ -84,7 +89,8 @@ const CompareState = ( props )=>{
                 {
                   props.analysis.used.condition.map((el,index)=>{
                     return (
-                      <tr key={"use-condition"+index}>
+                      <tr className="use-condition"
+                          key={"use-condition"+index}>
                         <td>use-condition</td>
                         <td>{el[1]}</td>
                         <td>{el[0]}</td>
@@ -95,7 +101,8 @@ const CompareState = ( props )=>{
                 {
                   props.analysis.used.loop.map((el,index)=>{
                     return (
-                      <tr key={"use-loop"+index}>
+                      <tr className="use-loop"
+                          key={"use-loop"+index}>
                         <td>use-loop</td>
                         <td>{el[1]}</td>
                         <td>{el[0]}</td>
@@ -111,8 +118,8 @@ const CompareState = ( props )=>{
   return (
     <section className="CompareState">
       <Card key={0}
-            className='blue-grey darken-1 simple'
-            textClassName='white-text' 
+            className='simple'
+            textClassName='black-text' 
             title={ "기본정보" } 
             actions={ props.handleCompare }>
           <Table>

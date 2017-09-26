@@ -7,7 +7,7 @@ section.PopUpWrapper{
   height: 100%;
   background-color: rgba( 0, 0, 0, 0.8 );
 
-  animation: FadeIn 1s;
+  animation: FadeIn 0.5s;
 }
 
 @keyframes FadeIn{

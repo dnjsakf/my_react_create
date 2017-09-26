@@ -151,7 +151,7 @@ class CompareWrapper extends Component{
 
   handleOnScroll( ){
     const scroller = document.querySelectorAll('div.compare-state');
-    const simple = document.querySelectorAll('.blue-grey.simple.card');
+    const simple = document.querySelectorAll('.simple.card');
     for(let i=0; i<scroller.length; i++){
       this.scrollDown( scroller[i], simple[i].scrollHeight, 20, 10 );
     }

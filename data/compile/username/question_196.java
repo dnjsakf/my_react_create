@@ -1,7 +1,9 @@
-import java.util.Scanner;
+import java.util.*;
 
 class INIT_JAVA{
   public static void main(String[] args){
-    System.out.println("Hello, JAVA");
-  }
+    Scanner scan = new Scanner(System.in);
+    String text = scan.readLine();
+    System.out.println(text);
+  } 
 }

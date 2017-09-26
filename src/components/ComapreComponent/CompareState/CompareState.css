@@ -13,3 +13,6 @@
 .CompareState > .blue-grey.detail.card {
   height: auto;
 }
+.CompareState table{
+  border-collapse: collapse;
+}

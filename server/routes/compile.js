@@ -1,45 +1,11 @@
-/**
- * TEST CODE
- */
-const test_sourcecode=[
-  'a, b = map( int, input().split())',
-  'print( a + b );'
-];
-const test_testcase=[
-  { // case-1 :: index 0
-    input: ['1 1', '2 2'],
-    output: ['2', '4']
-  },
-  { // case-2 :: index 1
-    input: ['3 1', '5 5'],
-    output: ['4', '10']
-  },
-  { // case-3 :: index 2
-    input: ['3 2', '5 -5'],
-    output: ['5', '0']
-  },
-  { // case-3 :: index 2
-    input: ['50 50', '100 100'],
-    output: ['50', '200']
-  },
-  { // case-3 :: index 2
-    input: ['150 150', '1100 1100'],
-    output: ['150', '1200']
-  }
-];
-
-
-/**
- * 음... 테스트케이스의 수 만큼 request를 받고 reponse 해주는게 좋을까?
- * 아니면, request를 받고, 다 처리하고 reponse를 하는게 좋을까?
- * 하나씩 받는게 좋을 것 같긴한데..
- */
 import express from 'express';
 import mysql from 'mysql';
 import fs from 'fs';
 import childProcess from 'child_process';
 import path from 'path';
 import moment from 'moment';
+
+import { update } from './../config/database/updateStats';
 
 const router = express.Router();
 const conn = mysql.createConnection({
@@ -247,14 +213,22 @@ router.post('/:language/:questionNo', (req, res)=>{
     .then((data)=>{
       console.log('[compile-success]\n', data);
 
-      const conditions = {
+      let conditions = {
         qNo: req.params.questionNo,
         mNo: User.no,
         language: req.params.language,
         sourceCode: req.body.sourceCode,
-        result: 0,
+        result: data[0].result,
         date: moment().format('YYYY-MM-DD')
       }
+      if( data.length > 1 ){
+        conditions.result = data.reduce(
+          (prev, current, index)=>{
+            return ( index === 1 ) ?  prev.result + current.result : prev + current.rseult;
+          }
+        ) / data.length
+      }
+
       const info = ((_data)=>{
         let keys = Object.keys(_data);
         let values = [];
@@ -267,6 +241,8 @@ router.post('/:language/:questionNo', (req, res)=>{
       const INSERT = `INSERT INTO qState ( ${info.keys.join(', ')} ) values ( ? )`;
       conn.query(INSERT, [ info.values ], (error, result)=>{
         if( error ) throw error;
+        update();
+        
         return res.status(200).json({
           success: true,
           result: data
@@ -327,13 +303,12 @@ function createCompiler( options ){
 /**
  * 전체 case에서 한 개씩 처리
  */
-function runCompile(compilers, testcases){
+function runCompile(compilers, testcase){
   let promise = [];
   compilers.map( (compiler, index)=>{
     promise.push(
       new Promise((resolve, reject)=>{
-        let input = testcases[index].input;
-        processSingleCase(compiler, input, resolve, reject);
+        processSingleCase(compiler, testcase[index], resolve, reject);
       })
     )
   });
@@ -342,15 +317,15 @@ function runCompile(compilers, testcases){
 /**
  * 단위 처리
  */
-function processSingleCase(compiler, inputs, resolve, reject){
+function processSingleCase(compiler, testcase, resolve, reject){
   console.log( '[compiler]', compiler.domain, compiler.pid );
   /**
    * stdin
    * INPUT이 여러개 여러 줄 일 수 있음
    */
   let result = {};
-  result.input = inputs;
-  inputs.map((input)=>{
+  result.input = testcase.input;
+  testcase.input.map((input)=>{
     compiler.stdin.write( `${input}\n` );
   });
   compiler.stdin.end(()=>{
@@ -359,12 +334,10 @@ function processSingleCase(compiler, inputs, resolve, reject){
   /**
    * stdout
    */
+  let outputs = [];
   compiler.stdout.on('data', (output)=>{
-    let outputs = [];
-    outputs = clearLastBlank(output.toString().split(/\r?\n/gm));
-    console.log( '[stdout]', compiler.domain, outputs);
-    result.output = outputs;
-    resolve(result);
+    outputs = outputs.concat( clearLastBlank( output.toString().split(/\r?\n/gm) ) );
+    console.log( '[stdout]', compiler.domain, testcase.output, outputs );
   });
   /**
    * stderr
@@ -374,7 +347,16 @@ function processSingleCase(compiler, inputs, resolve, reject){
     reject(error);
   });
   compiler.stdout.on('end', ()=>{
-    // console.log('[end]', compiler.domain );
+    if( outputs.lenght === 0 ){
+      reject('error');
+    }
+    result.output = outputs;
+    result.result = ( outputs.filter(
+      (output, index)=>{
+        return output === testcase.output[index];
+      }
+    ).length / testcase.output.length) * 100 ;
+    resolve(result);
   });
 }
 

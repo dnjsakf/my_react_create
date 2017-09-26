@@ -14,6 +14,8 @@ const CompileResult = ( props )=>{
    */
   let tbodys = [];
   if( typeof props.results === 'object'){
+    
+
     props.results.map((CASE, caseIndex)=>{
       tbodys.push(
         <tbody key={caseIndex}>
@@ -25,7 +27,7 @@ const CompileResult = ( props )=>{
                   <tr key={_index}>
                     <td>{ _index === 0 ? (_caseIndex + 1) : null }</td>
                     <td>{ _row }</td>
-                    <td>{ _index === 0 ? _outputs[_caseIndex] : null }</td>
+                    <td>{ typeof _outputs[_index] !== 'undefined' ? _outputs[_index] : null }</td>
                   </tr>
                 );
               });
@@ -48,7 +50,7 @@ const CompileResult = ( props )=>{
       <Table>
         <thead>
           <tr>
-            <th>No</th>
+            <th>Case</th>
             <th>Input</th>
             <th>result</th>
           </tr>

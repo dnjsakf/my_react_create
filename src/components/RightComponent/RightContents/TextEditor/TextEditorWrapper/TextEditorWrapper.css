@@ -25,4 +25,5 @@
 .compile-result{
   width: 100%;
   height: calc(40% - 40px);
+  overflow-y: scroll;
 }

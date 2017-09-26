@@ -13,8 +13,9 @@
 
   width: 100px;
   height: 130px;
+  margin-right: 1px;
 
-  box-shadow: 3px 3px grey;
+  box-shadow: 1px 1px 1px grey;
 }
 
 .DashboardItem > .item-name{

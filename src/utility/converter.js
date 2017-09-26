@@ -25,12 +25,11 @@ export function convertTestcaseToHtml(title, testcase, isEditor){
   Object.keys(testcase).map(function(key, caseIndex){
     let caseTag = [];
     const array = typeof testcase[key] === 'string' ? [testcase[key]] : testcase[key];
-    array.map((el, dataIndex)=>{
-      const number = dataIndex + 1;
+    array.map((data, dataIndex)=>{
       caseTag.push(
         <tr key={ dataIndex } className={`case-${title}-${ caseIndex }`}>
-          <td className={`case-${ caseIndex } no`}>{number}</td>
-          <td className={`case-${ caseIndex } data`}>{el}</td>
+          <td className={`case-${ caseIndex } no`}>{ dataIndex === 0 ? caseIndex+1 : null  }</td>
+          <td className={`case-${ caseIndex } data`}>{ data }</td>
         </tr>
       );
     });
@@ -38,13 +37,13 @@ export function convertTestcaseToHtml(title, testcase, isEditor){
     testcaseWrapper.push(
       <Col key={3 + caseIndex} m={12} s={cols} className={ `${title.toLowerCase()}-wrapper` }>  
         <Card 
-          className='blue-grey darken-1 input' 
-          textClassName='white-text' 
-          title={ title.toUpperCase() + "-" + (caseIndex + 1) }>
+          className='input' 
+          textClassName='black-text' 
+          title={ "" /* title.toUpperCase() + "-" + (caseIndex + 1) */}>
           <Table key={ caseIndex } className={ `${title}case-${ caseIndex }` }>
           <thead>
             <tr>
-              <th className="no" data-field="no">no</th>
+              <th className="no" data-field="no">{title}</th>
               <th className="data" data-field="data">data</th>
             </tr>
           </thead>

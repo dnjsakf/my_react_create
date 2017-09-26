@@ -10,7 +10,7 @@ const conn = mysql.createConnection({
 });
 
 conn.connect(()=>{
-  console.log('[mysql-connection] - config-mysql');
+  // console.log('[mysql-connection] - config-mysql');
 });
 
 function updateQuestionDashboard(){
@@ -38,11 +38,11 @@ function updateQuestionDashboard(){
           total[data.question][data.data.mode] = data.data.count;
         });
       });
-      console.log('[Finish!!]');
+      // console.log('[Finish!!]');
       return total;
     })
     .then((total)=>{
-      console.log('[Start Total]\n', total);
+      // console.log('[Start Total]\n', total);
       let promise = [];
       const questions = Object.keys(total);
       questions.map((question, index)=>{
@@ -55,16 +55,16 @@ function updateQuestionDashboard(){
       
       Promise.all(promise)
         .then((result)=>{
-          console.log('[Finish Total]\n', result);
-          process.exit();
+          // console.log('[Finish Total]\n', result);
+          // process.exit();
         })
         .catch(()=>{
-          process.exit();
+          // process.exit();
         });
     })
     .catch((error)=>{
       console.log(error);
-      process.exit();
+      // process.exit();
     });
 }
 
@@ -96,8 +96,8 @@ function searchChallenger( questionNo ){
     conn.query( select, (error, result)=>{
       if(error) reject(error);
 
-      console.log( select );
-      console.log( result );
+      // console.log( select );
+      // console.log( result );
       
       let promise = [];
       const updateData = JSON.parse(JSON.stringify(result));
@@ -110,7 +110,7 @@ function searchChallenger( questionNo ){
       });
       Promise.all(promise)
         .then((result)=>{
-          console.log('[challenger]', result);
+          // console.log('[challenger]', result);
           let convert = {};
           result.map((item)=>{
 
@@ -162,7 +162,7 @@ function searchCurrent( qusetionNo ){
       });
       Promise.all(promise)
         .then((result)=>{
-          console.log('[current]', result);
+          // console.log('[current]', result);
           resolve(result);
         })
         .catch(()=>{
@@ -209,7 +209,7 @@ function searchPerfect( qusetionNo ){
       });
       Promise.all(promise)
         .then((result)=>{
-          console.log('[perfect]', result);
+          // console.log('[perfect]', result);
           resolve(result);
         })
         .catch(()=>{
@@ -258,7 +258,7 @@ function searchLanguage( questionNo, language, perfect ){
       });
       Promise.all(promise)
         .then((result)=>{
-          console.log('[lengauge]', result);
+          // console.log('[lengauge]', result);
           resolve(result);
         })
         .catch(()=>{
@@ -290,4 +290,4 @@ function updateLanguage( data, resolve, reject ){
   });
 }
 
-updateQuestionDashboard();
+module.exports.update = updateQuestionDashboard;

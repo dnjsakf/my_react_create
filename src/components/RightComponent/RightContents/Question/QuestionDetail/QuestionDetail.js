@@ -20,8 +20,8 @@ const QuestionDetail = ( props )=>{
     [
       <Col key={1} m={12} s={0} className='QuestionDetail-Content animated fadeInLeft p3s'>  
           <Card 
-            className='blue-grey darken-1 content' 
-            textClassName='white-text' 
+            className='content' 
+            textClassName='black-text' 
             title='Question' >
             { question }
           </Card>  
@@ -29,8 +29,8 @@ const QuestionDetail = ( props )=>{
       ,
       <Col key={2} m={12} s={0} className='QuestionDetail-InputInfo animated fadeInRight p3s'>  
           <Card 
-            className='blue-grey darken-1 input-info' 
-            textClassName='white-text' 
+            className='input-info' 
+            textClassName='black-text' 
             title='Input Info' >
             { inputInfo }
           </Card>  
@@ -38,8 +38,8 @@ const QuestionDetail = ( props )=>{
       ,
       <Col key={3} m={12} s={0} className='QuestionDetail-OutputInfo animated fadeInLeft p3s'>  
           <Card 
-            className='blue-grey darken-1 output-info' 
-            textClassName='white-text' 
+            className='output-info' 
+            textClassName='black-text' 
             title='Output Info' >
             { outputInfo }
           </Card>  

@@ -6,8 +6,9 @@ nav.QuestionTitle {
   padding-left: 12px;
   padding-right: 12px;
   height: 63px;
+}
 
-  background-color: white;
+.nav-wrapper a.brand-logo{
   color: black;
 }
 

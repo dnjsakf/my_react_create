@@ -4,7 +4,7 @@ import style from './QuestionTitle.css';
 
 const QuestionTitle = ( props )=>{
   return(
-    <Navbar className='QuestionTitle'
+    <Navbar className='white QuestionTitle'
             brand={ `${props.no}  ${props.subject}` }
             right>
       <NavItem

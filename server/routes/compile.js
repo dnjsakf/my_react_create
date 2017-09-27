@@ -18,15 +18,21 @@ conn.connect(()=>{
   console.log('[mysql-connection] - compiler');
 });
 
+/**
+ * Compile:JAVA
+ * 1: create 'temp' folder
+ * 2: insert '.java' to 'temp'
+ * 3: javac
+ * 4: java
+ */
 
 /**
  * Save Source Code
  */
 router.post('/save/sourceCode/:language', (req, res)=>{
   let User = req.session.user;
-  /**
-   * 잘못된 접근
-   */
+
+  /** 잘못된 접근 */
   if( typeof req.params.language === 'undefined' ){
     return res.status(400).json({
       error: 'Invalid Connection',
@@ -39,9 +45,7 @@ router.post('/save/sourceCode/:language', (req, res)=>{
       code: 400
     });
   }
-  /**
-   * 잘못된 값
-   */
+  /** 잘못된 값 */
   if( typeof req.body.questionNo === 'undefined' ){
     return res.status(403).json({
       error: 'Type Error: Type of questionNo is undefined',
@@ -55,78 +59,23 @@ router.post('/save/sourceCode/:language', (req, res)=>{
     });
   }
 
-  /**
-   * SAVE Source Code
-   */
-  let extension = undefined;
-  switch( req.params.language.toLowerCase() ){
-    case 'python':
-      extension = 'py';
-      break;
-    case 'java':
-      extension = 'java';
-      break;
-    case 'c':
-      extension = 'c';
-      break;
-  }
-  
-  const fileName = `question_${req.body.questionNo}`;
-  const localPath = path.join(__dirname, './../../data/compile/username/');
-  const file = `${fileName}.${extension}`;
-  const savePath = path.join( localPath, file );
-  
-  fs.writeFile( savePath , req.body.sourceCode, 'utf-8', (error)=>{
-    /* 컴파일 정보를 세션에 저장 */
-    console.log( '[SAVED SOURCECODE]' );
-    console.log( User.compile );
-    
-    /**
-     * javac -> jar 변환 -> java -jar 실행
-     */
-    if( req.params.language.toLowerCase() === 'java' ){
-      const javaClasses = path.join(localPath, 'classes');
-      const javac = childProcess.spawn('javac', ['-d', javaClasses, '-encoding', 'utf-8', file], {cwd: localPath});
-
-      javac.on('exit', ()=>{
-        console.log('[JAVAC CLEAR]\n', javac.spawnargs.join(' '));
-        console.log(fs.readdirSync(javaClasses,{encoding:'utf-8'}));
-        /* 상위 폴더에 저장 */
-        const jarFile = `${fileName}.jar`;
-        const jar = childProcess.spawn('jar',[`-cvmf`, 'manifest.txt', `../${jarFile}`, '*.class'], {cwd: javaClasses});
-     
-        jar.on('exit', ()=>{
-          User.compile = {
-            compiler: req.params.language,
-            path: path.join(localPath, jarFile),
-            error
-          }
-          console.log('[JAR END]\n', jar.spawnargs.join(' '));
-          return res.status(200).json({
-            success: true
-          });
-        });
-      });
-      // const command = `javac -encoding utf-8 ${file} && jar -cvmf mainfest.txt ${filename}.jar *.class`;
-      // const options = ['-encoding utf-8 ']
-    } else {
-      User.compile = {
-        compiler: req.params.language,
-        path: savePath,
-        error
-      }
-      return res.status(200).json({
-        success: true
-      });
-    }
+  saveSource( User.displayName, req.params.language , req.body.sourceCode)
+  .then((savedpath)=>{
+    User.compilePath = savedpath;
+    res.status(200).json({
+      success: true
+    });
+  })
+  .catch((error)=>{
+    res.status(500).json({
+      error: error,
+      code: 500
+    });
   });
 });
 
-/**
- * Python Compile
- * usercode: 유저별로 compile url을 부여해주기 위함
- */
-// router.post('/:usercode/:language', (req, res)=>{
+
+
 router.post('/:language/:questionNo', (req, res)=>{
   let User = req.session.user;
   /**
@@ -139,18 +88,10 @@ router.post('/:language/:questionNo', (req, res)=>{
     });
   }
 
-  console.log('[USER COMPILE]', User.compile);
-  if( typeof User.compile === 'undefined' ){
-    return res.status(400).json({
-      error: 'Invalid Connection: None saved compile data',
-      code: 400
-    });
-  }
-  /** 저장된 소스코드가 없을 경우 */
-  if( typeof User.compile === 'undefined' ){
-    return res.status(404).json({
-      error: 'Not Found: No exist user saved sourcecode',
-      code: 404
+  if( typeof req.params.language === 'undefined' ){
+    return res.status(403).json({
+      error: 'Type Error: Type of language is undefined',
+      code: 403
     });
   }
   if( typeof req.params.questionNo === 'undefined' ){
@@ -165,204 +106,271 @@ router.post('/:language/:questionNo', (req, res)=>{
       code: 403
     });
   }
-  /**
-   * Start Query
-   */
-  const sql = `SELECT input, output FROM questions WHERE no = ${req.params.questionNo}`;
-  conn.query(sql, (error, exist)=>{
-    if(error) throw error;
-    if( exist.length === 0){
-      return res.status(404).json({
-        error: 'Not Found',
-        code: 404
+
+  saveSource( User.displayName, req.params.language , req.body.sourceCode)
+  /* 1. 소스코드 저장 */
+  .then((savedPath)=>{
+    /* Start Query */
+    console.log('[1. 소스코드저장]');
+    return new Promise((resolve, reject)=>{
+      const sql = `SELECT input, output FROM questions WHERE no = ${req.params.questionNo}`;
+      conn.query(sql, (error, exist)=>{
+        if(error) throw error;
+        if( exist.length === 0){
+          res.status(404).json({
+            error: 'Not Found',
+            code: 404
+          });
+        }
+        /** setting testcase */
+        const inputs = JSON.parse(exist[0].input);
+        const outputs = JSON.parse(exist[0].output);
+        let testcase = inputs.map((input, index)=>{
+          return { input: input, output: outputs[index] };
+        });
+        resolve({
+          compiler: req.params.language,
+          path: savedPath,
+          testcase
+        });
       });
-    }
+    })
+  })
+  .then((options)=>{
+    /* 2. 컴파일러 생성 */
+    console.log('[2. 컴파일러 생성]');
+    return createCompiler(options);
+  }, (error)=>{
+    /* TODO:ERROR */
+    console.error( '[CREATE COMPILER]\n', error);
+    res.status(500).json({
+      error,
+    });
+  })
+  .then((compile)=>{
+    /* 3. 컴파일 실행 */
+    console.log('[3. 컴파일러 실행]');
 
     /**
-     * Exist Question
-     * setting testcase
+     * 여기 에러!!!
+     * 여기 에러!!!
+     * 여기 에러!!!
+     * 여기 에러!!!
+     * 여기 에러!!!
      */
-    let testcase = [];
-    const inputs = JSON.parse(exist[0].input);
-    const outputs = JSON.parse(exist[0].output);
-    inputs.map((input, index)=>{
-      testcase.push(
-        {
-          input: input,
-          output: outputs[index]
-        }
-      )
+    return Promise.all( runCompile(compile.compilers, compile.testcase) );
+    /**
+     * 여기 에러!!!
+     * 여기 에러!!!
+     * 여기 에러!!!
+     * 여기 에러!!!
+     * 여기 에러!!!
+     */
+  }, (error)=>{
+    /* TODO:ERROR */
+    console.error( '[RUN COMPILER]\n', error);
+    res.status(500).json({
+      error,
     });
-
-    const options = {
-      compiler: User.compile.compiler,
-      path: User.compile.path,
-      size: testcase.length
+  })
+  .then((data)=>{
+    /* 4. 컴파일 결과 저장 */
+    console.log('[4. 컴파일 결과 저장]');
+    console.log('[compile-success]\n', data);
+    let conditions = {
+      qNo: req.params.questionNo,
+      mNo: User.no,
+      language: req.params.language,
+      sourceCode: req.body.sourceCode,
+      result: data[0].result,
+      date: moment().format('YYYY-MM-DD')
     }
-
-    const compilers = createCompiler(options);
-    if( compilers === false ){
-      return res.status(500).json({
-        error: 'compiler created error',
-        code: 500
-      });
+    if( data.length > 1 ){
+      conditions.result = data.reduce(
+        (prev, current, index)=>{
+          return ( index === 1 ) ?  prev.result + current.result : prev + current.rseult;
+        }
+      ) / data.length
     }
-
-    const result = runCompile(compilers, testcase);
-    Promise.all(result)
-    .then((data)=>{
-      console.log('[compile-success]\n', data);
-
-      let conditions = {
-        qNo: req.params.questionNo,
-        mNo: User.no,
-        language: req.params.language,
-        sourceCode: req.body.sourceCode,
-        result: data[0].result,
-        date: moment().format('YYYY-MM-DD')
-      }
-      if( data.length > 1 ){
-        conditions.result = data.reduce(
-          (prev, current, index)=>{
-            return ( index === 1 ) ?  prev.result + current.result : prev + current.rseult;
-          }
-        ) / data.length
-      }
-
-      const info = ((_data)=>{
-        let keys = Object.keys(_data);
-        let values = [];
-        keys.map((key)=>{
-          values.push( _data[key] );
-        });
-        return {keys, values};
-      })(conditions);
-      
-      const INSERT = `INSERT INTO qState ( ${info.keys.join(', ')} ) values ( ? )`;
-      conn.query(INSERT, [ info.values ], (error, result)=>{
-        if( error ) throw error;
-        update();
-        
-        return res.status(200).json({
-          success: true,
-          result: data
-        });
+    const info = ((_data)=>{
+      let keys = Object.keys(_data);
+      let values = [];
+      keys.map((key)=>{
+        values.push( _data[key] );
       });
-    }).catch((error)=>{
-      console.log('[compile-fail]\n', error);
-      return res.status(200).json({
-        success: false,
-        result: error
+      return {keys, values};
+    })(conditions);
+
+    const INSERT = `INSERT INTO qState ( ${info.keys.join(', ')} ) values ( ? )`;
+    conn.query(INSERT, [ info.values ], (error, result)=>{
+      if( error ) throw error;
+
+      update(); // update database 'battlecode_stats'
+
+      console.log('[STATE SAVE SUCCESS]');
+      res.status(200).json({
+        success: true,
+        result: data
       });
+    });
+  }, (error)=>{
+    /* TODO:ERROR */
+    console.log('[COMPILE FAIL]', error);
+    res.status(200).json({
+      success: false,
+      result: error
+    });
+  })
+  .catch((error)=>{
+    console.error('[COMPILE FAIL]\n', error);
+    res.status(500).json({
+      error: error,
+      code: 500
     });
   });
 });
 
 export default router;
 
-
-
-
 /**
  * 언어별 컴파일러 생성
  */
 function createCompiler( options ){
-  let compilers = [];
-  switch( options.compiler.toLowerCase() ){
-    case 'python':
-      for(let index = 0; index < options.size; index++){
-        const child = childProcess.spawn('python',[options.path]);
-      
-        child.stdout.setEncoding("utf8");
-        child.stderr.setEncoding("utf8");
+  return new Promise((resolve, reject)=>{
+    let compilers = [];
+    switch( options.compiler.toLowerCase() ){
+      case 'python':
+        for(let index = 0; index < options.testcase.length; index++){
+          const child = childProcess.spawn('python',[options.path + 'MAIN.py']);
+        
+          child.stdout.setEncoding("utf8");
+          child.stderr.setEncoding("utf8");
+  
+          child.domain = `python_${index}`;
+  
+          compilers.push(child);
+        }
+        resolve( { compilers, testcase: options.testcase } );
+        break;
+      case 'java':
+        const file = path.join( options.path, 'MAIN.java' );
+        const cmdJavac = `javac ${file}`;
+        childProcess.exec( cmdJavac, (error_javac)=>{
+          if( error_javac ) reject( error_javac );
 
-        child.domain = `python_${index}`;
-
-        compilers.push(child);
-      }
-      return compilers;
-    case 'java':
-      for(let index = 0; index < options.size; index++){
-        const child = childProcess.spawn('java',['-jar', options.path]);
-      
-        child.stdout.setEncoding("utf8");
-        child.stderr.setEncoding("utf8");
-
-        child.domain = `java_${index}`;
-
-        compilers.push(child);
-      }
-      return compilers;
-    case 'c':
-      return false;
-    default:
-      return false;
-  }
+          for(let index = 0; index < options.testcase.length; index++){
+            const child = childProcess.spawn( 'java', [options.path + 'MAIN'] );
+          
+            child.stdout.setEncoding("utf8");
+            child.stderr.setEncoding("utf8");
+    
+            child.domain = `java_${index}`;
+    
+            compilers.push(child);
+          }
+          resolve( { compilers, testcase: options.testcase } );
+        });
+        break;
+      case 'c':
+        reject('C cmpile is undefined');
+        break;
+      default:
+        reject('undefined');
+        break;
+    }
+  });
 }
 
 /**
  * 전체 case에서 한 개씩 처리
  */
 function runCompile(compilers, testcase){
-  let promise = [];
-  compilers.map( (compiler, index)=>{
-    promise.push(
-      new Promise((resolve, reject)=>{
-        processSingleCase(compiler, testcase[index], resolve, reject);
-      })
-    )
+  return new Promise((resolve)=>{
+    console.log( compilers );
+    console.log( testcase );
+    const promise = compilers.map( (compiler, index)=>{
+      console.log( compiler, testcase[index] );
+      let test = processSingleCase(compiler, testcase[index]);
+      console.log( '[Promise-Test] - ', test );
+      return test
+    })
+    console.log('[promises]\n', promise,'\n', promise.length);
+    console.log('[promises]\n', promise,'\n', promise.length);
+    resolve( promise );
   });
-  return promise;
 }
 /**
  * 단위 처리
  */
-function processSingleCase(compiler, testcase, resolve, reject){
+function processSingleCase(compiler, testcase){
   console.log( '[compiler]', compiler.domain, compiler.pid );
-  /**
-   * stdin
-   * INPUT이 여러개 여러 줄 일 수 있음
-   */
-  let result = {};
-  result.input = testcase.input;
-  testcase.input.map((input)=>{
-    compiler.stdin.write( `${input}\n` );
-  });
-  compiler.stdin.end(()=>{
-    console.log( '[end-stdin]', compiler.domain );
-  });
-  /**
-   * stdout
-   */
-  let outputs = [];
-  compiler.stdout.on('data', (output)=>{
-    outputs = outputs.concat( clearLastBlank( output.toString().split(/\r?\n/gm) ) );
-    console.log( '[stdout]', compiler.domain, testcase.output, outputs );
-  });
-  /**
-   * stderr
-   */
-  compiler.stderr.on('data', (error)=>{
-    console.log( '[stderr]', compiler.domain, error );
-    reject(error);
-  });
-  compiler.stdout.on('end', ()=>{
-    if( outputs.lenght === 0 ){
-      reject('error');
-    }
-    result.output = outputs;
-    result.result = ( outputs.filter(
-      (output, index)=>{
-        return output === testcase.output[index];
+  return new Pormise((resolve, reject)=>{
+    /* stdin */
+    let result = {};
+    result.input = testcase.input;
+    testcase.input.map((input)=>{
+      compiler.stdin.write( `${input}\n` );
+    });
+    compiler.stdin.end(()=>{
+      console.log( '[end-stdin]', compiler.domain );
+    });
+
+    /* stdout */
+    let outputs = [];
+    compiler.stdout.on('data', (output)=>{
+      outputs = outputs.concat( clearLastBlank( output.toString().split(/\r?\n/gm) ) );
+      console.log( '[stdout]', compiler.domain, testcase.output, outputs );
+    });
+    
+    /* stderr */
+    compiler.stderr.on('data', (error)=>{
+      console.log( '[stderr]', compiler.domain, error );
+      reject(error);
+    });
+    compiler.stdout.on('end', ()=>{
+      if( outputs.lenght === 0 ){
+        reject('error');
       }
-    ).length / testcase.output.length) * 100 ;
-    resolve(result);
+      result.output = outputs;
+      result.result = ( outputs.filter(
+        (output, index)=>{
+          return output === testcase.output[index];
+        }
+      ).length / testcase.output.length) * 100 ;
+      resolve( result );
+    });
   });
 }
 
 
 
-
+function saveSource( username, language, source){  
+  return new Promise((resolve, reject)=>{
+    let extension = language.toLowerCase();
+    if( extension === 'python' ){
+      extension = 'py';
+    }
+    const savePath = path.join(__dirname, './../../data/compile', username );
+    const saveFile = path.join( savePath, `MAIN.${extension}` );
+    
+    fs.mkdir( savePath , '0777', (error_dir)=>{
+      if( error_dir.code !== 'EEXIST' ){
+        console.error( '[SOURCE-DIR]\n', error_dir );
+        reject( error_dir );
+      }
+      fs.writeFile( saveFile , source, (error_file)=>{
+        if( error_file ){
+          console.log( '[SOURCE-FILE]\n', error_file );
+          resolve({
+            success: false,
+            error: error_file
+          });
+        }
+        resolve( savePath );
+      });
+    });
+  });  
+}
 
 /**
  * split 하면 맨 뒤에 공백이 하나 추가됨 이를 제거함

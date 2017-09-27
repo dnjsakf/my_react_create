@@ -1,9 +1,13 @@
 import java.util.*;
 
-class INIT_JAVA{
+class Question_196{
+  public static final Scanner scan = new Scanner(System.in);
   public static void main(String[] args){
-    Scanner scan = new Scanner(System.in);
-    String text = scan.readLine();
-    System.out.println(text);
-  } 
+    String str = scan.nextLine();
+    int[] num = new int[str.length()];
+    for(int i = 0; i < str.length(); i ++){
+		num[i] = Integer.valueOf(str.charAt(i));
+    }
+    System.out.println( num[0] / num[1] );
+  }
 }

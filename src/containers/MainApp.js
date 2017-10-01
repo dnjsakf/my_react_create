@@ -23,7 +23,7 @@ class MainApp extends Component{
       popup:{
         visible: false,
         mode: undefined,
-        value: undefined
+        option: {}
       }
     };
     
@@ -41,7 +41,7 @@ class MainApp extends Component{
   }
 
   // 팝업창 열기
-  handleShowPopUp( mode, value ){
+  handleShowPopUp( mode, option ){
     if( this.popupModes.indexOf(mode) === -1 ) return false;
     this.setState(
       update( this.state,
@@ -49,7 +49,7 @@ class MainApp extends Component{
           popup:{
             visible: { $set: true },
             mode: { $set: mode },
-            value: { $set: value }
+            option: { $set: option }
           }
         }
       )

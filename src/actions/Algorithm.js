@@ -56,12 +56,12 @@ export function algorithmRequestData( questionNo ){
  * action: get Question State
  * example: no, subject, name, langauge, sourcecode, result, date
  */
-export function questionStateRequest( questionNo, dashboard, page, count, sort ){
+export function questionStateRequest( isMyAlgo, questionNo, dashboard, page, count, sort ){
   return (dispatch)=>{
     
     dispatch( qusetionStateWaiting() );
 
-    const options = { questionNo, dashboard, page, count, sort };
+    const options = { isMyAlgo, questionNo, dashboard, page, count, sort };
     
     return axios.get('/api/data/dashboard/state', { params: options } )
           .then((response)=>{

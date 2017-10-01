@@ -155,6 +155,9 @@ router.get('/algorithm/data/:questionNo', (req, res)=>{
 /**
  * Get Algorithm state for "Dashboard"
  */
+/**
+ * 내 알고리즘에서 보여줄 때랑 구분해줘야됨
+ */
 router.get('/dashboard/state', (req, res)=>{
   /**
    * Check Validation
@@ -198,11 +201,16 @@ router.get('/dashboard/state', (req, res)=>{
     main: 'qState',
     join: ['member', 'questions']
   };
-  const conditions = {
+  let conditions = {
     qNo: parseInt(req.query.questionNo),
     page: parseInt(req.query.page),
     count: parseInt(req.query.count)
   }
+  if( req.query.isMyAlgo === 'true' ){
+    conditions.except = { mNo: req.session.user.no };
+  }
+
+
   const sort = req.query.sort;
   try{
     /**
@@ -218,41 +226,54 @@ router.get('/dashboard/state', (req, res)=>{
         });
       }
       // 이거 왜 저장했지??
-      req.session.question = { state: exists }
+      req.session.question = { state: exists };
 
       /**
        * 2. Query: Get Dashboard Some-Field Total Count
        */
-      const countOption = {
+      let countOption = {
         qNo: parseInt(req.query.questionNo),
-        language: mode
+        language: mode,
       }
+
+      console.log( '[querys]\n', req.query.isMyAlgo === 'true' );
+      if( req.query.isMyAlgo === 'true' ){
+        countOption.except = { mNo: req.session.user.no };
+      }
+
       try{
         const recordCount = myQuery.count( 'qState', 'qNo', countOption );
         conn.query(recordCount, (error, result)=>{
           if(error) throw error;
 
-          let nmg = result[0].count % req.query.count;
-          let maxPage = parseInt( result[0].count / req.query.count );
-          if( nmg > 0 ) maxPage += 1;
+          let maxPage = 1;
+          if( result.length > 0){
+            let nmg = result[0].count % req.query.count;
+            maxPage = parseInt( result[0].count / req.query.count );
+            if( nmg > 0 ) maxPage += 1;     
+          }
           
           let myRecords = {
             'java':[],
             'python':[],
             'c':[]
           };
-          if( typeof req.session.user !== 'undefined' ){
+          let otherRecords = [];
+          if( req.query.isMyAlgo === 'true' ){
             exists.map((row, index)=>{
-              if( row.name === req.session.user.displayName ){
+              if( row.mNo === req.session.user.no ){
                 myRecords[row.language].push(row);
+              } else {
+                otherRecords.push( row );
               }
             });
+          } else {
+            otherRecords = exists;
           }
-          
           return res.status(200).json({
             success: true,
             maxPage,
-            records: exists,
+            records: otherRecords,
             myRecords
           });
         });
@@ -265,7 +286,7 @@ router.get('/dashboard/state', (req, res)=>{
         });
       }
     });  
-  } catch(eexception){
+  } catch(exception){
     console.log('[exception]', exception);
     return res.status(500).json({
       error: 'mySql query error',

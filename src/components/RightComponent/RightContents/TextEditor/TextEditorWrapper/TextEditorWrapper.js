@@ -16,34 +16,45 @@ class TextEditorWrapper extends Component{
   constructor(props){
     super(props);
 
+    this.source = {
+      'java':'public class MAIN\n'
+            +'{\n'
+            +'    public static void main(String[] args)\n'
+            +'    {\n'
+            +'      System.out.println("Hello, JAVA");\n'
+            +'    }\n'    
+            +'}\n',
+      'python':'a, b = map( int, input().split() );\n'
+              +'print( a + b )\n',
+      'c':'#include<stdio.h>\n'
+         +'\n'
+         +'int main(void)\n'
+         +'{\n'
+         +'    int a, b;\n'
+         +'    scanf("%d %d", &a, &b);\n'
+         +'    printf("%d", a + b);\n'
+         +'    return 0;\n'
+         +'}\n'
+    }
+
     this.state = {
       focus: false,
       compiling: false,
+      saving: false,
       language: props.session.editor.editorLanguage,
-      sourceCode: ''
+      sourceCode: this.source[props.session.editor.editorLanguage]
+      /* 언어별로 기본 소스코드를 가져와야되는데 어떻게 만들어줄까.. */
     }
 
-    this.handleSaveFile = this.handleSaveFile.bind(this);
     this.handleTyping = this.handleTyping.bind(this);
+
+    this.handleSaveSource = this.handleSaveSource.bind(this);
     this.handleRunCompile = this.handleRunCompile.bind(this);
 
     this.handleLanguageSelect = this.handleLanguageSelect.bind(this);
   }
   componentDidMount(){
     
-  }
-  /**
-   * 중간중간 소스코드를 저장하기 위해.
-   * 에디터에서 포커스를 잃으면 저장하도록 한다.
-   */
-  handleSaveFile( focus ){
-    this.setState(
-      update( this.state, 
-        {
-          focus: {$set: focus }
-        }
-      )
-    )
   }
   /**
    * 타이핑 할 때 마다 state를 업데이트 하자.
@@ -58,9 +69,10 @@ class TextEditorWrapper extends Component{
     );
   }
   /**
-   * 컴파일 
+   * 중간중간 소스코드를 저장하기 위해.
+   * 에디터에서 포커스를 잃으면 저장하도록 한다. -> 저장 버튼을 누르면 저장하도록 변경 (2017-09-28)
    */
-  handleRunCompile( ){
+  handleSaveSource( focus ){
     /* 컴파일 중에는 재 컴파일을 실행하지 못하도록 */
     if( typeof this.props.status.compile === 'WAITING' ) return false;
     if( typeof this.props.question.no === 'undefined' ) return false;
@@ -74,22 +86,58 @@ class TextEditorWrapper extends Component{
     this.setState(
       update( this.state, 
         {
-          compiling: { $set: true }
+          saving: { $set: true }
         }
       )
     );
-    const url = `/api/compile/save/sourceCode/${this.state.language}`;
+
     const bodys = {
       questionNo: this.props.question.no,
       sourceCode: this.state.sourceCode
     };
-    const saved = axios.post(url, bodys );
-    saved.then((response)=>{
+    axios.post(`/api/compile/save/sourceCode/${this.state.language}`, bodys )
+    .then((response)=>{
+      this.setState(
+        update( this.state, 
+          {
+            saving: { $set: false }
+          }
+        )
+      );
       console.log('[SAVE COMPLITED]', response.data );
-      if( response.data.success === true ){
-        this.props.compileRun( this.state.language, this.props.question.no, this.state.sourceCode );
-      }
+    })
+    .catch((error)=>{
+      this.setState(
+        update( this.state, 
+          {
+            saving: { $set: false }
+          }
+        )
+      );
+      console.log('[SOURCE SAVE SOMETING BROKEN]', error );
     });
+  }
+  /**
+   * 컴파일 
+   */
+  handleRunCompile( ){
+    /* 컴파일 중에는 재 컴파일을 실행하지 못하도록 */
+    if( typeof this.props.status.compile === 'WAITING' ) return false;
+    if( typeof this.props.question.no === 'undefined' ) return false;
+    if( this.state.sourceCode.length === 0 ) return false;
+
+    console.log( this.state.language );
+    console.log( this.props.question.no );
+    console.log( this.state.sourceCode );
+    
+    this.setState(
+      update( this.state, 
+        {
+          compiling: { $set: true }
+        }
+      )
+    );
+    this.props.compileRun( this.state.language, this.props.question.no, this.state.sourceCode );
   }
   /**
    * Select에서 언어를 선택하면 state.language를 업데이트.
@@ -163,17 +211,7 @@ class TextEditorWrapper extends Component{
     console.log('[에디터 업데이트 완료]');
   }
 
-  render(){
-    const values = {
-      language: this.state.language,
-      theme: this.props.session.editor.editorTheme,
-      source: 'class INIT_JAVA{\n'
-        +'  public static void main(String[] args){\n'
-        +'    System.out.println("Hello, JAVA");\n'
-        +'  }\n'    
-        +'}'
-    }
-  
+  render(){  
     return (
       <section className='TextEditorWrapper'>
         {/*  select 필요하구나.. */}
@@ -191,19 +229,24 @@ class TextEditorWrapper extends Component{
         </div>
         <div className="text-editor">
           <CodemirrorEditor
-            handleFocus={ this.handleSaveFile }
             handleTyping={ this.handleTyping }
 
-            default={ values }
+            default={{
+              language: this.state.language,
+              theme: this.props.session.editor.editorTheme,
+              source: this.source[this.state.language]
+            }}
             />
         </div>
         <div className="compile-result">
           <CompileResult
             handleRunCompile={ this.handleRunCompile } 
+            handleSaveSource={ this.handleSaveSource }
 
+            saving={ this.state.svaing }
             compiling={ this.state.compiling }
 
-            results={ this.props.compile.result }
+            result={ this.props.compile }
             />
         </div>
       </section>
@@ -226,6 +269,7 @@ const mapStateToProps = (state)=>{
       no: state.RightContent.question.content.no
     },
     compile:{
+      success: state.Compile.success,
       result: state.Compile.result
     }
   };

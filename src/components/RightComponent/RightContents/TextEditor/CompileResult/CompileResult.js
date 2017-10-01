@@ -13,10 +13,8 @@ const CompileResult = ( props )=>{
    * 컴파일 결과 출력
    */
   let tbodys = [];
-  if( typeof props.results === 'object'){
-    
-
-    props.results.map((CASE, caseIndex)=>{
+  if( props.result.success === true ){
+    props.result.result.map((CASE, caseIndex)=>{
       tbodys.push(
         <tbody key={caseIndex}>
           {
@@ -37,14 +35,29 @@ const CompileResult = ( props )=>{
         </tbody>
       )
     });
+  } else if ( props.result.success === false ) {
+    tbodys.push(
+      <tbody key='error-body'>
+        <tr key={'error-row'}>
+          <td>1</td>
+          <td> compile error </td>
+          <td> { props.result.result } </td>
+        </tr>
+      </tbody>
+    )
   }
   return (
     <Row className='CompileResult-scroll'>
-      <Col key={0} m={12} s={0}>
+      <Col key={0} m={6} s={0}>
         <Button
           onClick={ props.handleRunCompile }
           disabled={ props.compiling }>
           { props.compiling ? '컴파일중' : '제출' }
+        </Button>
+        <Button
+          onClick={ props.handleSaveSource }
+          disabled={ props.saving }>
+          { props.saving ? '저장중' : '저장' }
         </Button>
       </Col>
       <Table>

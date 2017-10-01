@@ -130,8 +130,16 @@ export function convertTable( listData, tableOption ){
                       key={ colIndex } >
                       { 
                         <button className="btn-compare"
-                                value={ rowIndex } 
-                                onClick={ (event)=>{ existsReplace[field].onClick('compare', event.target.value) } } >
+                                onClick={
+                                  (event)=>{ 
+                                    const option = { 
+                                      row: rowIndex,
+                                      id: _row.no, 
+                                      language: _row.language
+                                    };
+                                    existsReplace[field].onClick('compare', option);
+                                  }
+                                 }>
                           상세보기
                         </button>
                       }

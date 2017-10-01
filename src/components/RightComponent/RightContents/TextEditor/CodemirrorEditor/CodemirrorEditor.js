@@ -36,12 +36,12 @@ const CodemirrorEditor = ( props )=>{
   return (
     <div className="CodemirrorEditor">
       <CodeMirror
-        onFocusChange={ props.handleFocus }
         defaultValue={ props.default.source }
         options={ option }
         onChange={ props.handleTyping }/>
     </div>
   );
 }
+// onFocusChange={ props.handleFocus }
 
 export default CodemirrorEditor

@@ -46,7 +46,7 @@ const PopUpWrapper = ( props )=>{
     case 'compare':
       popup = (
         <CompareWrapper
-          value={ props.popup.value }
+          option={ props.popup.option }
           onClose={ props.onClosePopUp }
           />
       )

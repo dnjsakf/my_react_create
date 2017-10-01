@@ -7,6 +7,7 @@ import update from 'react-addons-update';
 
 const initialState = {
   status: 'INIT',
+  success: 'INIT',
   result: 'INIT'
 }
 
@@ -24,6 +25,7 @@ export default function CompileReducer(state, action){
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
+          success: { $set: action.data.success },
           result: { $set: action.data.result }
         }
       );

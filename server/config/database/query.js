@@ -68,7 +68,7 @@ module.exports.dashboard = (mode, tables ,conditions, sort)=>{
   const count = (typeof conditions.count === 'number' ? conditions.count : 10);
   const rows = (typeof conditions.page === 'number' ? ( conditions.page - 1) * count : 0);
 
-  let extraCondition = true;
+  let where = [ `${mainTable}.qNo = ${conditions.qNo}` ];
   let sorting = `${mainTable}.no ${sort}`;
   // set extraCondition
   switch( mode.toLowerCase() ){
@@ -76,22 +76,29 @@ module.exports.dashboard = (mode, tables ,conditions, sort)=>{
       sorting = `${mainTable}.result ${sort}, ${mainTable}.no ${sort}`;
       break;
     case 'perfect':
-      extraCondition = `${mainTable}.result = 100`;
+      where.push( `${mainTable}.result = 100` );
       break;
     case 'c':
     case 'java':
     case 'python':
-      extraCondition = `${mainTable}.language = "${mode}"`;
+      where.push( `${mainTable}.language = "${mode}"` );
       break;
     default:
       // nothing
       break;
+  }
+
+  if( typeof conditions.except !== 'undefined' ){
+    if( typeof conditions.except.mNo !== 'undefined' ){
+      where.push( `not ${mainTable}.mNo = ${conditions.except.mNo}` )
+    }
   }
   // set query
   const query = [
     // SELECT 
     'SELECT',[
       `${mainTable}.no as no`,
+      `${mainTable}.mNo as mNo`,
       `${joinTable[0]}.name as name`,
       `${mainTable}.language as language`,
       `${mainTable}.sourceCode as sourceCode`,
@@ -103,10 +110,7 @@ module.exports.dashboard = (mode, tables ,conditions, sort)=>{
     // JOIN
     `INNER JOIN ${joinTable[0]} ON ${mainTable}.mNo = ${joinTable[0]}.no`,
     // conditions
-    `WHERE`,[
-      `${mainTable}.qNo = ${conditions.qNo}`,
-      extraCondition
-    ].join(' AND '),
+    `WHERE`, where.join( where.length > 1 ? ' AND ' : '' ),
     `ORDER BY ${sorting}`,
     `LIMIT ${rows}, ${count}`
    ];
@@ -136,22 +140,25 @@ module.exports.count = ( tableName, field, condition )=>{
   /**
    * option For Dashboard
    */
-  let extraCondition = true;
-  if( existCondition ){
-    if( typeof condition.language !== 'undefined' ){
-      switch( condition.language ){
-        case 'c':
-        case 'java':
-        case 'python':
-          extraCondition = `language = "${condition.language}"`;
-          break;
-        default:
-          // ToDo
-          break;
-      }
+  let query = [];
+  let where = [];
+  if( typeof condition.qNo === 'number' ){
+    where.push(`qNo = ${condition.qNo}`);
+  }
+  if( typeof condition.language !== 'undefined' ){
+    switch( condition.language ){
+      case 'c':
+      case 'java':
+      case 'python':
+        where.push( `language = "${condition.language}"` );
+        break;
     }
   }
-  let query = [];
+  if( typeof condition.except !== 'undefined' ){
+    if( typeof condition.except.mNo === 'number' ){
+      where.push(`not mNo = ${condition.except.mNo}`);
+    }
+  }
   if( existField ){
     query.push( `SELECT ${field}, count(*) as count` );
   } else {
@@ -160,9 +167,13 @@ module.exports.count = ( tableName, field, condition )=>{
 
   query.push( `FROM ${tableName}` );
   
-  if( existCondition ){
-    query.push( `WHERE`,[ `qNo = ${condition.qNo}`,  extraCondition ].join(' AND ') );
+  if( where.length > 1 ){
+    query.push( `WHERE`, where.join(' AND ') );
+  } else if ( where.length === 1) {
+    query.push( `WHERE`, where[0] );
   }
+
+  /* 안써도 돌아감 */
   if( existField ){
     query.push( `GROUP BY ${field}` );
   }

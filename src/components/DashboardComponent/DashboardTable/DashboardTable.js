@@ -9,7 +9,7 @@ const DashboardTable = ( props )=>{
   if( typeof props.table === 'undefined' ) return null;
   if( props.table.records === 'INIT') return null;
   let options = {};
-  if( props.isLogined ){
+  if( props.isLogined && props.isMyAlgo ){
     options = {
       except: ['subject'],
       replace: {

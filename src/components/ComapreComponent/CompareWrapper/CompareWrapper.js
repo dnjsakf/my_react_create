@@ -24,23 +24,25 @@ import { analysis } from './../../../utility/analysis.test.js';
 class CompareWrapper extends Component{
   constructor(props){
     super(props);
+
+    console.log( '[Compare Wrapper Variable]\n',props );
     this.state={
       my:{
-        no: props.dashboard.myRecords['python'][0].no,
-        name: props.dashboard.myRecords['python'][0].name,
-        language: props.user.editor.editorLanguage,
-        sourceCode: props.dashboard.myRecords['python'][0].sourceCode,
-        result: props.dashboard.myRecords['python'][0].result,
-        date: props.dashboard.myRecords['python'][0].date,
+        no: props.dashboard.myRecords[props.option.language][0].no,
+        name: props.dashboard.myRecords[props.option.language][0].name,
+        language: props.option.language,
+        sourceCode: props.dashboard.myRecords[props.option.language][0].sourceCode,
+        result: props.dashboard.myRecords[props.option.language][0].result,
+        date: props.dashboard.myRecords[props.option.language][0].date,
       },
       /* get ajax */
       other:{
-        no: props.dashboard.records[props.value].no,
-        name: props.dashboard.records[props.value].name,
-        language: props.dashboard.records[props.value].language,
-        sourceCode: props.dashboard.records[props.value].sourceCode,
-        result: props.dashboard.records[props.value].result,
-        date: props.dashboard.records[props.value].datae
+        no: props.dashboard.records[props.option.row].no,
+        name: props.dashboard.records[props.option.row].name,
+        language: props.dashboard.records[props.option.row].language,
+        sourceCode: props.dashboard.records[props.option.row].sourceCode,
+        result: props.dashboard.records[props.option.row].result,
+        date: props.dashboard.records[props.option.row].date
       },
       analysis:{
         my: {},

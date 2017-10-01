@@ -9,8 +9,6 @@ import {
   DashboardTable
 } from './../../../../DashboardComponent';
 
-
-
 function test( event ){
   console.log( event.target.value );
 }
@@ -18,6 +16,8 @@ function test( event ){
 const QuestionWrapper = ( props )=>{
   const dashboardTable = (
     <DashboardTable
+      isMyAlgo={ props.isMyAlgo }
+
       onChangeDashboard={ props.onChangeDashboard }
       onFoldDashboard={ props.onFoldDashboard }
       table={ props.dashboard.table }
@@ -32,6 +32,8 @@ const QuestionWrapper = ( props )=>{
         no={ props.content.no}
         subject={ props.content.subject }
         onAlgorithmSolve={ props.onAlgorithmSolve }
+
+        isLogined={ props.session.isLogined }
     
         // 신고팝업
         onShowPopUP={ props.onShowPopUP }

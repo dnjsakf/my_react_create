@@ -218,6 +218,8 @@ class SectionContainer extends Component{
           onAlgorithmClick={ this.handleAlgorithmSelect }
           />
         <RightContainer 
+          isMyAlgo={ this.state.left.menu.toLowerCase() === 'myalgorithm' }
+
           menu={ this.state.right.menu }
 
           titles={ this.state.right.title }

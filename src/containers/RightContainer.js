@@ -130,7 +130,7 @@ class RightContainer extends Component{
       sort = this.default.sort;
     }
 
-    this.props.getDashboardState( questionNo, dashboard, _page, count, sort ).then(()=>{
+    this.props.getDashboardState( this.props.isMyAlgo , questionNo, dashboard, _page, count, sort ).then(()=>{
       this.setState(
         update( this.state, 
           { 
@@ -236,6 +236,8 @@ class RightContainer extends Component{
         <ContentsWrapper
           // question-title
           menu={ this.props.menu }
+          isMyAlgo={ this.props.isMyAlgo }
+
           onAlgorithmSolve={ this.props.onAlgorithmSolve }
           content={ this.props.question.detail }
 
@@ -311,8 +313,8 @@ const mapDispatchToProps = ( dispatch )=>{
     getAlgorithmData: ( algorithmNo ) =>{
       return dispatch( algorithmRequestData( algorithmNo ) );
     },
-    getDashboardState: ( questionNo, dashboard, page, count, sort )=>{
-      return dispatch(questionStateRequest(questionNo, dashboard, page, count, sort));
+    getDashboardState: ( isMyAlgo, questionNo, dashboard, page, count, sort )=>{
+      return dispatch(questionStateRequest(isMyAlgo, questionNo, dashboard, page, count, sort));
     }
   }
 }

@@ -20,6 +20,8 @@ const ContentsWrapper = ( props )=>{
           <QuestionWrapper
             session={ props.session }
 
+            isMyAlgo={ props.isMyAlgo }
+
             // 문제 타이틀
             content={ props.content }
             onAlgorithmSolve={ props.onAlgorithmSolve }

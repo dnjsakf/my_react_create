@@ -1,5 +1,5 @@
 class INIT_JAVA{
   public static void main(String[] args){
-    System.out.println("Hellasdaso, JAVA");
+    System.out.println("Hello, JA sdf asd VA");
   }
 }

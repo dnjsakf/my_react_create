@@ -121,10 +121,10 @@ module.exports.dashboard = (mode, tables ,conditions, sort)=>{
  */
 
 // For table page...
-module.exports.count = ( tableName, field, condition )=>{
+module.exports.count = ( tableName, field, conditions )=>{
   if( typeof tableName === 'undefined' ) return 'Undefined tableName';
   const existField = ( typeof field === 'undefined' ? false : true);
-  const existCondition = ( typeof condition === 'undefined' ? false : true);
+  const existCondition = ( typeof conditions === 'undefined' ? false : true);
   /**
    * Check Valid
    */
@@ -134,7 +134,7 @@ module.exports.count = ( tableName, field, condition )=>{
   if( existField && typeof field !== 'string' ) {
     return 'Type Error: field type is "string"';
   }
-  if( existCondition && typeof condition !== 'object' ){
+  if( existCondition && typeof conditions !== 'object' ){
     return 'Type Error: condition type is "object"';
   }
   /**
@@ -142,21 +142,23 @@ module.exports.count = ( tableName, field, condition )=>{
    */
   let query = [];
   let where = [];
-  if( typeof condition.qNo === 'number' ){
-    where.push(`qNo = ${condition.qNo}`);
-  }
-  if( typeof condition.language !== 'undefined' ){
-    switch( condition.language ){
-      case 'c':
-      case 'java':
-      case 'python':
-        where.push( `language = "${condition.language}"` );
-        break;
+  if( typeof conditions === 'object' ){
+    if( typeof conditions.qNo === 'number' ){
+      where.push(`qNo = ${conditions.qNo}`);
     }
-  }
-  if( typeof condition.except !== 'undefined' ){
-    if( typeof condition.except.mNo === 'number' ){
-      where.push(`not mNo = ${condition.except.mNo}`);
+    if( typeof conditions.language !== 'undefined' ){
+      switch( conditions.language ){
+        case 'c':
+        case 'java':
+        case 'python':
+          where.push( `language = "${conditions.language}"` );
+          break;
+      }
+    }
+    if( typeof conditions.except !== 'undefined' ){
+      if( typeof conditions.except.mNo === 'number' ){
+        where.push(`not mNo = ${conditions.except.mNo}`);
+      }
     }
   }
   if( existField ){

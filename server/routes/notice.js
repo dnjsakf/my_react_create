@@ -30,8 +30,24 @@ router.get('/list', (req, res)=>{
   const count = req.query.count;
   const rows = ( req.query.page - 1 ) * count;
   const noticeRecords = `SELECT * FROM notice ORDER BY no DESC LIMIT ${rows}, ${count}`;
+
+  const query=[
+    'SELECT',[
+      'notice.no as no',
+      'notice.topic as topic',
+      'notice.subject as subject',
+      'member.name as author',
+      'notice.content as content',
+      'notice.date as date'
+    ].join(" , "),
+    'FROM notice',
+    'INNER JOIN member ON member.no = notice.author',
+    'ORDER BY notice.no DESC',
+    `LIMIT ${rows}, ${count}`
+  ].join(" ");
+
   try{
-    conn.query(noticeRecords, (error, exist)=>{
+    conn.query(query, (error, exist)=>{
       if(error) throw error;
       try{
         const reocrdsCount = myQuery.count('notice');

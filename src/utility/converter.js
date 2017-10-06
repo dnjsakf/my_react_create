@@ -119,12 +119,13 @@ export function convertTable( listData, tableOption ){
     rows.push(
       <tr 
         key={ rowIndex } 
-        onClick={ existOnClick.records !== false && existOnClick.records }>
+        value={ rowIndex }
+        onClick={ ()=>{ existOnClick.records( rowIndex )} }>
         {
           ((_fields, _row)=>{
             let cols = [];
             _fields.map((field, colIndex)=>{
-              if( Object.keys(existsReplace).indexOf(field) > -1 ){
+              if( Object.keys(existsReplace).indexOf(field) > -1 && field === 'sourceCode' ){
                 cols.push(
                   <td value={ rowIndex } 
                       key={ colIndex } >

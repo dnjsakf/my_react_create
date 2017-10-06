@@ -19,7 +19,7 @@ import style from './CompareWrapper.css';
 import { Button, Icon } from 'react-materialize';
 
 /* 유틸 */
-import { analysis } from './../../../utility/analysis.test.js';
+import { analysis } from './../../../utility/analysis.js';
 
 class CompareWrapper extends Component{
   constructor(props){

@@ -1,0 +1,29 @@
+.NoticeBoard{
+  width: 100%;
+  height: 100%;
+}
+
+.NoticeBoard > .notice-title{
+  height: 40px;
+}
+.NoticeBoard > .notice-content{
+  /* title - button - topic */
+  height: calc(100% - 80px - 60px);
+  
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+.NoticeBoard > .notice-button{
+  height: 40px;
+
+  text-align: center;
+}
+
+.NoticeBoard p{
+  width: 100%;
+  height: 100%;
+
+  border: none;
+  outline: none;
+}

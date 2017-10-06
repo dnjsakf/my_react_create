@@ -19,16 +19,15 @@ const HeaderWrapper = ( props )=>{
 
     // popup-notice
     <NavItem key={2}>
-      <a
-        onClick={ ()=>{ props.onShowPopUp('notice')} }>
+      <a onClick={ ()=>{ props.onShowPopUp('notice')} }>
         <Icon>notifications</Icon>
+        
       </a>
     </NavItem>,
 
     // popup-setting
     <NavItem key={3}>
-      <a
-        onClick={ ()=>{ props.onShowPopUp('setting')} }>
+      <a onClick={ ()=>{ props.onShowPopUp('setting')} }>
         <Icon>settings</Icon>
       </a>
     </NavItem>

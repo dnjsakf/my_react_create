@@ -18,7 +18,7 @@ section.Notice > .header{
   width: 100%;
   height: 60px;
 }
-section.Notice > .content{
+section.Notice > div > .content{
   width: 100%;
   height: 420px;
 }
@@ -31,18 +31,18 @@ section.Notice td{
   font-size: 20px;
 }
 
-section.Notice > .pages{
+section.Notice > div > .pages{
   width: 100%;
   height: 60px;
 }
-section.Notice > .pages > ul{
+section.Notice > div > .pages > ul{
   width: 50%;
   margin: 0 auto;
 
   text-align: center;
 }
 
-section.Notice > .buttons{
+section.Notice > div > .buttons{
   width: 100%;
   height: 60px;
 

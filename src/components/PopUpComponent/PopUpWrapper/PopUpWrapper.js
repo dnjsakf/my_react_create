@@ -37,9 +37,14 @@ const PopUpWrapper = ( props )=>{
       popup = (
         <Notice
           default={ props.defaultNotice }
+          info={ props.noticeInfo }
           
           onPage={ props.onPageNotice }
           onClose={ props.onClosePopUp }
+          
+          onPageNotice={ props.onPageNotice }
+          onSelectNotice={ props.onSelectNotice }
+          onBackNotice={ props.onBackNotice }
           />
       );
       break;

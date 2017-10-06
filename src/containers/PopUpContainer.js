@@ -14,13 +14,27 @@ class PopUpContainer extends Component{
   constructor(props){
     super(props);
 
+    this.state = {
+      notice: {
+        toggle: true,
+        record: 0
+      }
+    }
+
     this.default = {
       page: 1,
       count: 10
     }
 
+    // 신고하기
     this.handleSaveReport = this.handleSaveReport.bind(this);
+    
+    // 환경설정
     this.handleSaveSetting = this.handleSaveSetting.bind(this);
+    
+    // 공지사핟
+    this.handleNoticeBack = this.handleNoticeBack.bind(this);
+    this.handleNoticeSelect = this.handleNoticeSelect.bind(this);
     this.handleNoticePage = this.handleNoticePage.bind(this);
   }
 
@@ -66,12 +80,42 @@ class PopUpContainer extends Component{
     this.props.insertUserReport( report );
   }
 
+  // 공지사항 뒤로가기
+  handleNoticeBack( ){
+    if( this.state.notice.toggle === false ){
+      this.setState(
+        update( this.state, 
+          {
+            notice: {
+              toggle: { $set: true }
+            }
+          }
+        )
+      )
+    }
+  }
+
+  // 공지사항 선택
+  handleNoticeSelect( record ){
+    if( typeof record === 'undefined' ) return false;
+
+    this.setState(
+      update( this.state, 
+        {
+          notice: {
+            toggle: { $set: false },
+            record: { $set: record }
+          }
+        }
+      )
+    )
+  }
+
   // 공지사항 페이지 변경
   handleNoticePage( page ){
     if( typeof page === 'undefined' ) return false;
 
-    const count = this.default.count;
-    this.props.getNoticeList( page, count );
+    this.props.getNoticeList( page, this.default.count );
   }
 
   componentDidMount(){
@@ -82,6 +126,36 @@ class PopUpContainer extends Component{
     }
   }
 
+  componentWillReceiveProps(nextProps){
+    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
+    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
+    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
+    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
+    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
+  }
+
+  shouldComponentUpdate(nextProps, nextState){
+    if( nextProps.status.session !== 'waiting' ||
+        nextprops.status.question !== 'waiting' ||
+        nextProps.status.notice !== 'wiating'){
+          return true;
+        }
+
+    const sessionChange = (this.props.session !== nextProps.session );
+    if( sessionChange ) return true;
+    
+    const questionChange = ( this.props.question !== nextProps.question );
+    if( questionChange ) return true;
+
+    const noticePropsChange = ( this.props.notice !== nextProps.notice );
+    if( noticePropsChange ) return true;
+
+    const noticeStateChange = ( this.state.notice !== nextState.notice );
+    if( noticeStateChange ) return true;
+
+    return false;
+  }
+
   render(){
     return (
       <PopUpWrapper
@@ -90,14 +164,23 @@ class PopUpContainer extends Component{
         isLogined={ this.props.session.isLogined }
         user={ this.props.session.user }  // default = editor
 
-        defaultReport={ this.props.question }
-        defaultNotice={ this.props.notice }
+        defaultReport={ this.props.question } // selected-question
+        defaultNotice={ this.props.notice }   // list-data
+
+        noticeInfo={ this.state.notice }
 
         onClosePopUp={ this.props.onClosePopUp }
-        
-        onPageNotice={ this.handleNoticePage }
+
+        // 환경섲렁        
         onSaveSetting={ this.handleSaveSetting }
+        
+        // 신고하기
         onSaveReport={ this.handleSaveReport }
+        
+        // 공지사항
+        onPageNotice={ this.handleNoticePage }
+        onSelectNotice={ this.handleNoticeSelect }
+        onBackNotice={ this.handleNoticeBack }
         />
     )
   }

@@ -5,7 +5,7 @@ const moment = require('moment');
 const conn = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'wjddns1',
+  password: ( process.platform === 'linux' ? '1111' : 'wjddns1' ),
   database: 'battlecode_stats'
 });
 

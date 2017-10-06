@@ -9,7 +9,7 @@ import { update } from './../config/database/updateStats';
 const conn = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'wjddns1',
+  password: ( process.platform === 'linux' ? '1111' : 'wjddns1' ),
   database: 'battlecode'
 });
 conn.connect(()=>{
@@ -192,7 +192,11 @@ export function processSingleCase( compiler, testcase ){
     let result = {};
     result.input = testcase.input;
     testcase.input.map((input)=>{
-      compiler.stdin.write( `${input}\n` );
+      if( process.platform === 'linux' ){
+        compiler.stdin.write( `"${input}\n"` );
+      } else {
+        compiler.stdin.write( `${input}\n` );
+      }
     });
     compiler.stdin.end(()=>{
       console.log( '[process end-stdin]', compiler.compilerName );

@@ -5,7 +5,7 @@ import style from './NoticeBoard.css';
 
 const NoticeBoard = ( props )=>{
   return (
-    <Row className="NoticeBoard animated p1s slideInRight">
+    <Row className="NoticeBoard animated p5s fadeInRight">
       {/* title is s1 */}
       <Col className="notice-title number" m={2} s={1} key={0} >
         <a>{ props.no }</a>

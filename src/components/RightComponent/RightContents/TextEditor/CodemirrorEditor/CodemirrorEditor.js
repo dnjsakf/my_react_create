@@ -9,7 +9,7 @@ import cmModePython from 'codemirror/mode/python/python';
 import cmModeClike from 'codemirror/mode/clike/clike';       // c && java
 
 import cmThemeDracula from 'codemirror/theme/dracula.css';
-import cmThemeMidnight from 'codemirror/theme/Midnight.css';
+import cmThemeMidnight from 'codemirror/theme/midnight.css';
 
 import style from './CodemirrorEditor.css';
 import { Input } from 'react-materialize';

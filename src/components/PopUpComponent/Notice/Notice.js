@@ -28,7 +28,7 @@ const Notice = ( props )=>{
   let list, detail;
   if( toggle ){
     list = (
-      <div className="notice-list animated p1s slideInLeft">
+      <div className="notice-list animated p5s fadeInLeft">
         <Row className="content">
           <Col m={12} s={12}>
             <Table className="highlight centered responsive-table">

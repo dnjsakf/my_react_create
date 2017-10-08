@@ -125,15 +125,7 @@ class PopUpContainer extends Component{
       this.props.getNoticeList( page, count );
     }
   }
-
-  componentWillReceiveProps(nextProps){
-    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
-    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
-    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
-    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
-    console.log( '[ㅁㄴㅇㄻㄴㅇㄹ]', nextProps.notice );
-  }
-
+  
   shouldComponentUpdate(nextProps, nextState){
     if( nextProps.status.session !== 'waiting' ||
         nextprops.status.question !== 'waiting' ||

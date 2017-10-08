@@ -9,11 +9,22 @@ const conn = mysql.createConnection({
   database: 'battlecode_stats'
 });
 
-conn.connect(()=>{
-  // console.log('[mysql-connection] - config-mysql');
+conn.connect((error)=>{
+  if( error ){
+    console.error( error );
+    throw error;
+  } else {
+    console.log('[mysql-connection] - config-mysql');
+    
+    console.log( process.env.NODE_ENV );
+    if( process.env.NODE_ENV === 'development' ){
+      updateQuestionDashboard();
+    }
+  }
 });
 
 function updateQuestionDashboard(){
+  console.log( '[UPDATE-STATS-RUN]' );
 
   const challenger = searchChallenger( 'all' );
   const current = searchCurrent( 'all' );
@@ -55,7 +66,7 @@ function updateQuestionDashboard(){
       
       Promise.all(promise)
         .then((result)=>{
-          // console.log('[Finish Total]\n', result);
+          console.log('[Finish Total]\n', result);
           // process.exit();
         })
         .catch(()=>{
@@ -291,3 +302,4 @@ function updateLanguage( data, resolve, reject ){
 }
 
 module.exports.update = updateQuestionDashboard;
+

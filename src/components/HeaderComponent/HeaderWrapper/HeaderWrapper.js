@@ -9,25 +9,24 @@ const HeaderWrapper = ( props )=>{
     <Link to="/login"><Icon className='login-fingerprint'>fingerprint</Icon></Link>
   );
   const logout = (
-    <a onClick={ props.onLogout } ><Icon>vpn_key</Icon></a>
+    <a href="#" onClick={ props.onLogout } ><Icon>vpn_key</Icon></a>
   )
   // array
   const UserItems = [
     <NavItem key={1}>
-      <a>{ props.displayName }</a>
+      <a href="#">{ props.displayName }</a>
     </NavItem>,
 
     // popup-notice
     <NavItem key={2}>
-      <a onClick={ ()=>{ props.onShowPopUp('notice')} }>
-        <Icon>notifications</Icon>
-        
+      <a href="#" onClick={ ()=>{ props.onShowPopUp('notice')} }>
+        <Icon >notifications</Icon>
       </a>
     </NavItem>,
 
     // popup-setting
     <NavItem key={3}>
-      <a onClick={ ()=>{ props.onShowPopUp('setting')} }>
+      <a href="#" onClick={ ()=>{ props.onShowPopUp('setting')} }>
         <Icon>settings</Icon>
       </a>
     </NavItem>

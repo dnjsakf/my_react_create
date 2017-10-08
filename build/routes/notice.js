@@ -22,7 +22,7 @@ var router = _express2.default.Router();
 var conn = _mysql2.default.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'wjddns1',
+  password: process.platform === 'linux' ? '1111' : 'wjddns1',
   database: 'battlecode'
 });
 
@@ -46,8 +46,11 @@ router.get('/list', function (req, res) {
   var count = req.query.count;
   var rows = (req.query.page - 1) * count;
   var noticeRecords = 'SELECT * FROM notice ORDER BY no DESC LIMIT ' + rows + ', ' + count;
+
+  var query = ['SELECT', ['notice.no as no', 'notice.topic as topic', 'notice.subject as subject', 'member.name as author', 'notice.content as content', 'notice.date as date'].join(" , "), 'FROM notice', 'INNER JOIN member ON member.no = notice.author', 'ORDER BY notice.no DESC', 'LIMIT ' + rows + ', ' + count].join(" ");
+
   try {
-    conn.query(noticeRecords, function (error, exist) {
+    conn.query(query, function (error, exist) {
       if (error) throw error;
       try {
         var reocrdsCount = _query2.default.count('notice');

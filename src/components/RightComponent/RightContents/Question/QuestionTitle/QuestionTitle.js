@@ -8,14 +8,14 @@ const QuestionTitle = ( props )=>{
       <NavItem
         key={1}
         onClick={ ()=>{ props.onShowPopUP( 'report' ) } }>
-        <a><Icon className='QuestionReport'>bug_report</Icon></a>
+        <a href="#"><Icon className='QuestionReport'>bug_report</Icon></a>
       </NavItem>
     ),
     (
       <NavItem 
         key={2} 
         onClick={ ()=>{ props.onAlgorithmSolve(props.no)} }>
-        <a><Icon>border_color</Icon></a>
+        <a href="#"><Icon>border_color</Icon></a>
       </NavItem>
     )
   ];

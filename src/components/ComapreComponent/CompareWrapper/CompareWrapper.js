@@ -186,12 +186,12 @@ class CompareWrapper extends Component{
               <ul className="pagination">
                 <li className="waves-effect"
                     onClick={ ()=>{ this.handleFindSource('prev', 'my') } }>
-                  <a><Icon value="my">chevron_left</Icon></a>
+                  <a href="#"><Icon value="my">chevron_left</Icon></a>
                 </li>
                 <li className="active"><a>내 소스코드</a></li>
                 <li className="waves-effect"
                     onClick={ ()=>{ this.handleFindSource('next', 'my') } }>
-                  <a><Icon value="my">chevron_right</Icon></a>
+                  <a href="#"><Icon value="my">chevron_right</Icon></a>
                 </li>
               </ul>
             </div>
@@ -216,12 +216,12 @@ class CompareWrapper extends Component{
               <ul className="pagination">
                 <li className="waves-effect"
                     onClick={ ()=>{ this.handleFindSource('prev', 'other') } }>
-                  <a><Icon>chevron_left</Icon></a>
+                  <a href="#"><Icon>chevron_left</Icon></a>
                 </li>
                 <li className="active"><a>{this.state.other.no} {this.state.other.name }</a></li>
                 <li className="waves-effect"
                     onClick={ ()=>{ this.handleFindSource('next', 'other') } }>
-                  <a><Icon>chevron_right</Icon></a>
+                  <a href="#"><Icon>chevron_right</Icon></a>
                 </li>
               </ul>
             </div>
@@ -246,7 +246,7 @@ class CompareWrapper extends Component{
           </Button>
         </nav>
         <div id="btn-compare">
-          <a alt="비교하기" onClick={this.handleRunCompare}><Icon className="medium">compare_arrows</Icon></a>
+          <a alt="비교하기" href="#" onClick={this.handleRunCompare}><Icon className="medium">compare_arrows</Icon></a>
         </div>
       </section>
     );

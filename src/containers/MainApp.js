@@ -110,7 +110,7 @@ class MainApp extends Component{
 
     return (
       <section>
-        { this.state.popup.visible === true && popup}
+        { this.state.popup.visible === true && popup }
         <Header
           onShowPopUp={ this.handleShowPopUp }
           onLogout={ this.handleLogout }

@@ -46,7 +46,7 @@ module.exports.dashboard = function (mode, tables, conditions, sort) {
   var count = typeof conditions.count === 'number' ? conditions.count : 10;
   var rows = typeof conditions.page === 'number' ? (conditions.page - 1) * count : 0;
 
-  var extraCondition = true;
+  var where = [mainTable + '.qNo = ' + conditions.qNo];
   var sorting = mainTable + '.no ' + sort;
   // set extraCondition
   switch (mode.toLowerCase()) {
@@ -54,27 +54,33 @@ module.exports.dashboard = function (mode, tables, conditions, sort) {
       sorting = mainTable + '.result ' + sort + ', ' + mainTable + '.no ' + sort;
       break;
     case 'perfect':
-      extraCondition = mainTable + '.result = 100';
+      where.push(mainTable + '.result = 100');
       break;
     case 'c':
     case 'java':
     case 'python':
-      extraCondition = mainTable + '.language = "' + mode + '"';
+      where.push(mainTable + '.language = "' + mode + '"');
       break;
     default:
       // nothing
       break;
   }
+
+  if (typeof conditions.except !== 'undefined') {
+    if (typeof conditions.except.mNo !== 'undefined') {
+      where.push('not ' + mainTable + '.mNo = ' + conditions.except.mNo);
+    }
+  }
   // set query
   var query = [
   // SELECT 
-  'SELECT', [mainTable + '.no as no', joinTable[0] + '.name as name', mainTable + '.language as language', mainTable + '.sourceCode as sourceCode', mainTable + '.result as result', mainTable + '.date as date'].join(', '),
+  'SELECT', [mainTable + '.no as no', mainTable + '.mNo as mNo', joinTable[0] + '.name as name', mainTable + '.language as language', mainTable + '.sourceCode as sourceCode', mainTable + '.result as result', mainTable + '.date as date'].join(', '),
   // FROM 
   'FROM ' + mainTable,
   // JOIN
   'INNER JOIN ' + joinTable[0] + ' ON ' + mainTable + '.mNo = ' + joinTable[0] + '.no',
   // conditions
-  'WHERE', [mainTable + '.qNo = ' + conditions.qNo, extraCondition].join(' AND '), 'ORDER BY ' + sorting, 'LIMIT ' + rows + ', ' + count];
+  'WHERE', where.join(where.length > 1 ? ' AND ' : ''), 'ORDER BY ' + sorting, 'LIMIT ' + rows + ', ' + count];
   return query.join(' '); // string
 };
 /**
@@ -82,10 +88,10 @@ module.exports.dashboard = function (mode, tables, conditions, sort) {
  */
 
 // For table page...
-module.exports.count = function (tableName, field, condition) {
+module.exports.count = function (tableName, field, conditions) {
   if (typeof tableName === 'undefined') return 'Undefined tableName';
   var existField = typeof field === 'undefined' ? false : true;
-  var existCondition = typeof condition === 'undefined' ? false : true;
+  var existCondition = typeof conditions === 'undefined' ? false : true;
   /**
    * Check Valid
    */
@@ -95,28 +101,33 @@ module.exports.count = function (tableName, field, condition) {
   if (existField && typeof field !== 'string') {
     return 'Type Error: field type is "string"';
   }
-  if (existCondition && (typeof condition === 'undefined' ? 'undefined' : _typeof(condition)) !== 'object') {
+  if (existCondition && (typeof conditions === 'undefined' ? 'undefined' : _typeof(conditions)) !== 'object') {
     return 'Type Error: condition type is "object"';
   }
   /**
    * option For Dashboard
    */
-  var extraCondition = true;
-  if (existCondition) {
-    if (typeof condition.language !== 'undefined') {
-      switch (condition.language) {
+  var query = [];
+  var where = [];
+  if ((typeof conditions === 'undefined' ? 'undefined' : _typeof(conditions)) === 'object') {
+    if (typeof conditions.qNo === 'number') {
+      where.push('qNo = ' + conditions.qNo);
+    }
+    if (typeof conditions.language !== 'undefined') {
+      switch (conditions.language) {
         case 'c':
         case 'java':
         case 'python':
-          extraCondition = 'language = "' + condition.language + '"';
-          break;
-        default:
-          // ToDo
+          where.push('language = "' + conditions.language + '"');
           break;
       }
     }
+    if (typeof conditions.except !== 'undefined') {
+      if (typeof conditions.except.mNo === 'number') {
+        where.push('not mNo = ' + conditions.except.mNo);
+      }
+    }
   }
-  var query = [];
   if (existField) {
     query.push('SELECT ' + field + ', count(*) as count');
   } else {
@@ -125,9 +136,13 @@ module.exports.count = function (tableName, field, condition) {
 
   query.push('FROM ' + tableName);
 
-  if (existCondition) {
-    query.push('WHERE', ['qNo = ' + condition.qNo, extraCondition].join(' AND '));
+  if (where.length > 1) {
+    query.push('WHERE', where.join(' AND '));
+  } else if (where.length === 1) {
+    query.push('WHERE', where[0]);
   }
+
+  /* 안써도 돌아감 */
   if (existField) {
     query.push('GROUP BY ' + field);
   }

@@ -7,15 +7,26 @@ var moment = require('moment');
 var conn = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'wjddns1',
+  password: process.platform === 'linux' ? '1111' : 'wjddns1',
   database: 'battlecode_stats'
 });
 
-conn.connect(function () {
-  console.log('[mysql-connection] - config-mysql');
+conn.connect(function (error) {
+  if (error) {
+    console.error(error);
+    throw error;
+  } else {
+    console.log('[mysql-connection] - config-mysql');
+
+    console.log(process.env.NODE_ENV);
+    if (process.env.NODE_ENV === 'development') {
+      updateQuestionDashboard();
+    }
+  }
 });
 
 function updateQuestionDashboard() {
+  console.log('[UPDATE-STATS-RUN]');
 
   var challenger = searchChallenger('all');
   var current = searchCurrent('all');
@@ -39,10 +50,10 @@ function updateQuestionDashboard() {
         total[data.question][data.data.mode] = data.data.count;
       });
     });
-    console.log('[Finish!!]');
+    // console.log('[Finish!!]');
     return total;
   }).then(function (total) {
-    console.log('[Start Total]\n', total);
+    // console.log('[Start Total]\n', total);
     var promise = [];
     var questions = Object.keys(total);
     questions.map(function (question, index) {
@@ -53,13 +64,13 @@ function updateQuestionDashboard() {
 
     Promise.all(promise).then(function (result) {
       console.log('[Finish Total]\n', result);
-      process.exit();
+      // process.exit();
     }).catch(function () {
-      process.exit();
+      // process.exit();
     });
   }).catch(function (error) {
     console.log(error);
-    process.exit();
+    // process.exit();
   });
 }
 
@@ -91,6 +102,9 @@ function searchChallenger(questionNo) {
     conn.query(select, function (error, result) {
       if (error) reject(error);
 
+      // console.log( select );
+      // console.log( result );
+
       var promise = [];
       var updateData = JSON.parse(JSON.stringify(result));
       updateData.map(function (data, index) {
@@ -99,7 +113,7 @@ function searchChallenger(questionNo) {
         }));
       });
       Promise.all(promise).then(function (result) {
-        console.log('[challenger]', result);
+        // console.log('[challenger]', result);
         var convert = {};
         result.map(function (item) {});
         resolve(result);
@@ -145,7 +159,7 @@ function searchCurrent(qusetionNo) {
         }));
       });
       Promise.all(promise).then(function (result) {
-        console.log('[current]', result);
+        // console.log('[current]', result);
         resolve(result);
       }).catch(function () {
         reject();
@@ -188,7 +202,7 @@ function searchPerfect(qusetionNo) {
         }));
       });
       Promise.all(promise).then(function (result) {
-        console.log('[perfect]', result);
+        // console.log('[perfect]', result);
         resolve(result);
       }).catch(function () {
         reject();
@@ -233,7 +247,7 @@ function searchLanguage(questionNo, language, perfect) {
         }));
       });
       Promise.all(promise).then(function (result) {
-        console.log('[lengauge]', result);
+        // console.log('[lengauge]', result);
         resolve(result);
       }).catch(function () {
         reject();
@@ -264,4 +278,4 @@ function updateLanguage(data, resolve, reject) {
   });
 }
 
-updateQuestionDashboard();
+module.exports.update = updateQuestionDashboard;

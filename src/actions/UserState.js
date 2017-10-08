@@ -40,7 +40,7 @@ export function userStateInsertRequest( insertData ){
 export function userStateUpdateRequest( mode, updateData ){
   return ( dispatch )=>{
     
-    console.log(mode, updateData);
+    // console.log(mode, updateData);
     dispatch(userStateWaiting('update'));
 
     return axios.post(`/api/userstate/update/${mode}`, updateData )

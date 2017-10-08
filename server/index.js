@@ -13,7 +13,7 @@ import {
   algorithm, auth, 
   userstate, report, 
   notice, admin, 
-  compile 
+  compile
 } from './routes';
 
 const app = express();

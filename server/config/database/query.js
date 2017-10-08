@@ -1,6 +1,12 @@
 /**
  * Update battlecode_stats queries
  */
+module.exports.update_table = (tablename)=>{
+  return [
+    `INSERT IGNORE INTO battlecode_stats.${tablename}(question)`,
+    '(SELECT no as question FROM battlecode.questions)'
+  ].join(' ');
+}
 module.exports.challenger = (questionNo)=>{ 
   return [
     'SELECT qNo as question, count(*) as count',

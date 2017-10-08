@@ -25,13 +25,15 @@ conn.connect((error)=>{
 
 function updateQuestionDashboard(){
   console.log( '[UPDATE-STATS-RUN]' );
-
+  
   const challenger = searchChallenger( 'all' );
   const current = searchCurrent( 'all' );
   const perfect = searchPerfect( 'all' );
   const language = searchLanguage( 'all', 'all' );
 
-  Promise.all([challenger, current, perfect, language])
+  updateTable('total')
+  .then(()=>{
+    Promise.all([challenger, current, perfect, language])
     .then((result)=>{
       let total = {};
       result.map((item, index)=>{
@@ -77,8 +79,31 @@ function updateQuestionDashboard(){
       console.log(error);
       // process.exit();
     });
+  })
+  .catch((error)=>{
+    throw error;
+  });
 }
-
+/**
+ * 테이블에 question 번호 입력
+ */
+function updateTable(tablename){
+  const update = query.update_table(tablename);
+  return new Promise((resolve, reject)=>{
+    conn.query( update, (error, result)=>{
+      if( error ){
+        reject({
+          mode: 'update_table',
+          result: error
+        });
+      } else {
+        resolve({
+          success: true
+        });
+      }
+    });
+  });
+}
 /**
  * 전체 통계
  */

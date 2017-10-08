@@ -11,6 +11,9 @@
   height: 100%;
 }
 
+.HeaderWrapper a{
+  height: 50px;
+}
 .HeaderWrapper a:hover{
   animation-name: whiteToBlack;
   animation-duration: 1s;

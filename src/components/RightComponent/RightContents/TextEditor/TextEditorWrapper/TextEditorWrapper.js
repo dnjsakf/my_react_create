@@ -38,6 +38,7 @@ class TextEditorWrapper extends Component{
     }
 
     this.state = {
+      test: true,
       focus: false,
       compiling: false,
       saving: false,
@@ -54,7 +55,7 @@ class TextEditorWrapper extends Component{
     this.handleLanguageSelect = this.handleLanguageSelect.bind(this);
   }
   componentDidMount(){
-    
+    this.setState( update(this.state, { test: {$set: false} }))
   }
   /**
    * 타이핑 할 때 마다 state를 업데이트 하자.

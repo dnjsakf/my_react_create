@@ -91,7 +91,11 @@ export function createCompiler( option ){
         break;
       case 'java':
         return new Promise((resolve, reject)=>{
-          const cmdJavac = `cd ${option.savePath} & javac MAIN.java -encoding utf-8`;
+          const cmdJavac = [
+            `cd ${option.savePath}`,
+            `javac MAIN.java -encoding utf-8`
+          ].join( process.platform === 'linux' ? '&&' : '&' );
+          
           childProcess.exec( cmdJavac, (error_javac)=>{
             if( error_javac ){
               console.log('[ERROR: javac]\n', error_javac);
@@ -124,14 +128,19 @@ export function createCompiler( option ){
        *    => [경로]/실행파일명.exe
        */
         return new Promise((resolve, reject)=>{
-          const cmdGcc = `cd ${option.savePath} & gcc -o MAIN MAIN.c`;
+          const cmdGcc = [
+            `cd ${option.savePath}`,
+            `gcc -o MAIN MAIN.c`
+          ].join( process.platform === 'linux' ? '&&' : '&' );
+          const run = ( process.platform === 'linux' ? './MAIN' : 'MAIN.exe' );
+
           childProcess.exec( cmdGcc, (cmdErrorGcc)=>{
             if( cmdErrorGcc ){
               console.log('[ERROR: GCC]\n', cmdErrorGcc);
               reject( cmdErrorGcc.message );
             }
             for(let index = 0; index < option.testcase.length; index++){
-              const child = childProcess.spawn( 'MAIN.exe', {cwd: option.savePath} );
+              const child = childProcess.spawn( run, {cwd: option.savePath} );
             
               child.stdout.setEncoding("utf8");
               child.stderr.setEncoding("utf8");

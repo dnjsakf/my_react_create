@@ -3,6 +3,8 @@ import path from 'path';
 import express from 'express';
 import session from 'express-session';
 
+import passport from 'passport';
+
 import bodyParser from 'body-parser';
 import mysql from 'mysql';
 
@@ -26,6 +28,7 @@ app.use(function(error, req, res, next){
   console.error('[throw-error]', error.stack);
   return res.status(500).json({
     error: error,
+    next: next,
     code: 500,
     msg: "Something broken!!!"
   });
@@ -35,6 +38,10 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+
+// For Facebook login 
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Router Controll
 app.use('/', express.static(path.join(__dirname, './../public')));
@@ -50,10 +57,12 @@ app.get('*', (req,res)=>{
   return res.status(200).sendFile(path.join(__dirname, './../public/index.html'));
 });
 
-
+// PRODUCTION
 app.listen(expressPort, ()=>{
   console.log('[express] Server is running on port:', expressPort);
 });
+
+// DEVELOPMENT
 if(process.env.NODE_ENV === 'development'){
   console.log('[express server is running]');
   const config = require('../webpack.dev.config');

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import style from './Login.css';
+import './Login.css';
 
 import { Row, Input } from 'react-materialize';
  
@@ -8,16 +8,19 @@ const Login = ( props )=>{
     <form id="login-form">
       <Row>
         <Input 
+          s={12}
           name="username" 
-          onChange={ props.onChange } 
-          label="E-mail" 
-          s={12} />
+          label="E-mail"
+          onBlur={ props.onCheckValid }
+          onKeyPress={ props.onKeyPressEnter }
+          />
         <Input 
+          s={12}
           name="password" 
-          onKeyPress={ props.onKeyPressEnter } 
           type="password" 
           label="password" 
-          s={12} />
+          onKeyPress={ props.onKeyPressEnter }
+          onBlur={ props.onCheckValid } />
       </Row>
     </form>
   );

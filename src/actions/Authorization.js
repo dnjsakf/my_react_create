@@ -122,7 +122,7 @@ export function authPasswordCheckRequest( username, password ){
 }
 
 
-export function authWaiting( mode ){
+export function authWaiting( mode, data ){
   switch( mode ){
     case 'session':
       return {
@@ -138,7 +138,7 @@ export function authWaiting( mode ){
       }
     case 'register':
       return {
-        type: AUTH_REGISTER_WAITING
+        type: AUTH_REGISTER_WAITING,
       }
     case 'passwordCheck':
       return {
@@ -169,6 +169,7 @@ export function authSuccess( mode, data ){
     case 'register':
       return { 
         type: AUTH_REGISTER_SUCCESS,
+        email: data.email
       }
     case 'passwordCheck':
       return { 

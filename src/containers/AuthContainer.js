@@ -12,7 +12,12 @@ class AuthContainer extends Component{
       mode: 'login',
       username: ''
     };
-
+    this.RegExp={
+      username: /^[a-zA-Z0-9\-\_]+@[a-zA-Z0-9\-\_]+?\.[a-zA-Z]{2,4}$/,
+      password: /^[a-zA-Z0-9!@#$%]{6,12}$/,
+      passwordCheck: /^[a-zA-Z0-9!@#$%]{6,12}$/,
+      displayName: /^[a-zA-Z0-9가-힣]{3,8}$/,
+    }
     this.defaultModes = ['login', 'register'];
 
     this.handleChangeAuth = this.handleChangeAuth.bind(this);
@@ -20,6 +25,20 @@ class AuthContainer extends Component{
     this.handleRegisterEvent = this.handleRegisterEvent.bind(this);
 
     this.handleKeyPressEnter = this.handleKeyPressEnter.bind(this);
+
+    this.handleCheckValid = this.handleCheckValid.bind(this);
+  }
+
+  handleCheckValid( event ){
+    const targetName = event.target.name;
+    if( this.RegExp[targetName].test( event.target.value ) ){
+      // console.log(targetName, '[Correct]')
+      event.target.nextElementSibling.classList.remove( 'incorrect' );
+    } else {
+      // console.log(targetName, '[Incorrect]')
+      event.target.nextElementSibling.classList.add( 'incorrect' );
+      return false;
+    }
   }
   
   handleChangeAuth( event ){
@@ -38,39 +57,75 @@ class AuthContainer extends Component{
     );
   }
   
-  handleLoginEvent( event ){
-    const username = document.querySelector('input[name=username]').value;
-    const password = document.querySelector('input[name=password]').value;
-
-    // 패스워드는 나중에 해쉬로 저장하자.
+  handleLoginEvent(){
+    const username = document.querySelector('input[name=username]');
+    const password = document.querySelector('input[name=password]');
     
-    if( typeof username !== 'string' ) return false;
-    if( !(/[a-zA-Z0-9\-\_]+@[a-zA-Z0-9\-\_]+.[a-zA-Z]{2,3}/.test( username ))) return false;
+    if( typeof username.value !== 'string' ){
+      username.focus();
+      return false;
+    }
+    if( !(this.RegExp.username.test( username.value ))){
+      username.focus();
+      return false;
+    }
+    if( typeof password.value !== 'string' ){
+      password.focus();
+      return false;
+    }
+    if( !(this.RegExp.password.test( password.value ))){
+      password.focus();
+      return false
+    };
     
-    if( typeof password !== 'string' ) return false;
-    if( !(/[a-zA-Z0-9!@#$%]{6,12}/gm.test(password))) return false;
-    
-    this.props.handleAuthLogin( username, password );
+    this.props.handleAuthLogin( username.value, password.value );
   }
 
-  handleRegisterEvent( event ){
-    const username = document.querySelector('input[name=username]').value;
-    const password = document.querySelector('input[name=password]').value;
-    const passwordCheck = document.querySelector('input[name=password-check]').value;
-    const displayName = document.querySelector('input[name=displayName]').value;
-
-    // 패스워드는 나중에 해쉬로 저장하자.
-    if( typeof username !== 'string' ) return false;
-    if( (/[a-zA-Z0-9\-\_]+@[a-zA-Z0-9\-\_]+.[a-zA-Z]{2,3}/).test( username ) === false) return false;
-
-    if( typeof password !== 'string' ) return false;
-    if( (/[a-zA-Z0-9!@#$%]{6,12}/gm).test(password) === false) return false;
-    if( password !== passwordCheck ) return false;
+  handleRegisterEvent(){
+    const username = document.querySelector('input[name=username]');
+    const password = document.querySelector('input[name=password]');
+    const passwordCheck = document.querySelector('input[name=passwordCheck]');
+    const displayName = document.querySelector('input[name=displayName]');
     
-    if( typeof displayName !== 'string' ) return false;
-    if( (/[a-zA-Z0-9가-힣]{4,8}/gm).test( displayName ) === false) return false;
+    if( typeof username.value !== 'string' ){
+      username.focus();
+      return false;
+    }
+    if( !(this.RegExp.username.test( username.value ))) {
+      username.focus();
+      return false;
+    }
+    if( password.value !== passwordCheck.value ){
+      password.focus();
+      return false;
+    }
+    if( typeof password.value !== 'string' ){
+      password.focus();
+      return false;
+    }
+    if( !(this.RegExp.password.test(password.value))){
+      password.focus();
+      return false;
+    }
+    if( typeof passwordCheck.value !== 'string' ){
+      passwordCheck.focus();
+      return false;
+    }
+    if( !(this.RegExp.passwordCheck.test(passwordCheck.value))){
+      passwordCheck.focus();
+      return false;
+    }
     
-    this.props.handleAuthRegister( username, password, displayName ).then(()=>{
+    if( typeof displayName.value !== 'string' ){
+      displayName.focus();
+      return false;
+    }
+    if( !(this.RegExp.displayName.test( displayName.value ))){
+      displayName.focus();
+      return false;
+    }
+    
+    this.props.handleAuthRegister( username.value, password.value, displayName.value ).then(()=>{
       this.setState(
         update( this.state, 
           {
@@ -81,13 +136,38 @@ class AuthContainer extends Component{
     });
   }
 
+
+  /**
+   * LOGIN: username -> password -> LOGIN
+   * REGISTER: username -> dispalyName-> password -> passwordChek -> REGISTER
+   */
   handleKeyPressEnter( event ){
     if( event.which === 13 || event.keyCode === 13 ){
       if( this.state.mode === 'login' ){
-        this.handleLoginEvent();
+        switch(event.target.name){
+          case 'username':
+            document.querySelector('input[name=password]').focus();
+            return false;
+          case 'password':
+            return this.handleLoginEvent();
+        }
       } else {
-        this.handleRegisterEvent();
+        switch(event.target.name){
+          case 'username':
+            document.querySelector('input[name=displayName]').focus();
+            return false;
+          case 'displayName':
+            document.querySelector('input[name=password]').focus();
+            return false;
+          case 'password':
+            document.querySelector('input[name=passwordCheck]').focus();
+            return false;
+          case 'passwordCheck':
+            return this.handleRegisterEvent();
+        }
       }
+    } else {
+      return false;
     }
   }
   componentWillReceiveProps(nextProps){
@@ -95,12 +175,21 @@ class AuthContainer extends Component{
       browserHistory.push('/');
     }
   }
+  shouldComponentUpdate(nextProps, nextState){
+    if( nextState.mode === 'login' && nextProps.status === 'SUCCESS' ){
+      console.log('[user]', nextProps.username );
+      document.querySelector('input[name=username]').value = nextProps.username;
+      document.querySelector('input[name=password]').focus();
+    }
+    return true;
+  }
 
   // type은 다음에 mode로 replacement하자
   render(){
     return (
       <AuthWrapper 
         type={ this.state.mode }
+        onCheckValid={ this.handleCheckValid }
         onChangeType={ this.handleChangeAuth }
         onLoginEvent={ this.handleLoginEvent }
         onRegisterEvent={ this.handleRegisterEvent }
@@ -119,6 +208,7 @@ const mapStateToProps = (state)=>{
   return {
     isLogined: state.Authorization.isLogined,
     status: state.Authorization.status,
+    username: state.Authorization.user.username
   }
 }
 const mapDispatchToProps = (dispatch)=>{

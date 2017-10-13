@@ -10,6 +10,10 @@ section.AuthWrapper{
   border: 1px solid gray;
 }
 
+section.AuthWrapper .row{
+  margin: 0;
+  padding: 0;
+}
 
 section.AuthWrapper .input-wrapper{
   padding: 30px;

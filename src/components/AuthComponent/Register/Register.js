@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import style from './Register';
+import './Register.css';
 
 import { Row, Col, Input } from 'react-materialize';
 
@@ -8,27 +8,31 @@ const Register = ( props )=>{
     <form id="register-form">
       <Row>
         <Input 
-          onChange={ props.onChange }
+          s={6}
           name="username" 
           label="E-mail"
-          s={6} />
+          onBlur={ props.onCheckValid }
+          onKeyPress = { props.onKeyPressEnter }/>
         <Input 
-          onChange={ props.onChange }
+          s={6}
           name="displayName" 
-          label="Nick-Name" 
-          s={6} />
+          label="Nick-Name"
+          onBlur={ props.onCheckValid }
+          onKeyPress = { props.onKeyPressEnter }/>
         <Input
+          s={6} 
           name="password" 
           type="password" 
           label="password" 
-          s={6} />
+          onBlur={ props.onCheckValid }
+          onKeyPress = { props.onKeyPressEnter }/>
         <Input 
-          name="password-check" 
+          s={6}
+          name="passwordCheck" 
           type="password" 
           label="password check" 
-
-          onKeyPress = { props.onKeyPressEnter }
-          s={6} />
+          onBlur={ props.onCheckValid }
+          onKeyPress = { props.onKeyPressEnter }/>
         </Row>
     </form>
   );

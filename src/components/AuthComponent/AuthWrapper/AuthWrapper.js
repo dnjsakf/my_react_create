@@ -11,7 +11,11 @@ const AuthWrapper = ( props )=>{
   let authEventButton = '';
   switch( props.type ){
     case 'login':
-      authcontent = ( <Login onKeyPressEnter={ props.onKeyPressEnter } /> );
+      authcontent = (
+        <Login onKeyPressEnter={ props.onKeyPressEnter }
+               onCheckValid={ props.onCheckValid }
+               />
+      );
       authEventButton = ( 
         <Button 
           value="login"
@@ -21,12 +25,16 @@ const AuthWrapper = ( props )=>{
       );
       break;
     case 'register':
-      authcontent = ( <Register onKeyPressEnter={ props.onKeyPressEnter } /> );
+      authcontent = (
+      <Register onKeyPressEnter={ props.onKeyPressEnter } 
+                onCheckValid={ props.onCheckValid }
+                /> 
+      );
       authEventButton = ( 
         <Button 
           value="submit"
           onClick={ props.onRegisterEvent }>
-          submit
+          Register
         </Button>
       );
       break;

@@ -48,13 +48,23 @@ export default function AuthorizationReducer(state, action){
       );
     /* SUCCESSC */
     case AUTH_LOGOUT_SUCCESS:
-    case AUTH_REGISTER_SUCCESS:
       return update( state, 
         {
           status: { $set: 'SUCCESS' },
           isLogined: { $set: false }
         }
       );
+    case AUTH_REGISTER_SUCCESS:
+      return update( state, 
+        {
+          status: { $set: 'SUCCESS' },
+          isLogined: { $set: false },
+          user: {
+            username: { $set: action.email }
+          }
+        }
+      );
+    
     case AUTH_LOGIN_SUCCESS:
     case AUTH_SESSION_SUCCESS:
       return update( state, 

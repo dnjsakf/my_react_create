@@ -1,0 +1,6 @@
+form#register-form label.active{
+  font-size: 20px;
+}
+form#register-form label.incorrect{
+  color: red;
+}

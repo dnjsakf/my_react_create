@@ -1,0 +1,6 @@
+form#login-form label.active{
+  font-size: 20px;
+}
+form#login-form label.incorrect{
+  color: red;
+}

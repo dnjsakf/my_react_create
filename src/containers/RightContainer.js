@@ -14,11 +14,13 @@ import {
 // Authorization
 import { 
   authPasswordCheckRequest, 
-  authSessionRequest 
+  authSessionRequest, 
+  authLogoutRequest
 } from '../actions/Authorization';
 // UserState
 import { 
-  userStateUpdateRequest 
+  userStateUpdateRequest, 
+  userStateDeleteRequest
 } from '../actions/UserState';
 
 
@@ -97,7 +99,16 @@ class RightContainer extends Component{
     if( this.props.session.isLogined === false ) return false;
     if( this.props.session.user === 'UNKNOWN') return false;
 
-    // TODO: action
+    const username = this.props.session.user.username;
+
+    if( confirm("정말 탈퇴하시겠습니까?") ){
+      console.log('[탈퇴]');
+      this.props.logout( username ).then(
+        ()=>{
+          this.props.deleteUserState( username );
+        }
+      );
+    }
   }
   
   sortToggle(prevSort, isPagingMode){
@@ -180,7 +191,7 @@ class RightContainer extends Component{
     if( nextProps.status.session !== 'WAITING' ) return true;
     if( nextProps.status.question !== 'WAITING' ) return true;
     if( nextProps.status.dashboard !== 'WAITING' ) return true;
-    if( nextProps.status.update !== 'WAITING' ) return true;
+    if( nextProps.status.userstate !== 'WAITING' ) return true;
 
     const menuChanged = ( this.props.menu !== nextProps.menu );
     console.log('[오른쪽 메뉴 변경]', menuChanged, this.props.menu, nextProps.menu );
@@ -272,7 +283,7 @@ const mapStateToProps = ( state )=>{
     status:{
       session: state.Authorization.status,
       question: state.RightContent.question.status,
-      update: state.UserState.status,
+      userstate: state.UserState.status,
       dashboard: state.RightContent.dashboard.status,
     },
     session:{
@@ -297,6 +308,10 @@ const mapStateToProps = ( state )=>{
 }
 const mapDispatchToProps = ( dispatch )=>{
   return {
+    // session logout for delete userstate
+    logout: ( username )=>{
+      return dispatch(authLogoutRequest(username));
+    },
     // check user password
     passwordCheck: ( username, password )=>{
       return dispatch(authPasswordCheckRequest( username, password ));
@@ -304,6 +319,10 @@ const mapDispatchToProps = ( dispatch )=>{
     // updated user editor setting
     updateUserState: ( mode, updateData )=>{
       return dispatch(userStateUpdateRequest( mode, updateData ));
+    },
+    // delete user state
+    deleteUserState: ( deleteData )=>{
+      return dispatch(userStateDeleteRequest( deleteData ));
     },
     // check user server connection
     sessionCheck: ()=>{

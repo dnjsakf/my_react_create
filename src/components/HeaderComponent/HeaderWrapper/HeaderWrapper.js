@@ -43,7 +43,7 @@ const HeaderWrapper = ( props )=>{
     </NavItem>
   ];
   return (
-    <Navbar className='HeaderWrapper' brand='Battle-Code' right>
+    <Navbar className='HeaderWrapper' brand='Battle-Code' href="#" right>
       { props.isLogined === true && UserItems }
       <NavItem key={3}>
         { props.isLogined === true ? logout : login }

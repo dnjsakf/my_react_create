@@ -9,6 +9,10 @@ const conn = mysql.createConnection({
   password: ( process.platform === 'linux' ? '1111' : 'wjddns1' ),
   database: 'battlecode'
 });
+conn.connect((error)=>{
+  if( error ) throw error;
+  console.log( '[mysql-connection] - userstate' );
+});
 
 /**
  * TODO: 회원정보 추가
@@ -161,30 +165,16 @@ router.post('/update/:mode', (req, res)=>{
  * TODO: 회원탈퇴
  */
 router.delete('/delete', (req, res)=>{
-  const session = req.session;
-  if( typeof session.user === 'undefined' ){
-    return res.status(404).json({
-      error: 'Invliad connect',
-      code: 0
-    });
-  }
-  if( session.user.username !== req.body.username ){
-    return res.status(403).json({
-      error: 'No matched username',
-      code: 1
-    });
-  }
-
-  const sqlDelete = `DELETE FROM member WHERE email = ?`;
-  conn.query(sqlDelete, (error, result)=>{
+  console.log('[delete]', req.query.email );  
+  const sqlDelete = `DELETE FROM member WHERE ?`;
+  conn.query(sqlDelete, [{ email: req.query.email }] ,(error, result)=>{
     if(error) throw error;
     // TODO: result 
-
+    console.log('[delete]', result);
     return res.status(200).json({
       success: true
     });
   });
 });
-
 
 export default router;

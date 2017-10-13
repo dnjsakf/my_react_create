@@ -10,7 +10,7 @@ const Register = ( props )=>{
         <Input 
           onChange={ props.onChange }
           name="username" 
-          label="E-mail" 
+          label="E-mail"
           s={6} />
         <Input 
           onChange={ props.onChange }

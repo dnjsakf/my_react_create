@@ -7,3 +7,9 @@
 input.UserState.validate[disabled] + label {
   color: black;
 }
+
+label.test:checked + div{
+  display: block;
+  opacity: 1;
+  background-color: none;
+}

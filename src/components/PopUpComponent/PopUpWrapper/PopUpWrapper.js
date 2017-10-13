@@ -32,7 +32,6 @@ const PopUpWrapper = ( props )=>{
           />
       );
       break;
-    
     case 'notice':
       popup = (
         <Notice

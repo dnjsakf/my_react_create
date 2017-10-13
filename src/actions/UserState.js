@@ -58,12 +58,12 @@ export function userStateUpdateRequest( mode, updateData ){
 /**
  * UserState Delete Event
  */
-export function userStateDeleteRequest( deleteData ){
+export function userStateDeleteRequest( email ){
   return ( dispatch )=>{
     
     dispatch(userStateWaiting('delete'));
 
-    return axios.delete('/api/userstate/delete', deleteData )
+    return axios.delete('/api/userstate/delete', { params: { email } } )
           .then((response)=>{
             console.log('[\nuserstate-delete-success]', response, '\n');
             dispatch(userStateSuccess('delete', response.data));

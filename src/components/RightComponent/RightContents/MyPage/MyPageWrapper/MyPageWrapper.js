@@ -13,6 +13,7 @@ const MyPageWrapper = ( props )=>{
     content = (
       <UserState 
         onUpdateUserState={ props.onUpdateUserState }
+        onDeleteUserState={ props.onDeleteUserState }
 
         user={ props.user }
       />

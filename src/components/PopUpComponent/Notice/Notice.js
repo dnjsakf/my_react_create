@@ -22,9 +22,6 @@ const Notice = ( props )=>{
   }
   const tableItems = convertTable( props.default.records, tableOption );
 
-  console.log( props.info );
-  console.log( props.default.records );
-
   let list, detail;
   if( toggle ){
     list = (

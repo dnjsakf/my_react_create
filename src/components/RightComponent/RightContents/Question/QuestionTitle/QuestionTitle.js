@@ -23,6 +23,7 @@ const QuestionTitle = ( props )=>{
   return(
     <Navbar className='white QuestionTitle'
             brand={ `${props.no}  ${props.subject}` }
+            href="#"
             right>
             { props.isLogined ? questionOption : null }
     </Navbar>

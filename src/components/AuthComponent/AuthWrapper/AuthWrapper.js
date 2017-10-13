@@ -35,14 +35,16 @@ const AuthWrapper = ( props )=>{
   return (
     <section className="AuthWrapper">
       <div className="Auth-Change-Buttons">
-        <Button className="deep-orange lighten-2" value="login" onClick={ props.onChangeType }>login</Button>
-        <Button className="blue lighten-2" value="register" onClick={ props.onChangeType }>Register</Button>
+        <Button className="toggle-login active" value="login" onClick={ props.onChangeType }>login</Button>
+        <Button className="toggle-register" value="register" onClick={ props.onChangeType }>Register</Button>
       </div>
-      <div className="Auth-Form">
-        { authcontent }
-      </div>
-      <div className="Auth-Buttons">
-        { authEventButton }
+      <div className="input-wrapper">
+        <div className="Auth-Form">
+          { authcontent }
+        </div>
+        <div className="Auth-Buttons">
+          { authEventButton }
+        </div>
       </div>
     </section>
   );

@@ -56,6 +56,7 @@ const ContentsWrapper = ( props )=>{
           passwordChecked={ props.passwordChecked }
 
           onUpdateUserState={ props.onUpdateUserState }
+          onDeleteUserState={ props.onDeleteUserState }
 
           user={ props.session.user }
         />

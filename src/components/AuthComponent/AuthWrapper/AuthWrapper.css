@@ -1,11 +1,18 @@
 section.AuthWrapper{
-  background-color: #ffcdd2;
-  height: 500px;
+  background-color: white;
   width: 500px;
+  height: auto;
 
   margin: 0 auto;
 
   margin-top: 30px;
+  
+  border: 1px solid gray;
+}
+
+
+section.AuthWrapper .input-wrapper{
+  padding: 30px;
 }
 
 section.AuthWrapper .Auth-Form{
@@ -27,4 +34,12 @@ div.Auth-Buttons{
 }
 div.Auth-Buttons > button{
   width: 130px;
+}
+
+
+button.toggle-login{
+  background-color: lightgreen;
+}
+button.toggle-register{
+  background-color: lightblue;
 }

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Row, Input, Button } from 'react-materialize';
 
+import './PasswordCheck.css';
+
 const PasswordCheck = ( props )=>{
   return (
     <section className="PasswordCheck">

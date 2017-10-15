@@ -27,10 +27,11 @@ section.AuthWrapper .Auth-Change-Buttons{
   width: 100%;
   text-align: center;
 }
-section.AuthWrapper > div.Auth-Change-Buttons > button{
+section.AuthWrapper .Auth-Change-Buttons > button{
   width: 50%;
   height: 50px;
 }
+
 
 div.Auth-Buttons{
   text-align: center;

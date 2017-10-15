@@ -118,7 +118,7 @@ router.get('/algorithm/data/:questionNo', (req, res)=>{
   const question = `SELECT ${questionFields} FROM questions WHERE no = ? `;
   conn.query(question, [req.params.questionNo] ,(error, question)=>{
     if(error) throw error;
-    if(question.lenght === 0){
+    if(question.length === 0){
       return res.status(404).json({
         error: 'Not Found',
         error: 0
@@ -154,9 +154,6 @@ router.get('/algorithm/data/:questionNo', (req, res)=>{
 
 /**
  * Get Algorithm state for "Dashboard"
- */
-/**
- * 내 알고리즘에서 보여줄 때랑 구분해줘야됨
  */
 router.get('/dashboard/state', (req, res)=>{
   /**
@@ -209,8 +206,6 @@ router.get('/dashboard/state', (req, res)=>{
   if( req.query.isMyAlgo === 'true' ){
     conditions.except = { mNo: req.session.user.no };
   }
-
-
   const sort = req.query.sort;
   try{
     /**
@@ -237,6 +232,8 @@ router.get('/dashboard/state', (req, res)=>{
       }
 
       console.log( '[querys]\n', req.query.isMyAlgo === 'true' );
+      // 내가 푼 문제를 다 제거하니까
+      // 당연히 에러나지!
       if( req.query.isMyAlgo === 'true' ){
         countOption.except = { mNo: req.session.user.no };
       }
@@ -294,8 +291,64 @@ router.get('/dashboard/state', (req, res)=>{
     });
   }
 });
+/**
+ * 내 알고리즘 가져오기
+ * 1. 세션을 가지고 있는 상태
+ * 2. 문제가 선택되어진 상태   ->  이건 프론트에서
+ * 3. 선택된 언어 -> 전체로 탐색할 경우 언어가 없을 수도 있음
+ */
+router.get('/dashboard/state/mine', (req, res)=>{
+  if( typeof req.session.user === 'undefined' ){
+    return res.status(404).json({
+      error: 'Not Found User',
+      code: 403
+    });
+  }
+  if( typeof req.query.questionNo === 'undefined'){
+    return res.status(403).json({
+      error: 'Type Error: questionNo is undefined',
+      code: 403
+    });
+  }
+  if( typeof req.query.language === 'undefined'){
+    return res.stauts(403).json({
+      error: 'Type Error: Language is undefined',
+      code: 403
+    });
+  }
+  
+  const User = req.session.user;
+  let query = [
+    'SELECT',[ '*', 'mNo as name' ].join(','),
+    'SELECT',[ '*' ].join(','),
+    'FROM',[ 'qState' ].join(''),
+    'WHERE',[
+      // Only One Date Row
+      `mNo = ${User.no}',
+      'qNo = ${req.query.questionNo}`,
+      `language = ${req.query.language}`
+    ].join(' AND '),
+    'ORDER BY',[ 'no DESC' ].join(''),
+    'LIMIT 1'
+  ].join(' ');
+
+  conn.query( query, (error, exist)=>{
+    if( error ) throw error;
+    if( exist.length === 0){
+      return res.status(200).json({
+        success: false,
+        records: 'Not Found Data'
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      records: exist[0]
+    });
+  });
+});
 
 
+// 비교하기 창에서 소스코드 변경
 router.get('/compare/:target/:mode/:questionNo/:language/:no/', (req, res)=>{
   if( typeof req.params.target === 'undefined' ){
     return res.status(403).json({

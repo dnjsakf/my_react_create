@@ -53,20 +53,37 @@ class CompareWrapper extends Component{
     this.handleFindSource = this.handleFindSource.bind(this);
     this.handleRunCompare = this.handleRunCompare.bind(this);
     this.handleOnScroll = this.handleOnScroll.bind(this);
+
+    this.handleGetMyAlgorithm = this.handleGetMyAlgorithm.bind(this);
+  }
+
+  handleGetMyAlgorithm(){
+    if( this.props.isLogined === false ){ return false; }
+    
+    const url = '/api/data/dashboard/state/mine';
+    const querys = { 
+      params: {
+        questionNo: this.props.question.no,
+        language: this.props.option.language
+      }
+    }
+    const myAlgorithm = axios.get(url, querys);
+    myAlgorithm.then((response)=>{
+      this.setState(
+        update(this.state,
+          {
+            my: { $set: response }
+          }
+        )
+      )
+    });
+    myAlgorithm.catch((erorr)=>{
+      return 0;
+    });
   }
 
   componentWillMount(){
-    /** 내 데이터만 가져오기 */
-    // const questionNo = this.props.question.no;
-    // const language = this.state.other.language;
-    // const url = `/api/data/compare/my/next/${questionNo}/${language}/true`;
-    // axios.get(url)
-    // .then((response)=>{
-
-    // })
-    // .catch((error)=>{
-      
-    // })
+    this.handleGetMyAlgorithm();
   }
 
   // Get prev && next source-code

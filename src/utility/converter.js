@@ -120,7 +120,7 @@ export function convertTable( listData, tableOption ){
       <tr 
         key={ rowIndex } 
         value={ rowIndex }
-        onClick={ ()=>{ existOnClick.records( rowIndex )} }>
+        onClick={''/* ()=>{ existOnClick.records( rowIndex )} */}>
         {
           ((_fields, _row)=>{
             let cols = [];

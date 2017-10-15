@@ -24,16 +24,27 @@ import { analysis } from './../../../utility/analysis.js';
 class CompareWrapper extends Component{
   constructor(props){
     super(props);
-
+    /**
+     * CompareWrapper 가 로드되기 전에
+     * 내 소스코드를 먼저 가져와야할까?
+     */
     console.log( '[Compare Wrapper Variable]\n',props );
     this.state={
+      // my:{
+      //   no: props.dashboard.myRecords[props.option.language][0].no,
+      //   name: props.dashboard.myRecords[props.option.language][0].name,
+      //   language: props.option.language,
+      //   sourceCode: props.dashboard.myRecords[props.option.language][0].sourceCode,
+      //   result: props.dashboard.myRecords[props.option.language][0].result,
+      //   date: props.dashboard.myRecords[props.option.language][0].date,
+      // },
       my:{
-        no: props.dashboard.myRecords[props.option.language][0].no,
-        name: props.dashboard.myRecords[props.option.language][0].name,
-        language: props.option.language,
-        sourceCode: props.dashboard.myRecords[props.option.language][0].sourceCode,
-        result: props.dashboard.myRecords[props.option.language][0].result,
-        date: props.dashboard.myRecords[props.option.language][0].date,
+        no: undefined,
+        name: undefined,
+        language: undefined,
+        sourceCode: undefined,
+        result: undefined,
+        date: undefined,
       },
       /* get ajax */
       other:{
@@ -69,17 +80,17 @@ class CompareWrapper extends Component{
     }
     const myAlgorithm = axios.get(url, querys);
     myAlgorithm.then((response)=>{
+      console.log( '[get my sourceCode]', response );
       this.setState(
         update(this.state,
           {
-            my: { $set: response }
+            my: { $set: response.data.records }
           }
         )
       )
     });
-    myAlgorithm.catch((erorr)=>{
-      return 0;
-    });
+    // error controll
+    // myAlgorithm.catch((erorr)=>{});
   }
 
   componentWillMount(){
@@ -190,6 +201,10 @@ class CompareWrapper extends Component{
     setTimeout(()=>{ return clearInterval(animation); }, 1000);
   }
 
+  /**
+   * 내 알고리즘은 데이터가 로드 되면 그때 작성해서 보여줘야되고,
+   * 상대 알고리즘 먼저 로드시켜두는게 좋은듯
+   */
   render(){
     return (
       <section className="CompareWrapper">
@@ -198,7 +213,7 @@ class CompareWrapper extends Component{
         </header>
         <section className="compare-content">
           {/* 이걸 component로 빼도 될듯 */}
-          <div className="my-sourcecode"> 
+          <div className="my-sourcecode">
             <div className="content-title">
               <ul className="pagination">
                 <li className="waves-effect"

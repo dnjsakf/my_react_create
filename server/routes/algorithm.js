@@ -319,19 +319,16 @@ router.get('/dashboard/state/mine', (req, res)=>{
   
   const User = req.session.user;
   let query = [
-    'SELECT',[ '*', 'mNo as name' ].join(','),
     'SELECT',[ '*' ].join(','),
     'FROM',[ 'qState' ].join(''),
     'WHERE',[
-      // Only One Date Row
-      `mNo = ${User.no}',
-      'qNo = ${req.query.questionNo}`,
-      `language = ${req.query.language}`
+      `mNo = ${User.no}`,
+      `qNo = ${req.query.questionNo}`,
+      `language = "${req.query.language}"`
     ].join(' AND '),
     'ORDER BY',[ 'no DESC' ].join(''),
-    'LIMIT 1'
+    'LIMIT 1'  // Only One Date Row
   ].join(' ');
-
   conn.query( query, (error, exist)=>{
     if( error ) throw error;
     if( exist.length === 0){
@@ -340,6 +337,7 @@ router.get('/dashboard/state/mine', (req, res)=>{
         records: 'Not Found Data'
       });
     }
+    exist[0].name = User.displayName;
     return res.status(200).json({
       success: true,
       records: exist[0]

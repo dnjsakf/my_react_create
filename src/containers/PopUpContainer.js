@@ -10,6 +10,8 @@ import { insertUserReportRequest } from '../actions/UserReport';
 import { getNoticeRequest } from '../actions/Notice';
 import { userStateUpdateRequest } from '../actions/UserState';
 
+import Materialize from 'react-materialize';
+
 class PopUpContainer extends Component{
   constructor(props){
     super(props);
@@ -76,8 +78,9 @@ class PopUpContainer extends Component{
       reportType: reportType.value,
       reportDetail: reportDetail.value,
     }
-
     this.props.insertUserReport( report );
+
+    Materialize.toast('test',1000);
   }
 
   // 공지사항 뒤로가기

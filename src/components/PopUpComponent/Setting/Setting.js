@@ -21,7 +21,6 @@ const Setting = ( props )=>{
                     id="editor-theme" 
                     s={12} 
                     type='select' 
-                    label="afsdfafd" 
                     defaultValue={ props.defaultEditor.editorTheme }>
                     <option value='dracula'>dracula</option>
                     <option value='midnight'>midnight</option>
@@ -39,7 +38,6 @@ const Setting = ( props )=>{
                     id="editor-language"  
                     s={12} 
                     type='select' 
-                    label="afsdfafd" 
                     defaultValue={ props.defaultEditor.editorLanguage }>
                     <option value='python'>python</option>
                     <option value='c'>c</option>
@@ -60,7 +58,6 @@ const Setting = ( props )=>{
                     id="editor-font" 
                     s={12} 
                     type='select' 
-                    label="afsdfafd" 
                     defaultValue={ props.defaultEditor.editorFont }>
                     <option value='Arial'>Arial</option>
                     <option value='돋움'>돋움</option>
@@ -78,7 +75,6 @@ const Setting = ( props )=>{
                     id="editor-fontSize" 
                     s={12} 
                     type='select' 
-                    label="afsdfafd" 
                     defaultValue={ props.defaultEditor.editorFontSize }>
                     <option value='15px'>15px</option>
                     <option value='16px'>16px</option>

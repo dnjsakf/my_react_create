@@ -43,7 +43,8 @@ class TextEditorWrapper extends Component{
       compiling: false,
       saving: false,
       language: props.session.editor.editorLanguage,
-      sourceCode: this.source[props.session.editor.editorLanguage]
+      sourceCode: this.source[props.session.editor.editorLanguage],
+      fontsize: props.session.editor.editorFontSize
       /* 언어별로 기본 소스코드를 가져와야되는데 어떻게 만들어줄까.. */
     }
 
@@ -170,6 +171,11 @@ class TextEditorWrapper extends Component{
         )
       )
     }
+    if( this.props.session.editor.editorFontSize !== nextProps.session.editor.editorFontSize){
+      const element = document.querySelector('.CodemirrorEditor');
+      element.classList.remove( 'font-' + this.props.session.editor.editorFontSize );
+      element.classList.add( 'font-' + nextProps.session.editor.editorFontSize );
+    }
     if( nextProps.status.compile !== 'WAITING' ){
       this.setState(
         update( this.state, 
@@ -188,7 +194,7 @@ class TextEditorWrapper extends Component{
     /* 컴파일이 끝나기 전에 다시 누르지 못하게 하기 */
     if( nextProps.status.compile !== 'WAITING' ) return true;
     if( nextProps.status.session === 'WAITING' ) return false;
-
+    
     const languageChanged = ( this.state.language !== nextState.language );
     console.log('[에디터 언어 변경]', languageChanged, this.state.language, nextState.language);
     if( languageChanged ) return true;
@@ -200,7 +206,7 @@ class TextEditorWrapper extends Component{
     const editorChanged = ( this.props.session.editor !== nextProps.session.editor );
     console.log('[에디터 변경]', editorChanged, this.props.session.editor, nextProps.session.editor);
     if( editorChanged ) return true;
-
+    
     console.log('[에디터 업데이트 안함]');
     return false;
   }
@@ -235,7 +241,8 @@ class TextEditorWrapper extends Component{
             default={{
               language: this.state.language,
               theme: this.props.session.editor.editorTheme,
-              source: this.source[this.state.language]
+              source: this.source[this.state.language],
+              fontsize: this.state.fontsize
             }}
             />
         </div>

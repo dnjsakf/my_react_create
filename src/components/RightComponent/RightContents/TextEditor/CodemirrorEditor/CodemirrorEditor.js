@@ -32,9 +32,9 @@ const CodemirrorEditor = ( props )=>{
   }
   // 컴파일 옵션 확인
   // console.log('[CODEMIRROR OPTIONS]\n', option);
-
+  
   return (
-    <div className="CodemirrorEditor">
+    <div className={ `CodemirrorEditor font-${props.default.fontsize}` }>
       <CodeMirror
         defaultValue={ props.default.source }
         options={ option }

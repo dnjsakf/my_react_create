@@ -11,3 +11,17 @@
 .ReactCodeMirror .CodeMirror-scroll{
   padding-bottom: 0;
 }
+
+
+.font-15px{
+  font-size: 15px;
+}
+.font-16px{
+  font-size: 16px;
+}
+.font-18px{
+  font-size: 18px;
+}
+.font-20px{
+  font-size: 20px;
+}

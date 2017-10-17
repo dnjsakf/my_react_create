@@ -25,6 +25,10 @@ var conn = _mysql2.default.createConnection({
   password: process.platform === 'linux' ? '1111' : 'wjddns1',
   database: 'battlecode'
 });
+conn.connect(function (error) {
+  if (error) throw error;
+  console.log('[mysql-connection] - userstate');
+});
 
 /**
  * TODO: 회원정보 추가
@@ -175,25 +179,12 @@ router.post('/update/:mode', function (req, res) {
  * TODO: 회원탈퇴
  */
 router.delete('/delete', function (req, res) {
-  var session = req.session;
-  if (typeof session.user === 'undefined') {
-    return res.status(404).json({
-      error: 'Invliad connect',
-      code: 0
-    });
-  }
-  if (session.user.username !== req.body.username) {
-    return res.status(403).json({
-      error: 'No matched username',
-      code: 1
-    });
-  }
-
-  var sqlDelete = 'DELETE FROM member WHERE email = ?';
-  conn.query(sqlDelete, function (error, result) {
+  console.log('[delete]', req.query.email);
+  var sqlDelete = 'DELETE FROM member WHERE ?';
+  conn.query(sqlDelete, [{ email: req.query.email }], function (error, result) {
     if (error) throw error;
     // TODO: result 
-
+    console.log('[delete]', result);
     return res.status(200).json({
       success: true
     });

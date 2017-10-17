@@ -12,7 +12,7 @@ const conn = mysql.createConnection({
   database: 'battlecode'
 });
 conn.connect(function(){
-  console.log('[mysql-connected] - algorithm');
+  console.log('[mysql-connection] - algorithm');
 });
 
 /**

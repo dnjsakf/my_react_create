@@ -33,47 +33,70 @@ function updateQuestionDashboard() {
   var perfect = searchPerfect('all');
   var language = searchLanguage('all', 'all');
 
-  Promise.all([challenger, current, perfect, language]).then(function (result) {
-    var total = {};
-    result.map(function (item, index) {
-      item.map(function (data) {
-        if (typeof total[data.question] === 'undefined') {
-          total[data.question] = {
-            challenger: 0,
-            current: 0,
-            perfect: 0,
-            c: 0,
-            java: 0,
-            python: 0
-          };
-        }
-        total[data.question][data.data.mode] = data.data.count;
+  updateTable('total').then(function () {
+    Promise.all([challenger, current, perfect, language]).then(function (result) {
+      var total = {};
+      result.map(function (item, index) {
+        item.map(function (data) {
+          if (typeof total[data.question] === 'undefined') {
+            total[data.question] = {
+              challenger: 0,
+              current: 0,
+              perfect: 0,
+              c: 0,
+              java: 0,
+              python: 0
+            };
+          }
+          total[data.question][data.data.mode] = data.data.count;
+        });
       });
-    });
-    // console.log('[Finish!!]');
-    return total;
-  }).then(function (total) {
-    // console.log('[Start Total]\n', total);
-    var promise = [];
-    var questions = Object.keys(total);
-    questions.map(function (question, index) {
-      promise.push(new Promise(function (resolve, reject) {
-        updateTotal(question, total[question], resolve, reject);
-      }));
-    });
+      // console.log('[Finish!!]');
+      return total;
+    }).then(function (total) {
+      // console.log('[Start Total]\n', total);
+      var promise = [];
+      var questions = Object.keys(total);
+      questions.map(function (question, index) {
+        promise.push(new Promise(function (resolve, reject) {
+          updateTotal(question, total[question], resolve, reject);
+        }));
+      });
 
-    Promise.all(promise).then(function (result) {
-      console.log('[Finish Total]\n', result);
-      // process.exit();
-    }).catch(function () {
+      Promise.all(promise).then(function (result) {
+        console.log('[Finish Total]\n', result);
+        // process.exit();
+      }).catch(function () {
+        // process.exit();
+      });
+    }).catch(function (error) {
+      console.log(error);
       // process.exit();
     });
   }).catch(function (error) {
-    console.log(error);
-    // process.exit();
+    throw error;
   });
 }
-
+/**
+ * 테이블에 question 번호 입력
+ */
+function updateTable(tablename) {
+  var update = query.update_table(tablename);
+  return new Promise(function (resolve, reject) {
+    conn.query(update, function (error, result) {
+      if (error) {
+        reject({
+          mode: 'update_table',
+          result: error
+        });
+      } else {
+        resolve({
+          success: true
+        });
+      }
+    });
+  });
+}
 /**
  * 전체 통계
  */

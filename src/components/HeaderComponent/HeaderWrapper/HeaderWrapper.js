@@ -17,26 +17,23 @@ const HeaderWrapper = ( props )=>{
   )
   // array
   const UserItems = [
-    <NavItem key={1}>
-      <a className="valign-wrapper"
-         href="#">
+    <NavItem key={1} href="#">
+      <a className="valign-wrapper">
          { props.displayName }
       </a>
     </NavItem>,
 
     // popup-notice
-    <NavItem key={2}>
+    <NavItem key={2} href="#">
       <a className="valign-wrapper" 
-         href="#" 
          onClick={ ()=>{ props.onShowPopUp('notice')} }>
-        <Icon >notifications</Icon>
+        <Icon>notifications</Icon>
       </a>
     </NavItem>,
 
     // popup-setting
-    <NavItem key={3}>
+    <NavItem key={3} href="#">
       <a className="valign-wrapper"
-         href="#" 
          onClick={ ()=>{ props.onShowPopUp('setting')} }>
         <Icon>settings</Icon>
       </a>
@@ -45,7 +42,7 @@ const HeaderWrapper = ( props )=>{
   return (
     <Navbar className='HeaderWrapper' brand='Battle-Code' href="#" right>
       { props.isLogined === true && UserItems }
-      <NavItem key={3}>
+      <NavItem key={4} href="#">
         { props.isLogined === true ? logout : login }
       </NavItem>
     </Navbar>

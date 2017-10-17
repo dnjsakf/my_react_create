@@ -12,6 +12,10 @@ var _expressSession = require('express-session');
 
 var _expressSession2 = _interopRequireDefault(_expressSession);
 
+var _passport = require('passport');
+
+var _passport2 = _interopRequireDefault(_passport);
+
 var _bodyParser = require('body-parser');
 
 var _bodyParser2 = _interopRequireDefault(_bodyParser);
@@ -42,6 +46,7 @@ app.use(function (error, req, res, next) {
   console.error('[throw-error]', error.stack);
   return res.status(500).json({
     error: error,
+    next: next,
     code: 500,
     msg: "Something broken!!!"
   });
@@ -51,6 +56,10 @@ app.use((0, _expressSession2.default)({
   resave: false,
   saveUninitialized: true
 }));
+
+// For Facebook login 
+app.use(_passport2.default.initialize());
+app.use(_passport2.default.session());
 
 // Router Controll
 app.use('/', _express2.default.static(_path2.default.join(__dirname, './../public')));
@@ -66,9 +75,12 @@ app.get('*', function (req, res) {
   return res.status(200).sendFile(_path2.default.join(__dirname, './../public/index.html'));
 });
 
+// PRODUCTION
 app.listen(expressPort, function () {
   console.log('[express] Server is running on port:', expressPort);
 });
+
+// DEVELOPMENT
 if (process.env.NODE_ENV === 'development') {
   console.log('[express server is running]');
   var config = require('../webpack.dev.config');

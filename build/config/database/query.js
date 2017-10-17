@@ -5,6 +5,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 /**
  * Update battlecode_stats queries
  */
+module.exports.update_table = function (tablename) {
+  return ['INSERT IGNORE INTO battlecode_stats.' + tablename + '(question)', '(SELECT no as question FROM battlecode.questions)'].join(' ');
+};
 module.exports.challenger = function (questionNo) {
   return ['SELECT qNo as question, count(*) as count', 'FROM battlecode.qState', questionNo === 'all' ? 'WHERE qNo IN ( SELECT no FROM battlecode.questions )' : 'WHERE qNo = ' + questionNo, 'GROUP BY qNo'].join(' ');
 };

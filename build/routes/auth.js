@@ -163,7 +163,8 @@ router.post('/register', function (req, res) {
         });
       }
       return res.status(200).json({
-        success: true
+        success: true,
+        email: condition.email
       });
     });
   });

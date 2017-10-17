@@ -7,15 +7,17 @@ const QuestionTitle = ( props )=>{
     (
       <NavItem
         key={1}
+        href="#"
         onClick={ ()=>{ props.onShowPopUP( 'report' ) } }>
-        <a href="#"><Icon className='QuestionReport'>bug_report</Icon></a>
+        <a><Icon className='QuestionReport'>bug_report</Icon></a>
       </NavItem>
     ),
     (
       <NavItem 
-        key={2} 
+        key={2}
+        href="#"
         onClick={ ()=>{ props.onAlgorithmSolve(props.no)} }>
-        <a href="#"><Icon>border_color</Icon></a>
+        <a><Icon>border_color</Icon></a>
       </NavItem>
     )
   ];

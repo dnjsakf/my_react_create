@@ -1,6 +1,7 @@
 import exporess from 'express';
 import mysql from 'mysql';
 import bcrypt from 'bcryptjs';
+import moment from 'moment';
 
 // default: auth
 const router = exporess.Router();
@@ -123,6 +124,7 @@ router.post('/register', (req, res)=>{
     email: req.body.username,
     password: bcrypt.hashSync(req.body.password, 8),
     name: req.body.displayName,
+    date: moment().format('YYYY-MM-DD')
   };
   console.log( '[register]', condition );
   

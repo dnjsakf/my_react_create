@@ -94,7 +94,7 @@ export function createCompiler( option ){
           const cmdJavac = [
             `cd ${option.savePath}`,
             `javac MAIN.java -encoding utf-8`
-          ].join( process.platform === 'linux' ? '&&' : '&' );
+          ].join( ' && ');
           
           childProcess.exec( cmdJavac, (error_javac)=>{
             if( error_javac ){
@@ -131,7 +131,7 @@ export function createCompiler( option ){
           const cmdGcc = [
             `cd ${option.savePath}`,
             `gcc -o MAIN MAIN.c`
-          ].join( process.platform === 'linux' ? '&&' : '&' );
+          ].join(' && ');
           const run = ( process.platform === 'linux' ? './MAIN' : 'MAIN.exe' );
 
           childProcess.exec( cmdGcc, (cmdErrorGcc)=>{

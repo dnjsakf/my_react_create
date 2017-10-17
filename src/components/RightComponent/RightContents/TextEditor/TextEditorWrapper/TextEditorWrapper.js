@@ -45,7 +45,6 @@ class TextEditorWrapper extends Component{
       language: props.session.editor.editorLanguage,
       sourceCode: this.source[props.session.editor.editorLanguage],
       fontsize: props.session.editor.editorFontSize
-      /* 언어별로 기본 소스코드를 가져와야되는데 어떻게 만들어줄까.. */
     }
 
     this.handleTyping = this.handleTyping.bind(this);
@@ -151,7 +150,8 @@ class TextEditorWrapper extends Component{
     this.setState(
       update( this.state, 
         {
-          language: { $set: event.target.value   }
+          language: { $set: event.target.value   },
+          sourceCode: { $set: this.source[event.target.value] }
         }
       )
     )

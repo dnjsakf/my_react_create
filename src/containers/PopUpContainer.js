@@ -10,8 +10,6 @@ import { insertUserReportRequest } from '../actions/UserReport';
 import { getNoticeRequest } from '../actions/Notice';
 import { userStateUpdateRequest } from '../actions/UserState';
 
-import Materialize from 'react-materialize';
-
 class PopUpContainer extends Component{
   constructor(props){
     super(props);
@@ -58,8 +56,12 @@ class PopUpContainer extends Component{
     }
 
     this.props.updateUserState('setting', updateData).then(()=>{
-      this.props.sessionCheck();
+      Materialize.toast('저장완료', 1000);
+      this.props.sessionCheck().then(()=>{
+        this.props.onClosePopUp();
+      });
     });
+
   }
 
   // 신고하기 저장(제출); 
@@ -78,9 +80,10 @@ class PopUpContainer extends Component{
       reportType: reportType.value,
       reportDetail: reportDetail.value,
     }
-    this.props.insertUserReport( report );
-
-    Materialize.toast('test',1000);
+    this.props.insertUserReport( report ).then(()=>{
+      Materialize.toast('신고 완료', 1000);
+      this.props.onClosePopUp();
+    });
   }
 
   // 공지사항 뒤로가기

@@ -56,8 +56,7 @@ class MainApp extends Component{
     )
   }
   // 팝업창 닫기
-  handleClosePopUp( event ){
-    event.preventDefault();
+  handleClosePopUp( ){
     this.setState(
       update( this.state,
         {

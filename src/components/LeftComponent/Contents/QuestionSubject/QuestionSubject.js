@@ -16,8 +16,9 @@ const QuestionSubject = ( props )=>{
         className="animated fadeInDown"
         key={ index }
         href="#"
-        onClick={ ()=>{ props.onAlgorithmClick( item.no )} }> 
-        { item.subject }
+        onClick={ ()=>{ props.onAlgorithmClick( item.no )} }>
+        <div className="list-number">{ index+1 }</div>
+        <div className="list-subject">{ item.subject }</div>
       </CollectionItem>
     );
   });

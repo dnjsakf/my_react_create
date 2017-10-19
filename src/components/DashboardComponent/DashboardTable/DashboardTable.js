@@ -11,7 +11,7 @@ const DashboardTable = ( props )=>{
   let options = {};
   if( props.isLogined && props.isMyAlgo ){
     options = {
-      except: ['subject'],
+      except: ['mNo','subject'],
       replace: {
         sourceCode: {
           onClick: props.onShowPopUP
@@ -20,7 +20,7 @@ const DashboardTable = ( props )=>{
     }
   } else {
     options = {
-      except: ['subject', 'sourceCode']
+      except: ['mNo','subject', 'sourceCode']
     }
   }
   

@@ -12,7 +12,7 @@ const ContentsWrapper = ( props )=>{
     case 'algorithm':
     case 'myalgorithm':
       content = (
-        <QuestionSubject 
+        <QuestionSubject
           subject={ props.algorithmList }
           onAlgorithmClick={ props.onAlgorithmClick }/>
       );

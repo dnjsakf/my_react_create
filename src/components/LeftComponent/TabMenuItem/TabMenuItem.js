@@ -7,7 +7,6 @@ import { Button } from 'react-materialize';
 
 const TabMenuItem = ( props )=>{
   let items = [];
-  
   props.titles.map((item, index)=>{
     items.push(
       <li className="animated bounceInDown" key={index}>
@@ -26,4 +25,4 @@ const TabMenuItem = ( props )=>{
   )
 }
 
-export default TabMenuItem
+export default TabMenuItem;

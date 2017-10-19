@@ -72,21 +72,28 @@ export function createCompiler( option ){
     switch( option.compiler.toLowerCase() ){
       case 'python':
         return new Promise((resolve, reject)=>{
-          for(let index = 0; index < option.testcase.length; index++){
-            const child = childProcess.spawn('python',[ path.join(option.savePath,'MAIN.py') ]);
-          
-            child.stdout.setEncoding("utf8");
-            child.stderr.setEncoding("utf8");
-    
-            child.compilerName = `python_${index}`;
-    
-            option.compilers.push(child);
-          }
-          if( option.compilers.length === 0 ){
-            reject('Error: compiler is empty');
-          } else {
-            resolve( option );
-          }
+          const cwd = `cd ${option.savePath}`;
+          childProcess.exec( cwd, (error_cwd)=>{
+            if( error_cwd ){
+              console.log('[ERROR: python]\n', error_cwd);
+              reject( error_cwd.message.replace(/Command failed:.+py:/g, '') );
+            }
+            for(let index = 0; index < option.testcase.length; index++){
+              const child = childProcess.spawn('python',[ 'MAIN.py'],{ cwd:option.savePath });
+            
+              child.stdout.setEncoding("utf8");
+              child.stderr.setEncoding("utf8");
+      
+              child.compilerName = `python_${index}`;
+      
+              option.compilers.push(child);
+            }
+            if( option.compilers.length === 0 ){
+              reject('Error: compiler is empty');
+            } else {
+              resolve( option );
+            }
+          });
         });
         break;
       case 'java':
@@ -201,11 +208,7 @@ export function processSingleCase( compiler, testcase ){
     let result = {};
     result.input = testcase.input;
     testcase.input.map((input)=>{
-      if( process.platform === 'linux' ){
-        compiler.stdin.write( `"${input}\n"` );
-      } else {
-        compiler.stdin.write( `${input}\n` );
-      }
+      compiler.stdin.write( `${input}\n` );
     });
     compiler.stdin.end(()=>{
       console.log( '[process end-stdin]', compiler.compilerName );

@@ -7,3 +7,11 @@
 .QuestionSubject > .nav-wrapper {
   height: 100%;
 }
+
+.QuestionSubject .list-number{
+  float: left;
+  width: 10%;
+}
+.QuestionSubject .list-subject{
+  width: 90%;
+}

@@ -92,40 +92,49 @@ class AuthContainer extends Component{
       return false;
     }
     if( !(this.RegExp.username.test( username.value ))) {
+      Materialize.toast('Error: username', 1000);
       username.focus();
       return false;
     }
     if( password.value !== passwordCheck.value ){
+      Materialize.toast('Error: password', 1000);
       password.focus();
       return false;
     }
     if( typeof password.value !== 'string' ){
+      Materialize.toast('Error: password', 1000);
       password.focus();
       return false;
     }
     if( !(this.RegExp.password.test(password.value))){
+      Materialize.toast('Error: password', 1000);
       password.focus();
       return false;
     }
     if( typeof passwordCheck.value !== 'string' ){
+      Materialize.toast('Error: password', 1000);
       passwordCheck.focus();
       return false;
     }
     if( !(this.RegExp.passwordCheck.test(passwordCheck.value))){
+      Materialize.toast('Error: password', 1000);
       passwordCheck.focus();
       return false;
     }
     
     if( typeof displayName.value !== 'string' ){
+      Materialize.toast('Error: nick-name', 1000);
       displayName.focus();
       return false;
     }
     if( !(this.RegExp.displayName.test( displayName.value ))){
+      Materialize.toast('Error: nick-name', 1000);
       displayName.focus();
       return false;
     }
     
     this.props.handleAuthRegister( username.value, password.value, displayName.value ).then(()=>{
+      Materialize.toast('가입성공', 1000);
       this.setState(
         update( this.state, 
           {
@@ -135,8 +144,6 @@ class AuthContainer extends Component{
       )
     });
   }
-
-
   /**
    * LOGIN: username -> password -> LOGIN
    * REGISTER: username -> dispalyName-> password -> passwordChek -> REGISTER
